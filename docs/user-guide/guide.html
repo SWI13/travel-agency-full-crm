@@ -1,0 +1,896 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>YourTour — User guide</title>
+<link rel="stylesheet" href="guide.css">
+</head>
+<body>
+
+<!-- ───────────────────────────── Contents ───────────────────────────── -->
+<section class="chapter" id="contents">
+  <div class="eyebrow">YourTour · User guide</div>
+  <h1>Contents</h1>
+  <p class="lead">This guide explains how the YourTour website and the staff dashboard work, and how to use every screen day to day. Read sections 1 to 4 first; then go straight to the screens you use.</p>
+  <ol class="toc">
+    <li><span class="n">1</span>The system in one page</li>
+    <li><span class="n">2</span>Signing in, language and phone use</li>
+    <li><span class="n">3</span>Roles: who can do what</li>
+    <li><span class="n">4</span>A tour of the dashboard</li>
+    <li><span class="n">5</span>First-time setup (administrator)</li>
+    <li><span class="n">6</span>The public website</li>
+    <li><span class="n">7</span>WhatsApp Leads — the board</li>
+    <li><span class="n">8</span>The lead panel</li>
+    <li><span class="n">9</span>Adding a lead by hand</li>
+    <li><span class="n">10</span>Notifications</li>
+    <li><span class="n">11</span>Follow-ups</li>
+    <li><span class="n">12</span>Packages</li>
+    <li><span class="n">13</span>Departures</li>
+    <li><span class="n">14</span>Turning a lead into a booking</li>
+    <li><span class="n">15</span>Pilgrims &amp; Bookings</li>
+    <li><span class="n">16</span>Overview</li>
+    <li><span class="n">17</span>Analytics &amp; Reports</li>
+    <li><span class="n">18</span>Team</li>
+    <li><span class="n">19</span>Activity Logs</li>
+    <li><span class="n">20</span>Integrations — connecting WhatsApp</li>
+    <li><span class="n">21</span>Settings</li>
+    <li><span class="n">22</span>Practice mode (sample data)</li>
+    <li><span class="n">23</span>Daily routines</li>
+    <li><span class="n">24</span>Good practice and privacy</li>
+    <li><span class="n">25</span>Problems and answers</li>
+    <li><span class="n">26</span>For the person who runs the system</li>
+    <li><span class="n">A</span>Glossary — English, French, Arabic</li>
+  </ol>
+
+  <div class="box tip" style="margin-top:8mm">
+    <span class="title">How to read this guide</span>
+    <p>Button and menu names are written like <span class="ui">Save changes</span>. Screens are shown in English; the dashboard can also be used in French or Arabic — the glossary at the end gives the three names side by side.</p>
+    <p>The pictures use <b>sample data</b>: every sample customer, package and booking carries a <span class="badge b-demo">DEMO</span> badge. The phone numbers and the WhatsApp number shown are fictional.</p>
+  </div>
+</section>
+
+<!-- ───────────────────────────── 1 ───────────────────────────── -->
+<section class="chapter" id="s1">
+  <div class="eyebrow">Start here</div>
+  <h2><span class="num">1</span>The system in one page</h2>
+  <p class="lead">YourTour has two parts that work together: a <b>public website</b> for customers and a <b>private dashboard</b> for the team. Both share the same information.</p>
+
+  <div class="flow">
+    <div><span class="step">STEP 1</span><b>Customer finds an offer</b>On the website, an ad, or by word of mouth.</div>
+    <div><span class="step">STEP 2</span><b>Customer writes</b>On WhatsApp, or with the call-back form on the website.</div>
+    <div><span class="step">STEP 3</span><b>A lead appears</b>The dashboard creates a customer card by itself, with name, number and message.</div>
+    <div><span class="step">STEP 4</span><b>The team follows up</b>Replies on WhatsApp, fills in the trip details, moves the card stage by stage.</div>
+    <div><span class="step">STEP 5</span><b>Booking</b>Confirmed customers become bookings, with payments and travel documents.</div>
+  </div>
+
+  <h3>The words used in this guide</h3>
+  <table class="plain">
+    <thead><tr><th style="width:30%">Word</th><th>Meaning</th></tr></thead>
+    <tbody>
+      <tr><td><b>Lead</b></td><td>A customer card. One card per phone number. Everything about that customer lives on it: messages, trip wishes, notes, reminders and bookings.</td></tr>
+      <tr><td><b>Stage</b></td><td>Where the customer is in the sale, from <i>New</i> to <i>Completed</i> (or <i>Lost</i>). See section 7.</td></tr>
+      <tr><td><b>Follow-up</b></td><td>A reminder to contact a customer at a given date and time.</td></tr>
+      <tr><td><b>Package</b></td><td>An Umrah or Hajj offer: hotels, flight, price, what is included.</td></tr>
+      <tr><td><b>Departure</b></td><td>A dated group for a package, with a number of places. A package can have several departures.</td></tr>
+      <tr><td><b>Booking</b></td><td>A confirmed sale: which departure, how many travellers, total price and amount paid.</td></tr>
+      <tr><td><b>Pilgrim</b></td><td>One traveller of a booking, with a document checklist and visa status.</td></tr>
+      <tr><td><b>DEMO</b></td><td>Sample data for practice. Never a real customer. Can be removed in one click.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="box note">
+    <span class="title">Important: where replies are sent</span>
+    <p>The dashboard <b>reads and organises</b> WhatsApp conversations. It does <b>not send</b> messages. The team keeps replying from the <b>WhatsApp Business app</b> on the agency phone, as today. The <span class="ui">Open WhatsApp</span> button on each customer opens the right chat in one click.</p>
+  </div>
+
+  <h3>Where it runs</h3>
+  <table class="plain">
+    <thead><tr><th style="width:30%">What</th><th>Address</th></tr></thead>
+    <tbody>
+      <tr><td>Website (customers)</td><td>Today on the office computer: <code>http://localhost:5173</code>. After going live: the agency's own address (for example <code>www.yourtour.dz</code>).</td></tr>
+      <tr><td>Dashboard (team)</td><td>The same address followed by <code>/admin</code> — for example <code>http://localhost:5173/admin</code>. There is also a <span class="ui">Staff sign-in</span> link at the bottom of every website page.</td></tr>
+    </tbody>
+  </table>
+  <p class="small muted">While the system runs on the office computer, it only works on that computer and only while it is switched on (see section 26). Real WhatsApp messages start arriving once the system is online and connected to WhatsApp (section 20).</p>
+</section>
+
+<!-- ───────────────────────────── 2 ───────────────────────────── -->
+<section class="chapter" id="s2">
+  <div class="eyebrow">Everyone</div>
+  <h2><span class="num">2</span>Signing in, language and phone use</h2>
+
+  <figure>
+    <img src="img/01-sign-in.jpg" alt="Sign-in page">
+    <figcaption><b>Sign-in page.</b> Each employee has their own email and password, created by the administrator.</figcaption>
+  </figure>
+
+  <h3>Sign in</h3>
+  <ol class="steps">
+    <li>Open the dashboard address (ending in <code>/admin</code>).</li>
+    <li>Type your <b>email</b> and <b>password</b>, then press <span class="ui">Sign in</span>.</li>
+    <li>You arrive on the <span class="ui">Overview</span>. You stay signed in for 7 days on that browser.</li>
+  </ol>
+  <ul>
+    <li><b>Forgot your password?</b> Ask an administrator: <span class="ui">Team</span> → key icon → <span class="ui">Reset password</span>.</li>
+    <li><b>Too many wrong attempts</b> lock sign-in for that email for about 5 minutes. Wait, then try again.</li>
+    <li><b>Change your own password:</b> click your name at the top right → <span class="ui">Change password</span>. Passwords need at least 10 characters.</li>
+    <li><b>Sign out:</b> your name at the top right → <span class="ui">Sign out</span>. Always sign out on a shared computer.</li>
+  </ul>
+
+  <h3>Choosing the language</h3>
+  <p>Click the <b>translate icon</b> (文A) in the top bar, or go to <span class="ui">Settings</span> → <span class="ui">My preferences</span>. Choose Français, العربية or English. In Arabic the whole screen switches to right-to-left: the menu moves to the right side. Your choice is remembered on that browser.</p>
+
+  <figure>
+    <img src="img/26-dashboard-ar.jpg" alt="Dashboard in Arabic">
+    <figcaption><b>The dashboard in Arabic.</b> Text, layout and menu all switch to right-to-left.</figcaption>
+  </figure>
+</section>
+
+<section class="chapter">
+  <h3 style="margin-top:0">Using the dashboard on a phone</h3>
+  <p>The dashboard works on phones and tablets. On a small screen the menu is hidden: tap the <b>three lines</b> at the top left to open it. Everything else works the same way.</p>
+  <div class="phones">
+    <figure><img src="img/27-mobile-leads.jpg" alt="Leads on a phone"><figcaption><b>WhatsApp Leads</b> on a phone.</figcaption></figure>
+    <figure><img src="img/28-mobile-menu.jpg" alt="Menu on a phone"><figcaption><b>The menu</b>, opened with the three-line button.</figcaption></figure>
+    <figure><img src="img/35-site-mobile-ar.jpg" alt="Website on a phone"><figcaption><b>The website</b> on a phone, in Arabic.</figcaption></figure>
+  </div>
+</section>
+
+<!-- ───────────────────────────── 3 ───────────────────────────── -->
+<section class="chapter" id="s3">
+  <div class="eyebrow">Everyone</div>
+  <h2><span class="num">3</span>Roles: who can do what</h2>
+  <p class="lead">Each employee has one of three roles. The system enforces them: a button you are not allowed to use is either hidden or refused.</p>
+  <table>
+    <thead><tr><th style="width:44%">Action</th><th>Admin</th><th>Manager</th><th>Agent</th></tr></thead>
+    <tbody>
+      <tr><td>See all leads and bookings</td><td>Yes</td><td>Yes</td><td>Only the ones assigned to them</td></tr>
+      <tr><td>Edit leads, schedule follow-ups, create bookings, update payments</td><td>Yes</td><td>Yes</td><td>On their own customers</td></tr>
+      <tr><td>Add a lead by hand</td><td>Yes</td><td>Yes</td><td>Yes (assigned to themselves)</td></tr>
+      <tr><td>Assign a lead to an employee</td><td>Yes</td><td>Yes</td><td>No</td></tr>
+      <tr><td>Create and edit packages and departures</td><td>Yes</td><td>Yes</td><td>View only</td></tr>
+      <tr><td>Analytics &amp; Reports, Team page</td><td>Yes</td><td>View</td><td>No</td></tr>
+      <tr><td>Activity Logs</td><td>Everything</td><td>Everything</td><td>Their own work only</td></tr>
+      <tr><td>Add, edit, deactivate employees; reset passwords</td><td>Yes</td><td>No</td><td>No</td></tr>
+      <tr><td>Integrations, agency Settings, sample data</td><td>Yes</td><td>No</td><td>No</td></tr>
+      <tr><td>Delete a lead</td><td>Yes</td><td>No</td><td>No</td></tr>
+    </tbody>
+  </table>
+  <div class="box tip">
+    <span class="title">Agents only see their own customers</span>
+    <p>An agent sees only the leads, follow-ups and bookings assigned to them — on every page, in search, and in live notifications. A new WhatsApp lead appears for an agent once a manager assigns it to them, or immediately if automatic assignment is switched on (section 21).</p>
+  </div>
+</section>
+
+<!-- ───────────────────────────── 4 ───────────────────────────── -->
+<section class="chapter" id="s4">
+  <div class="eyebrow">Everyone</div>
+  <h2><span class="num">4</span>A tour of the dashboard</h2>
+  <figure>
+    <img src="img/02-overview.jpg" alt="Overview page">
+    <figcaption><b>The dashboard.</b> Menu on the left, tools at the top, the selected page in the middle.</figcaption>
+  </figure>
+
+  <div class="cols">
+    <div>
+      <h4>The menu (left)</h4>
+      <ul>
+        <li><b>Sales:</b> Overview, WhatsApp Leads, Follow-ups.</li>
+        <li><b>Operations:</b> Packages, Departures, Pilgrims &amp; Bookings.</li>
+        <li><b>Administration:</b> Team, Analytics &amp; Reports, Activity Logs, Integrations, Settings. You only see what your role allows.</li>
+        <li><span class="badge b-petrol">4</span> next to WhatsApp Leads = conversations with unread messages.</li>
+        <li><span class="badge b-rose">3</span> next to Follow-ups = reminders that are late.</li>
+        <li>At the bottom: <span class="ui">View website</span>, and the connection light: <b>green "Live"</b> means new information appears by itself; <b>amber "Reconnecting…"</b> means the connection dropped and is being restored.</li>
+        <li>The small arrow icon collapses the menu to icons only.</li>
+      </ul>
+    </div>
+    <div>
+      <h4>The top bar</h4>
+      <ul>
+        <li><b>Search</b> — type 2 letters or 3 digits to find a customer by name or phone, a package, or a booking. Click a result to open it.</li>
+        <li><b>Speaker</b> — sound notifications on or off.</li>
+        <li><b>Translate (文A)</b> — dashboard language.</li>
+        <li><b>Bell</b> — list of new leads and messages since you opened the page.</li>
+        <li><b>Your name</b> — change password, sign out.</li>
+      </ul>
+      <h4>The pink DEMO bar</h4>
+      <p>Shown while sample data is loaded. Remove the sample data before real work starts (section 22).</p>
+    </div>
+  </div>
+</section>
+
+<!-- ───────────────────────────── 5 ───────────────────────────── -->
+<section class="chapter" id="s5">
+  <div class="eyebrow">Administrator</div>
+  <h2><span class="num">5</span>First-time setup</h2>
+  <p class="lead">Do these steps once, in this order, before the team starts using the system with real customers.</p>
+  <ol class="steps">
+    <li><b>Agency profile</b> — <span class="ui">Settings</span> → <span class="ui">Agency profile</span>. Enter the real name (French and Arabic), licence number, phone, <b>WhatsApp number</b>, email, address, opening hours, Google Maps, Facebook and Instagram links. These appear on the website; empty fields are simply hidden. Without the WhatsApp number, the website shows no WhatsApp buttons. (Section 21.)</li>
+    <li><b>Packages</b> — <span class="ui">Packages</span> → <span class="ui">New package</span>. Create each real Umrah and Hajj offer and set its status to <b>Active</b> when it should appear on the website. (Section 12.)</li>
+    <li><b>Departures</b> — <span class="ui">Departures</span> → <span class="ui">New departure</span>. Add every departure date with its number of places. (Section 13.)</li>
+    <li><b>Team</b> — <span class="ui">Team</span> → <span class="ui">Add employee</span>. One account per person, with the right role. Give each person their temporary password privately and ask them to change it. (Section 18.)</li>
+    <li><b>Lead automation</b> — <span class="ui">Settings</span> → <span class="ui">Lead automation</span>: decide if new leads are assigned automatically in turn between agents, or by a manager. (Section 21.)</li>
+    <li><b>Document checklist</b> — <span class="ui">Settings</span> → <span class="ui">Pilgrim document checklist</span>: adjust the steps you track for every traveller (passport received, photos…).</li>
+    <li><b>Remove the sample data</b> — <span class="ui">Integrations</span> → <span class="ui">Remove sample data</span>. (Section 22.)</li>
+    <li><b>Connect WhatsApp</b> — done once by the technical person with the agency's Meta account. (Section 20.)</li>
+  </ol>
+  <div class="box warn">
+    <span class="title">Only real, confirmed information</span>
+    <p>Prices, hotels, flights and dates are shown to customers exactly as you type them. Enter only what is confirmed, and update it when it changes. Photos must be your own or properly licensed — never copied from another agency's website.</p>
+  </div>
+</section>
+
+<!-- ───────────────────────────── 6 ───────────────────────────── -->
+<section class="chapter" id="s6">
+  <div class="eyebrow">What customers see</div>
+  <h2><span class="num">6</span>The public website</h2>
+  <p class="lead">The website shows YourTour's packages and turns visitors into WhatsApp conversations and call-back requests. It opens in Arabic by default; visitors switch with <b>AR · FR · EN</b> at the top.</p>
+
+  <figure>
+    <img src="img/30-site-home-en.jpg" alt="Website home">
+    <figcaption><b>Home page.</b> Headline, WhatsApp button, the next featured package, the agency's strong points, then the packages, "How it works" and the call-back form.</figcaption>
+  </figure>
+
+  <h3>The pages</h3>
+  <table class="plain">
+    <thead><tr><th style="width:24%">Page</th><th>Content</th></tr></thead>
+    <tbody>
+      <tr><td><b>Home</b></td><td>Headline, featured package, strong points, first six packages with Umrah / Hajj tabs, "How it works", call-back form.</td></tr>
+      <tr><td><b>Packages</b></td><td>All active packages, the number of trips available, Umrah / Hajj filter, sorting by travel date or by price, and a <span class="ui">Show more</span> button.</td></tr>
+      <tr><td><b>Package detail</b></td><td>Every detail you entered, the departure dates with seats left, a WhatsApp button and the call-back form.</td></tr>
+      <tr><td><b>About · Contact</b></td><td>Agency presentation, licence, address, phone, hours, map link, call-back form.</td></tr>
+      <tr><td><b>Privacy</b></td><td>What personal data is collected and why (Algerian Law 18-07).</td></tr>
+      <tr><td><b>Thank you</b></td><td>Shown after the form is sent.</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section class="chapter">
+  <figure>
+    <img src="img/32-site-packages.jpg" alt="Packages page">
+    <figcaption><b>Packages page.</b> Each card shows, in this order: flight type (direct or with stopover), hotel area, distance and walking time to the Haram, package name, next departure date, duration and departure city, hotel, airline, "price starts from", and the WhatsApp and details buttons.</figcaption>
+  </figure>
+  <figure>
+    <img src="img/33-site-detail.jpg" alt="Package detail page">
+    <figcaption><b>Package detail.</b> The price box with the WhatsApp button stays visible while the customer scrolls. Departure dates show how many places are left; full departures are greyed out.</figcaption>
+  </figure>
+</section>
+
+<section class="chapter">
+  <h3 style="margin-top:0">The WhatsApp buttons and the reference code</h3>
+  <p>When a customer presses a WhatsApp button on a package, their WhatsApp opens with a ready message that starts with the package reference, for example:</p>
+  <p class="ar" style="background:var(--stone);border-radius:2mm;padding:2.4mm 4mm;font-size:10.5pt">[OMR-01] السلام عليكم، أريد معلومات عن: عمرة 15 يوم</p>
+  <p>Thanks to this code, the dashboard links the new lead to that package automatically and marks its source as <b>Website → WhatsApp</b>. Buttons that are not about a specific package use the general code <code>[WEB-00]</code>. If the customer deletes the code, the message still arrives normally — only the automatic link to the package is lost.</p>
+
+  <h3>The call-back form</h3>
+  <div class="cols">
+    <figure style="margin-top:0"><img src="img/34-site-contact.jpg" alt="Contact page with form"><figcaption><b>Contact page</b> with the form.</figcaption></figure>
+    <div>
+      <p>The customer gives a name, phone number, Umrah or Hajj, package (optional), adults, children and a message, and ticks the consent box.</p>
+      <ul>
+        <li>A lead appears at once in the dashboard with source <b>Website form</b>, and the message shows in its conversation.</li>
+        <li>If the phone number already has a card, the request is added to that same card.</li>
+        <li>The same number can send the form once every 2 minutes; this blocks accidental double clicks and spam.</li>
+        <li>The customer then sees the thank-you page with a WhatsApp button.</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>What decides what the website shows</h3>
+  <ul>
+    <li>A package appears only when its status is <b>Active</b> (Draft, Sold out and Archived are hidden).</li>
+    <li>Only departures that are <b>Open</b> and in the future are listed. "Seats left" is calculated from real bookings.</li>
+    <li>"Price starts from" is the cheapest price among departures that still have places (or the package price).</li>
+    <li>Agency details come from <span class="ui">Settings</span> → <span class="ui">Agency profile</span>. Packages marked DEMO show a "Sample" badge — remove them before going live.</li>
+  </ul>
+</section>
+
+<!-- ───────────────────────────── 7 ───────────────────────────── -->
+<section class="chapter" id="s7">
+  <div class="eyebrow">Main workspace</div>
+  <h2><span class="num">7</span>WhatsApp Leads — the board</h2>
+  <p class="lead">Every WhatsApp conversation becomes a lead automatically. Nobody has to type the customer's name or number.</p>
+  <figure>
+    <img src="img/03-leads-board.jpg" alt="Pipeline board">
+    <figcaption><b>The pipeline board.</b> One column per stage. The newest activity is at the top of each column.</figcaption>
+  </figure>
+
+  <h3>Reading a card</h3>
+  <div class="cols">
+    <ul>
+      <li><b>Name</b> — the name the team typed, else the WhatsApp profile name, else the phone number.</li>
+      <li><b>DEMO</b> badge — sample customer.</li>
+      <li><b>Phone number.</b></li>
+      <li><b>Green number</b> — unread messages; the card has a green border and says <b>NEW MESSAGE</b>.</li>
+      <li><b>Latest message</b> — the last thing written, by the customer or by the agency.</li>
+    </ul>
+    <ul>
+      <li><b>Badges</b> — service (Umrah, Hajj, Not specified), source (Facebook ad, Organic WhatsApp…), and the priority flag when High or Urgent.</li>
+      <li><b>Calendar</b> — next follow-up date, or <span class="badge b-rose">Overdue</span> in red.</li>
+      <li><b>Time</b> since the last activity.</li>
+      <li><b>Initials</b> of the assigned employee, or <b style="color:#b45309">Unassigned</b>.</li>
+      <li><b>⇄ icon</b> — move the card to another stage.</li>
+    </ul>
+  </div>
+</section>
+
+<section class="chapter">
+  <h3 style="margin-top:0">Moving a customer to the next stage</h3>
+  <ul>
+    <li><b>Drag and drop</b> the card into another column, or</li>
+    <li>click the <b>⇄ icon</b> at the bottom right of the card and choose the stage (easiest on a phone), or</li>
+    <li>change <span class="ui">Lead stage</span> in the lead panel and press <span class="ui">Save changes</span>.</li>
+  </ul>
+  <p>Moving a card to <b>Lost</b> always asks for the reason (price, dates, booked elsewhere…). Reasons are counted in the reports.</p>
+
+  <table>
+    <thead><tr><th style="width:23%">Stage</th><th style="width:40%">Means</th><th>Usual next step</th></tr></thead>
+    <tbody>
+      <tr><td>New</td><td>The customer wrote; nobody has answered yet.</td><td>Reply on WhatsApp quickly; assign the lead.</td></tr>
+      <tr><td>Contacted</td><td>The agency answered.</td><td>Understand the need: Umrah or Hajj, dates, number of people, budget.</td></tr>
+      <tr><td>Qualified</td><td>A real project: dates and people are known.</td><td>Propose a package.</td></tr>
+      <tr><td>Package sent</td><td>An offer was sent.</td><td>Schedule a follow-up to get an answer.</td></tr>
+      <tr><td>Awaiting documents</td><td>The customer said yes; papers are expected.</td><td>Collect passports and photos.</td></tr>
+      <tr><td>Awaiting deposit</td><td>Waiting for the deposit.</td><td>Confirm the payment.</td></tr>
+      <tr><td>Confirmed</td><td>The sale is done.</td><td>Create the booking (section 14).</td></tr>
+      <tr><td>Travel preparation</td><td>Booked; visa and final preparation.</td><td>Complete each traveller's checklist.</td></tr>
+      <tr><td>Completed</td><td>The trip took place.</td><td>Ask for feedback; keep in touch for next season.</td></tr>
+      <tr><td>Lost</td><td>The customer will not travel with us (reason required).</td><td>Nothing, or try again next season.</td></tr>
+    </tbody>
+  </table>
+  <div class="box tip">
+    <span class="title">Automatic "Contacted"</span>
+    <p>Once WhatsApp is connected with the Business app (section 20), a reply sent from the agency phone moves a New lead to Contacted by itself and clears its unread counter. This can be switched off in Settings.</p>
+  </div>
+</section>
+
+<section class="chapter">
+  <h3 style="margin-top:0">List view</h3>
+  <p>Click <span class="ui">List</span> (top right) to see the same leads as a table: customer, latest message, service, stage, agent, source, priority, next follow-up and last activity. Click any row to open the customer.</p>
+  <figure class="crop" style="--h:84mm"><img src="img/04-leads-list.jpg" alt="List view"><figcaption><b>List view.</b> Useful to scan many customers quickly.</figcaption></figure>
+
+  <h3>Search and filters</h3>
+  <p>Type a name or at least 3 digits of a phone number in the search box. Press <span class="ui">Filters</span> to narrow the list by <b>Stage, Service, Assigned to</b> (including <i>Unassigned</i>), <b>Source, Priority</b> and <b>Created</b> (today, last 7 or 30 days). The number of active filters shows on the button; <span class="ui">Clear filters</span> removes them all.</p>
+  <figure class="crop" style="--h:84mm"><img src="img/05-leads-filters.jpg" alt="Filters"><figcaption><b>Filters open.</b> The Overview's figures link here with the right filter already applied.</figcaption></figure>
+</section>
+
+<section class="chapter">
+  <h3 style="margin-top:0">Where leads come from</h3>
+  <p>The <b>source</b> badge is filled in automatically, only from information WhatsApp actually provides — never guessed.</p>
+  <table>
+    <thead><tr><th style="width:27%">Source badge</th><th>When it is used</th></tr></thead>
+    <tbody>
+      <tr><td>Facebook ad</td><td>The customer clicked a Click-to-WhatsApp ad shown on Facebook. The card also shows the ad title and ad ID.</td></tr>
+      <tr><td>Instagram ad</td><td>The same, from an ad on Instagram.</td></tr>
+      <tr><td>Meta ad</td><td>An ad click, without information about which platform.</td></tr>
+      <tr><td>Facebook / Instagram post</td><td>The customer came from a post that is not an ad.</td></tr>
+      <tr><td>Website → WhatsApp</td><td>The message starts with a website reference such as <code>[OMR-01]</code>.</td></tr>
+      <tr><td>Website form</td><td>The call-back form on the website.</td></tr>
+      <tr><td>Organic WhatsApp</td><td>The customer wrote directly, with no ad or website information.</td></tr>
+      <tr><td>Added manually</td><td>Created by an employee (walk-in, phone call).</td></tr>
+    </tbody>
+  </table>
+  <p>The service (Umrah or Hajj) is also guessed from the customer's words ("عمرة", "Omra", "حج", "Hajj"…) when it is clear. You can always correct it.</p>
+
+  <h3>When a customer writes again</h3>
+  <ul>
+    <li>The message goes to the <b>same card</b> — never a duplicate customer.</li>
+    <li>The card moves to the top, the unread counter goes up and a notification appears.</li>
+    <li>Everything the team typed (display name, notes, trip details, stage) stays as it is.</li>
+    <li>If the card was <i>Completed</i> or <i>Lost</i>, its stage does not change by itself: move it back to <i>Contacted</i> if it is a new trip.</li>
+  </ul>
+</section>
+
+<!-- ───────────────────────────── 8 ───────────────────────────── -->
+<section class="chapter" id="s8">
+  <div class="eyebrow">Main workspace</div>
+  <h2><span class="num">8</span>The lead panel</h2>
+  <p class="lead">Click any card, row or search result to open the customer's panel on the side of the screen. Press <span class="kbd">Esc</span> or the ✕ to close it. It has three tabs.</p>
+  <figure>
+    <img src="img/06-lead-details.jpg" alt="Lead panel, Customer tab">
+    <figcaption><b>Customer tab.</b> Top: name, number, stage, source and service, with <span class="ui">Open WhatsApp</span> and <span class="ui">Call</span>.</figcaption>
+  </figure>
+  <h3>Tab 1 — Customer</h3>
+  <ul>
+    <li><b>Customer</b> — WhatsApp profile name (filled automatically; may be empty if the customer has none), phone, date created, source. For ad leads, a box shows the <b>ad title and ad ID</b>.</li>
+    <li><b>Display name</b> — the name the team wants to use ("Mme Benali", "Karim — Batna"). It replaces the WhatsApp name everywhere and is never overwritten by WhatsApp.</li>
+    <li><b>Travel interest</b> — Umrah or Hajj, preferred package, departure city, departure and return dates, adults, children, room preference, estimated budget in DZD.</li>
+  </ul>
+</section>
+
+<section class="chapter">
+  <figure class="crop">
+    <img src="img/06b-lead-sales.jpg" alt="Sales management">
+    <figcaption><b>Sales management</b>, lower in the Customer tab.</figcaption>
+  </figure>
+  <ul>
+    <li><b>Sales management</b> — lead stage, priority, assigned agent (only managers and admins can change it), tags (type a word and press Enter), and notes for the team.</li>
+    <li>When something is changed, the bottom bar says <b>Unsaved changes</b>. Press <span class="ui">Save changes</span> — or <span class="ui">Cancel</span> to undo.</li>
+    <li>If a colleague changes the same customer meanwhile, their changes appear by themselves as long as you have not started editing.</li>
+  </ul>
+
+  <h3>Tab 2 — Conversation</h3>
+  <div class="cols">
+    <figure style="margin-top:0"><img src="img/07-lead-conversation.jpg" alt="Conversation"><figcaption><b>Conversation.</b> Customer on one side, agency on the other, grouped by day.</figcaption></figure>
+    <div>
+      <ul>
+        <li>A copy of the WhatsApp messages received for this customer, with date and time.</li>
+        <li>Replies sent from the agency phone appear on the agency side once WhatsApp is connected with the Business app.</li>
+        <li>Labels show <b>Website form</b> requests, <b>Imported history</b>, and the ad the customer clicked.</li>
+        <li>Opening this tab marks the conversation as read.</li>
+        <li>To answer, press <span class="ui">Open WhatsApp</span>. The dashboard never sends messages itself.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="chapter">
+  <h3 style="margin-top:0">Tab 3 — Follow-ups · Bookings</h3>
+  <figure><img src="img/08-lead-tasks.jpg" alt="Follow-ups and bookings tab"><figcaption><b>Follow-ups · Bookings.</b> Reminders for this customer, the form to add one, and the customer's bookings.</figcaption></figure>
+  <ul>
+    <li><b>Schedule a follow-up</b>: date and time (tomorrow 10:00 is proposed), reason (call back, send offer, documents, deposit, other) and an optional note, then <span class="ui">Schedule</span>. The reminder is assigned to the customer's agent.</li>
+    <li>Each reminder can be marked completed or reopened here. Late ones are red.</li>
+    <li><b>Bookings</b>: <span class="ui">Convert to booking</span> becomes available once the customer is Confirmed (section 14). Existing bookings show the amount paid and payment status.</li>
+  </ul>
+  <div class="box note">
+    <span class="title">Deleting a customer (administrator only)</span>
+    <p>At the bottom of the Customer tab: <span class="ui">Delete lead</span>. It removes the card and its conversation record and cannot be undone. Customers with bookings cannot be deleted. In most cases, moving the customer to <i>Lost</i> is the better choice.</p>
+  </div>
+</section>
+
+<!-- ───────────────────────────── 9 ───────────────────────────── -->
+<section class="chapter" id="s9">
+  <div class="eyebrow">Main workspace</div>
+  <h2><span class="num">9</span>Adding a lead by hand</h2>
+  <p class="lead">For customers who visit the agency or phone. WhatsApp and website customers are added automatically — do not add them again.</p>
+  <div class="cols">
+    <figure style="margin-top:0"><img src="img/09-new-lead.jpg" alt="Add a lead"><figcaption><b>Add a lead manually.</b></figcaption></figure>
+    <div>
+      <ol class="steps">
+        <li><span class="ui">WhatsApp Leads</span> → <span class="ui">New lead</span>.</li>
+        <li>Phone number (required), name, service and an optional note. Managers can assign it to an employee; an agent's own leads are assigned to that agent.</li>
+        <li><span class="ui">Add lead</span>. The panel opens on the new customer.</li>
+      </ol>
+      <p>Accepted phone formats: <code>0661 23 45 67</code>, <code>0661-234-567</code>, <code>+213 661 23 45 67</code>, <code>00213661234567</code>, landlines like <code>033 27 19 65</code>, and foreign numbers written with <code>+</code> or <code>00</code>.</p>
+      <p>If the number already exists, the system says so and offers <span class="ui">Open the existing lead</span> instead of creating a duplicate.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ───────────────────────────── 10 ───────────────────────────── -->
+<section class="chapter" id="s10">
+  <div class="eyebrow">Everyone</div>
+  <h2><span class="num">10</span>Notifications</h2>
+  <p class="lead">Keep the dashboard open in a browser tab during working hours: new leads and messages appear without refreshing the page.</p>
+  <figure><img src="img/23-live-toast.jpg" alt="Live notification"><figcaption><b>A new lead arrives.</b> The card appears at the top of New, a message pops up at the bottom with an <span class="ui">Open</span> button, and a short sound plays.</figcaption></figure>
+  <div class="cols">
+    <figure style="margin-top:0"><img src="img/24-notifications.jpg" alt="Notification list"><figcaption><b>The bell</b> lists what arrived since the page was opened.</figcaption></figure>
+    <ul>
+      <li><b>Sound</b> — a short two-note chime. Turn it on or off with the speaker icon. Browsers only allow sound after you have clicked once on the page.</li>
+      <li><b>Pop-up message</b> with <span class="ui">Open</span> to go straight to the customer.</li>
+      <li><b>Bell</b> — the list empties when the page is reloaded; the customers themselves stay marked unread.</li>
+      <li><b>Green counter</b> in the menu — conversations with unread messages.</li>
+      <li><b>Browser tab title</b> — starts with the number of unread conversations, e.g. "(3) YourTour — CRM", visible even from another tab.</li>
+      <li>Agents are notified only about customers assigned to them.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ───────────────────────────── 11 ───────────────────────────── -->
+<section class="chapter" id="s11">
+  <div class="eyebrow">Everyone</div>
+  <h2><span class="num">11</span>Follow-ups</h2>
+  <p class="lead">Follow-ups make sure no customer is forgotten. Schedule one every time you promise to call back.</p>
+  <figure><img src="img/10-followups.jpg" alt="Follow-ups page"><figcaption><b>Follow-ups.</b> Late reminders are on top in red, then today's, then the next ones.</figcaption></figure>
+  <ul>
+    <li><b>Overdue</b> (red frame) — the date has passed. Handle these first.</li>
+    <li><b>Today</b> — due today. <b>Upcoming</b> — later.</li>
+    <li><b>Completed</b> — click the heading to show the last 50 completed ones.</li>
+    <li><span class="ui">Mark completed</span> when it is done. <span class="ui">Reopen</span> if needed.</li>
+    <li><span class="ui">Reschedule</span> → <i>Tomorrow</i>, <i>In 3 days</i>, <i>Next week</i> (same time of day), or pick an exact date and time.</li>
+    <li>Click the customer's name to open their panel.</li>
+    <li>Managers can switch between <span class="ui">Everyone</span> and <span class="ui">Mine</span>.</li>
+  </ul>
+  <p>The next follow-up also shows on the customer's card, and the Overview counts customers whose reminder is due today or late.</p>
+</section>
+
+<!-- ───────────────────────────── 12 ───────────────────────────── -->
+<section class="chapter" id="s12">
+  <div class="eyebrow">Managers and administrators</div>
+  <h2><span class="num">12</span>Packages</h2>
+  <p class="lead">A package is an Umrah or Hajj offer. Active packages are published on the website.</p>
+  <figure><img src="img/11-packages.jpg" alt="Packages page"><figcaption><b>Packages.</b> Each card shows the next departure, places available, the price and the status. Icons: view on website, edit, archive, delete.</figcaption></figure>
+</section>
+
+<section class="chapter">
+  <figure class="crop"><img src="img/12-package-form.jpg" alt="New package form"><figcaption><b>New package.</b> The form is in three parts: package, stay &amp; transport, price &amp; capacity.</figcaption></figure>
+  <table class="plain">
+    <thead><tr><th style="width:30%">Field</th><th>What to enter</th></tr></thead>
+    <tbody>
+      <tr><td><b>Name · Name in Arabic</b></td><td>As customers should see it. The Arabic name is used on the Arabic website.</td></tr>
+      <tr><td><b>Category · Status</b></td><td>Umrah or Hajj. Status: <b>Draft</b> (hidden), <b>Active</b> (on the website), <b>Sold out</b> (hidden from the website), <b>Archived</b> (hidden and greyed out).</td></tr>
+      <tr><td><b>Description</b></td><td>What is included, programme, conditions — in French and in Arabic.</td></tr>
+      <tr><td><b>Duration · Departure city</b></td><td>Number of days; city of departure.</td></tr>
+      <tr><td><b>Makkah / Madinah accommodation</b></td><td>Hotel names, and the hotel category (e.g. 4★).</td></tr>
+      <tr><td><b>Hotel area · Distance · Walking time</b></td><td>Area or street of the Makkah hotel, distance to the Haram in metres (shown as "700 m" or "1.2 km") and walking time in minutes (e.g. 10-12).</td></tr>
+      <tr><td><b>Airline · Flight type · Flight information</b></td><td>Airline name; direct or with stopover (shown as a badge on the card); free text for the flight details.</td></tr>
+      <tr><td><b>Transport · Room options</b></td><td>Buses and transfers; the room types offered (single, double, triple, quad).</td></tr>
+      <tr><td><b>Price per person · Capacity</b></td><td>Price in DZD; the usual number of places per group (proposed for new departures).</td></tr>
+      <tr><td><b>Cover image link</b></td><td>An <code>https://</code> link to a photo you own or have the right to use.</td></tr>
+      <tr><td><b>First departure</b></td><td>Optional, only when creating: departure and return dates of the first group.</td></tr>
+    </tbody>
+  </table>
+  <ul>
+    <li>The <b>reference code</b> (OMR-01, HAJ-01…) is created automatically and used in the website's WhatsApp messages.</li>
+    <li><b>Archive</b> a package you no longer sell. <b>Delete</b> is only possible when no booking uses it; it also deletes its departures.</li>
+  </ul>
+</section>
+
+<!-- ───────────────────────────── 13 ───────────────────────────── -->
+<section class="chapter" id="s13">
+  <div class="eyebrow">Managers and administrators</div>
+  <h2><span class="num">13</span>Departures</h2>
+  <p class="lead">A departure is a dated group of a package. Places left are calculated from the bookings.</p>
+  <figure><img src="img/13-departures.jpg" alt="Departures page"><figcaption><b>Departures.</b> Upcoming groups first, then past and closed ones. The bar shows how full each group is: green, amber above 80 %, red when full.</figcaption></figure>
+  <table class="plain">
+    <thead><tr><th style="width:30%">Field</th><th>Meaning</th></tr></thead>
+    <tbody>
+      <tr><td><b>Package · Dates</b></td><td>Which package; departure and return dates (return after departure).</td></tr>
+      <tr><td><b>Capacity</b></td><td>Number of places. It cannot be set lower than the places already booked.</td></tr>
+      <tr><td><b>Price per person</b></td><td>Leave empty to use the package price; fill it to give this group a different price.</td></tr>
+      <tr><td><b>Status</b></td><td><b>Open</b> — bookable and on the website. <b>Closed</b> — no new bookings, hidden from the website. <b>Departed</b> — the group has left. <b>Cancelled</b>.</td></tr>
+      <tr><td><b>Group name · City · Flight · Notes</b></td><td>Optional details for the team.</td></tr>
+    </tbody>
+  </table>
+  <p>A departure with bookings cannot be deleted — close or cancel it instead.</p>
+</section>
+
+<!-- ───────────────────────────── 14 ───────────────────────────── -->
+<section class="chapter" id="s14">
+  <div class="eyebrow">Everyone</div>
+  <h2><span class="num">14</span>Turning a lead into a booking</h2>
+  <figure><img src="img/16-booking-modal.jpg" alt="Create a booking"><figcaption><b>Create a booking.</b> Opened from the customer's panel, tab Follow-ups · Bookings.</figcaption></figure>
+  <ol class="steps">
+    <li>Move the customer to <b>Confirmed</b> (or Travel preparation / Completed). Before that, the button stays disabled.</li>
+    <li>Open the customer → tab <span class="ui">Follow-ups · Bookings</span> → <span class="ui">Convert to booking</span>.</li>
+    <li>Choose the <b>departure group</b>. Only open, future departures with free places are listed; the customer's preferred package comes first.</li>
+    <li>Enter the <b>number of travellers</b> (no more than the places left) and the <b>booking date</b>.</li>
+    <li>The <b>total</b> is proposed as price × travellers — change it if you agreed another price. Enter the <b>amount already paid</b>; the remaining balance is shown below.</li>
+    <li>Press <span class="ui">Create booking</span>.</li>
+  </ol>
+  <p>The system then creates the booking, one <b>pilgrim</b> record per traveller, takes the places from the departure, and updates "seats left" on the website.</p>
+</section>
+
+<!-- ───────────────────────────── 15 ───────────────────────────── -->
+<section class="chapter" id="s15">
+  <div class="eyebrow">Everyone</div>
+  <h2><span class="num">15</span>Pilgrims &amp; Bookings</h2>
+  <figure><img src="img/14-bookings.jpg" alt="Bookings"><figcaption><b>Bookings tab.</b> At the top: value booked, amount collected and amount still to collect (cancelled and refunded bookings excluded).</figcaption></figure>
+  <h3>Recording a payment</h3>
+  <ol class="steps">
+    <li>Click the pencil at the end of the booking's row.</li>
+    <li>Update the <b>amount paid</b> (and the total if it changed). The remaining balance updates as you type.</li>
+    <li>Leave <span class="ui">Payment</span> on <i>Automatic</i>: the status becomes <span class="badge b-rose">Unpaid</span>, <span class="badge b-saffron">Partially paid</span> or <span class="badge b-green">Paid</span> from the amounts.</li>
+    <li>Choose <b>Refunded</b> or <b>Cancelled</b> only when that is the case — the booking's places are then released.</li>
+    <li><span class="ui">Save changes</span>. Every payment change is written in the Activity Logs.</li>
+  </ol>
+  <p class="small muted">The amount paid can never be higher than the total. Click the customer's name to open their panel.</p>
+</section>
+
+<section class="chapter">
+  <h3 style="margin-top:0">Pilgrims and their documents</h3>
+  <figure><img src="img/15-pilgrims.jpg" alt="Pilgrims"><figcaption><b>Pilgrims tab.</b> One row per traveller, sorted by departure date.</figcaption></figure>
+  <ul>
+    <li><b>Name</b> — the first traveller takes the customer's name, the others "Name +1", "Name +2"… Click a name to type the real one, then press Enter.</li>
+    <li><b>Document checklist</b> — click each step when it is done (it turns petrol with a tick). The steps are set in Settings.</li>
+    <li><b>Visa</b> — click the badge to change: not started, in progress, submitted, approved, rejected.</li>
+    <li><b>Readiness</b> — the bar fills as steps are done; it says <b>Ready</b> when all steps are complete and the visa is approved.</li>
+  </ul>
+  <div class="box tip">
+    <span class="title">Privacy by design</span>
+    <p>Only the <b>progress</b> is recorded here. Do not type passport numbers or upload document scans anywhere in the system — keep the originals in the agency's secure file.</p>
+  </div>
+</section>
+
+<!-- ───────────────────────────── 16 ───────────────────────────── -->
+<section class="chapter" id="s16">
+  <div class="eyebrow">Everyone</div>
+  <h2><span class="num">16</span>Overview</h2>
+  <p class="lead">The first page after signing in. Every number is calculated from the real records; click a number to open the matching list. Agents see figures for their own customers.</p>
+  <table>
+    <thead><tr><th style="width:32%">Figure</th><th>What it counts</th></tr></thead>
+    <tbody>
+      <tr><td>Total leads</td><td>All customer cards.</td></tr>
+      <tr><td>New WhatsApp leads today</td><td>Conversations that started today on WhatsApp (manual and website-form leads not included).</td></tr>
+      <tr><td>Unassigned leads</td><td>Open customers with no employee yet (confirmed, completed and lost not counted). An amber dot warns when there are some.</td></tr>
+      <tr><td>Awaiting follow-up</td><td>Customers with a reminder due today or already late. A red dot warns when there are some.</td></tr>
+      <tr><td>Qualified leads</td><td>Customers at Qualified, Package sent, Awaiting documents or Awaiting deposit.</td></tr>
+      <tr><td>Confirmed bookings</td><td>Bookings that are not refunded or cancelled.</td></tr>
+      <tr><td>Upcoming departures</td><td>Departures from today on that are not cancelled or departed.</td></tr>
+      <tr><td>Total pilgrims</td><td>Travellers in bookings that are not refunded or cancelled.</td></tr>
+    </tbody>
+  </table>
+  <p>Below the figures: <b>Recent leads</b> (latest activity, with a green dot when unread), the <b>Sales pipeline</b> (customers per stage — click a stage to see them), <b>Upcoming departures</b> with places booked, <b>Team performance</b>, and <b>Recent activity</b>.</p>
+</section>
+
+<!-- ───────────────────────────── 17 ───────────────────────────── -->
+<section class="chapter" id="s17">
+  <div class="eyebrow">Managers and administrators</div>
+  <h2><span class="num">17</span>Analytics &amp; Reports</h2>
+  <figure><img src="img/18-analytics.jpg" alt="Analytics"><figcaption><b>Analytics &amp; Reports.</b> Choose the period at the top right: 7 days, 30 days, 90 days, 12 months or custom dates.</figcaption></figure>
+  <table class="plain">
+    <thead><tr><th style="width:32%">Figure</th><th>How it is calculated</th></tr></thead>
+    <tbody>
+      <tr><td><b>Leads in period</b></td><td>Customers created during the period.</td></tr>
+      <tr><td><b>Conversion rate</b></td><td>Share of those customers who reached Confirmed or later.</td></tr>
+      <tr><td><b>Lost leads</b></td><td>Customers of the period now at Lost; the reasons are listed in "Lost leads".</td></tr>
+      <tr><td><b>Revenue from confirmed bookings</b></td><td>Total value of bookings dated in the period, not refunded or cancelled. Hover to see the amount collected.</td></tr>
+      <tr><td><b>Median first response</b></td><td>Typical time between a customer's first message and the agency's first reply. Needs WhatsApp connected with the Business app.</td></tr>
+    </tbody>
+  </table>
+  <p>Charts: leads per day, week or month (switch to <span class="ui">Data table</span> to read the exact numbers), Umrah versus Hajj, leads by source (which ads work), lost reasons, bookings per employee, best-selling packages, and how full the next groups are (always the upcoming groups, whatever the period).</p>
+</section>
+
+<!-- ───────────────────────────── 18 ───────────────────────────── -->
+<section class="chapter" id="s18">
+  <div class="eyebrow">Administrators (managers can view)</div>
+  <h2><span class="num">18</span>Team</h2>
+  <figure><img src="img/17-team.jpg" alt="Team page"><figcaption><b>Team.</b> Employees, role, status, results and last sign-in.</figcaption></figure>
+  <ul>
+    <li><span class="ui">Add employee</span> — full name, email, a <b>temporary password</b> (10+ characters) and the role. Give the password to the person privately; they change it from their profile menu.</li>
+    <li><b>Pencil</b> — change the name or role. <b>Key</b> — set a new password.</li>
+    <li><span class="ui">Deactivate</span> — the person is signed out at once and can no longer sign in. Their history is kept. Reassign their open customers to someone else. <span class="ui">Reactivate</span> restores access.</li>
+    <li>There must always be at least one active administrator, and you cannot remove your own admin role.</li>
+    <li><b>Leads</b> = customers assigned; <b>Contacted</b> = of those, answered or moved past New; <b>Converted</b> = reached Confirmed or later.</li>
+    <li>Accounts marked <span class="badge b-demo">Sample account</span> belong to the sample data and disappear when it is removed.</li>
+  </ul>
+</section>
+
+<!-- ───────────────────────────── 19 ───────────────────────────── -->
+<section class="chapter" id="s19">
+  <div class="eyebrow">Everyone</div>
+  <h2><span class="num">19</span>Activity Logs</h2>
+  <figure><img src="img/19-activity.jpg" alt="Activity log"><figcaption><b>Activity Logs.</b> Who did what, and when.</figcaption></figure>
+  <p>Every important event is recorded automatically: new lead, incoming message, reply from the Business app, assignment, stage change (with the lost reason), package chosen, booking created, payment updated, follow-up scheduled, rescheduled or completed, packages and departures created or changed, employees added or changed, settings changed, sign-ins, integration events and webhook errors.</p>
+  <ul>
+    <li>Search the text, or filter by <b>action</b>, <b>person</b> and <b>dates</b>. Click a customer's name to open them.</li>
+    <li>Entries <b>cannot be edited or deleted</b> by anyone — this is the agency's reliable history.</li>
+    <li>Agents see entries about their own work and their own customers. <span class="ui">Load more</span> shows older entries.</li>
+  </ul>
+</section>
+
+<!-- ───────────────────────────── 20 ───────────────────────────── -->
+<section class="chapter" id="s20">
+  <div class="eyebrow">Administrator · technical person</div>
+  <h2><span class="num">20</span>Integrations — connecting WhatsApp</h2>
+  <figure><img src="img/20-integrations.jpg" alt="Integrations"><figcaption><b>Integrations.</b> Shows honestly whether WhatsApp is connected, and why not.</figcaption></figure>
+  <table>
+    <thead><tr><th style="width:32%">Status</th><th>Meaning</th></tr></thead>
+    <tbody>
+      <tr><td>Not connected</td><td>The Meta (WhatsApp) settings are missing. No real message can arrive yet. This is the current state.</td></tr>
+      <tr><td>Configured — not verified</td><td>Settings are in place; press <span class="ui">Test connection</span> and send a test message.</td></tr>
+      <tr><td>Connected</td><td>The last test with Meta succeeded. The connected number, verified name and quality rating are shown.</td></tr>
+      <tr><td>Connection error</td><td>The last test failed; the reason is shown in red.</td></tr>
+    </tbody>
+  </table>
+  <p>The page also shows the <b>webhook address</b> to give to Meta, when Meta last checked it, the last real and the last simulated message, the last error, the latest webhook events, and which settings are present (never their values). The <b>Database</b> line has a green dot when the data store is working.</p>
+  <div class="box note">
+    <span class="title">Who does the connection</span>
+    <p>Connecting needs the agency's Meta Business account, a Meta developer app and access to the server settings. This is done once by the technical person, following <code>docs/META_SETUP.md</code>. The steps are also summarised on this page under <b>Setup guide</b>.</p>
+  </div>
+</section>
+
+<section class="chapter">
+  <h3 style="margin-top:0">Keeping the WhatsApp Business app on the phone (Coexistence)</h3>
+  <p>The agency wants to keep answering from the WhatsApp Business app. Meta offers this as <b>Coexistence</b>: the app keeps working, and the dashboard receives a copy of every conversation, including the replies sent from the phone. What to know, according to Meta's rules (November 2026):</p>
+  <ul>
+    <li><b>Meta decides who is eligible.</b> It needs WhatsApp Business app version 2.24.17 or newer, and the onboarding is done through Meta's "Embedded Signup" by a registered Meta Tech Provider or partner. Not every number or country qualifies.</li>
+    <li>After connecting, <b>broadcast lists in the app become read-only</b>; disappearing messages, view-once and live location are turned off for one-to-one chats. Group chats are not copied.</li>
+    <li>Up to 6 months of past conversations can be copied once, <b>only if the agency agrees</b> during the connection. This has not yet been tested with YourTour's number.</li>
+    <li><b>Open the WhatsApp Business app on the phone regularly.</b> Meta disconnects numbers whose phone stays inactive for about 14 days.</li>
+    <li>Messages sent from the app stay free.</li>
+  </ul>
+</section>
+
+<!-- ───────────────────────────── 21 ───────────────────────────── -->
+<section class="chapter" id="s21">
+  <div class="eyebrow">Everyone · administrator</div>
+  <h2><span class="num">21</span>Settings</h2>
+  <figure class="crop"><img src="img/22-settings.jpg" alt="Settings"><figcaption><b>Settings.</b> Personal preferences for everyone; the agency sections for administrators.</figcaption></figure>
+  <table class="plain">
+    <thead><tr><th style="width:30%">Section</th><th>What it does</th></tr></thead>
+    <tbody>
+      <tr><td><b>My preferences</b></td><td>Dashboard language and sound notifications, with <span class="ui">Play sound</span> to test. Saved on this browser only.</td></tr>
+      <tr><td><b>Agency profile</b></td><td>Name (French and Arabic), licence number, phone, <b>WhatsApp number</b> (international format, digits only, e.g. 213661234567), email, address, opening hours, Google Maps, Facebook and Instagram links. Shown on the website.</td></tr>
+      <tr><td><b>Lead automation</b></td><td><b>Assign new leads automatically</b>: off (a manager assigns each lead) or in turn between active agents. <b>Move New to Contacted</b> when the agency replies from the Business app. Default sound and default language for new employees.</td></tr>
+      <tr><td><b>Pilgrim document checklist</b></td><td>The steps tracked for every traveller (up to 12). Add, rename or remove steps, then save.</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ───────────────────────────── 22 ───────────────────────────── -->
+<section class="chapter" id="s22">
+  <div class="eyebrow">Administrator</div>
+  <h2><span class="num">22</span>Practice mode (sample data)</h2>
+  <p class="lead">Before real customers arrive, practise with sample data. Everything it creates is marked <span class="badge b-demo">DEMO</span> and can be removed in one click without touching real data.</p>
+  <figure><img src="img/21-integrations-demo.jpg" alt="Demo and testing"><figcaption><b>Integrations → Demo &amp; testing.</b></figcaption></figure>
+  <ul>
+    <li><span class="ui">Load sample data</span> — 14 sample customers at every stage, 3 packages with departures, follow-ups, bookings, pilgrims and 3 sample employees.</li>
+    <li><b>Simulate</b> buttons pretend a customer wrote on WhatsApp: first message from a new customer, existing customer writing again, message without profile name, Facebook or Instagram ad click, message from a website button, the same message delivered twice, five customers at once, a reply from the Business app, a customer with a username and no number.</li>
+    <li>Open <span class="ui">WhatsApp Leads</span> in a second tab to watch the card arrive with the sound.</li>
+    <li><span class="ui">Remove sample data</span> — deletes every DEMO record and the sample employees. Do this before going live.</li>
+  </ul>
+  <p class="small muted">On the live server these tools are switched off unless the technical person enables them.</p>
+</section>
+
+<!-- ───────────────────────────── 23 ───────────────────────────── -->
+<section class="chapter" id="s23">
+  <div class="eyebrow">Checklists</div>
+  <h2><span class="num">23</span>Daily routines</h2>
+  <div class="cols">
+    <div>
+      <h3 style="margin-top:0">Agent</h3>
+      <h4>Start of the day</h4>
+      <ul class="checklist">
+        <li>Sign in and keep the dashboard open in a tab; check the sound is on.</li>
+        <li>Open <span class="ui">Follow-ups</span>: handle every overdue reminder, then today's.</li>
+        <li>Open <span class="ui">WhatsApp Leads</span>: answer every card with a green counter.</li>
+      </ul>
+      <h4>For each customer</h4>
+      <ul class="checklist">
+        <li>Reply from the WhatsApp Business app (<span class="ui">Open WhatsApp</span>).</li>
+        <li>Fill in the travel interest and save.</li>
+        <li>Move the card to the right stage.</li>
+        <li>Schedule the next follow-up before closing the panel.</li>
+        <li>When confirmed: create the booking, record payments, tick documents.</li>
+      </ul>
+      <h4>End of the day</h4>
+      <ul class="checklist">
+        <li>No overdue reminders left; no unanswered New leads.</li>
+        <li>Sign out on a shared computer.</li>
+      </ul>
+    </div>
+    <div>
+      <h3 style="margin-top:0">Manager</h3>
+      <ul class="checklist">
+        <li>Several times a day: <span class="ui">Overview</span> → <b>Unassigned leads</b> → assign each one.</li>
+        <li>Check <b>Awaiting follow-up</b> and late reminders per agent.</li>
+        <li>Keep packages and departures up to date (prices, places, status).</li>
+        <li>Close full or past departures.</li>
+        <li>Weekly: <span class="ui">Analytics</span> — leads by source (which ads work), conversion, lost reasons, response time.</li>
+      </ul>
+      <h3>Administrator</h3>
+      <ul class="checklist">
+        <li>Create accounts for newcomers; deactivate leavers the same day.</li>
+        <li>Check <span class="ui">Integrations</span> for errors once a week.</li>
+        <li>Keep the agency profile accurate (hours, phone).</li>
+        <li>Review the <span class="ui">Activity Logs</span> when something looks wrong.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ───────────────────────────── 24 ───────────────────────────── -->
+<section class="chapter" id="s24">
+  <div class="eyebrow">Everyone</div>
+  <h2><span class="num">24</span>Good practice and privacy</h2>
+  <ul>
+    <li><b>One account per person.</b> Never share a password — the Activity Logs record who did what.</li>
+    <li><b>Customers' data is personal data</b> (Algerian Law 18-07). Use it only to serve the customer. Do not copy customer lists to personal phones or files.</li>
+    <li><b>No passport numbers, ID numbers or document scans</b> in notes or anywhere in the system. Track only whether documents are received.</li>
+    <li><b>Answer fast.</b> The reports measure the time to first reply; customers who wait go to another agency.</li>
+    <li><b>Always schedule the next step.</b> A customer without a follow-up is a customer who can be forgotten.</li>
+    <li><b>Use a clear display name</b> when the WhatsApp name is a nickname, and short tags the whole team understands (e.g. "family", "VIP", "Ramadan").</li>
+    <li><b>Keep the website true.</b> Update prices, places and dates as soon as they change; archive offers you no longer sell.</li>
+    <li><b>Lost is not a failure</b> — but always give the reason, so the agency learns what to improve.</li>
+  </ul>
+</section>
+
+<!-- ───────────────────────────── 25 ───────────────────────────── -->
+<section class="chapter" id="s25">
+  <div class="eyebrow">Help</div>
+  <h2><span class="num">25</span>Problems and answers</h2>
+  <table>
+    <thead><tr><th style="width:36%">Problem</th><th>What to do</th></tr></thead>
+    <tbody>
+      <tr><td>I cannot sign in.</td><td>Check the email and password. After many wrong tries, wait 5 minutes. Ask an administrator to reset your password or reactivate your account.</td></tr>
+      <tr><td>No sound for new leads.</td><td>Click once anywhere on the dashboard (browsers need it), check the speaker icon, test with <span class="ui">Settings</span> → <span class="ui">Play sound</span>, check the computer's volume.</td></tr>
+      <tr><td>New leads do not appear by themselves.</td><td>Look at the light at the bottom of the menu. If it says <b>Reconnecting…</b>, check the internet connection or reload the page. Real WhatsApp messages only arrive once WhatsApp is connected (section 20).</td></tr>
+      <tr><td>An agent cannot see a customer.</td><td>The customer is not assigned to them. A manager assigns it in the customer's panel.</td></tr>
+      <tr><td>I cannot change the assigned agent.</td><td>Only managers and administrators can.</td></tr>
+      <tr><td>"Convert to booking" is greyed out.</td><td>Move the customer to Confirmed first.</td></tr>
+      <tr><td>No departure in the booking list.</td><td>Only open, future departures with free places are listed. Check the departure's status, date and capacity.</td></tr>
+      <tr><td>A package is not on the website.</td><td>Its status must be Active. Customers only see departures that are Open and in the future.</td></tr>
+      <tr><td>The website has no WhatsApp buttons.</td><td>Enter the WhatsApp number in <span class="ui">Settings</span> → <span class="ui">Agency profile</span>.</td></tr>
+      <tr><td>Seats left look wrong.</td><td>Cancelled or refunded bookings release their places. Check the bookings of that departure and its capacity.</td></tr>
+      <tr><td>The same customer appears twice.</td><td>It cannot happen for the same phone number. Two cards mean two different numbers (for example two family members).</td></tr>
+      <tr><td>A customer from last year wrote again.</td><td>Their message is on their old card. Move it back to Contacted for the new trip.</td></tr>
+      <tr><td>I saved something by mistake.</td><td>Change it back and save. The Activity Logs show what the previous value was.</td></tr>
+      <tr><td>"Something went wrong" message.</td><td>Reload the page and try again. If it keeps happening, note the time and tell the administrator.</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ───────────────────────────── 26 ───────────────────────────── -->
+<section class="chapter" id="s26">
+  <div class="eyebrow">Technical</div>
+  <h2><span class="num">26</span>For the person who runs the system</h2>
+  <p class="lead">This page is for whoever installs and keeps the system running. Full technical documentation is in the project folder (<code>README.md</code> and the <code>docs</code> folder).</p>
+  <h3>Today: on the office computer</h3>
+  <p>The project is in <code>C:\Users\EIX\Desktop\agency</code>. Open a terminal in that folder:</p>
+  <ol class="steps">
+    <li>Start <b>Docker Desktop</b> and wait until the engine is running.</li>
+    <li><code>npm run appwrite:start</code> — starts the database (Appwrite).</li>
+    <li><code>npm run dev:appwrite</code> — starts the website and dashboard on <code>http://localhost:5173</code>. Keep this window open.</li>
+    <li>To stop: <span class="kbd">Ctrl</span>+<span class="kbd">C</span> in that window, then <code>npm run appwrite:stop</code> (frees about 3 GB of memory).</li>
+  </ol>
+  <h3>Going live — what is needed</h3>
+  <ul class="checklist">
+    <li>Hosting for the application and the agency's domain name with HTTPS.</li>
+    <li>A database online: Appwrite Cloud, or Appwrite on a rented server — with regular backups.</li>
+    <li>The agency's Meta Business account, a Meta developer app, and the WhatsApp settings (<code>docs/META_SETUP.md</code>).</li>
+    <li>For keeping the WhatsApp Business app: Coexistence onboarding through a Meta Tech Provider or partner.</li>
+    <li>Real content: packages, prices, dates, photos the agency owns, licence number, address, hours.</li>
+    <li>Sample data removed; demo tools off.</li>
+  </ul>
+  <h3>Not available yet</h3>
+  <ul>
+    <li>Sending WhatsApp messages from the dashboard (replies stay in the Business app).</li>
+    <li>Uploading photos directly — package images are web links for now.</li>
+    <li>Real WhatsApp traffic has not been tested yet, because the Meta connection is not set up.</li>
+  </ul>
+</section>
+
+<!-- ───────────────────────────── Glossary ───────────────────────────── -->
+<section class="chapter" id="glossary">
+  <div class="eyebrow">Appendix</div>
+  <h2><span class="num">A</span>Glossary — English, French, Arabic</h2>
+  <p class="lead">The same screens in the three dashboard languages.</p>
+  <table class="glossary">
+    <thead><tr><th style="width:34%">English</th><th style="width:33%">Français</th><th style="text-align:right">العربية</th></tr></thead>
+    <tbody>
+      <tr><td colspan="3" style="background:var(--petrol-soft);color:var(--petrol);font-family:Alexandria">Menu</td></tr>
+      <tr><td>Overview</td><td>Vue d'ensemble</td><td class="ar">نظرة عامة</td></tr>
+      <tr><td>WhatsApp Leads</td><td>Leads WhatsApp</td><td class="ar">عملاء واتساب</td></tr>
+      <tr><td>Follow-ups</td><td>Relances</td><td class="ar">المتابعات</td></tr>
+      <tr><td>Packages</td><td>Forfaits</td><td class="ar">العروض</td></tr>
+      <tr><td>Departures</td><td>Départs</td><td class="ar">الرحلات</td></tr>
+      <tr><td>Pilgrims &amp; Bookings</td><td>Pèlerins &amp; réservations</td><td class="ar">الحجاج والحجوزات</td></tr>
+      <tr><td>Team</td><td>Équipe</td><td class="ar">الفريق</td></tr>
+      <tr><td>Analytics &amp; Reports</td><td>Analyses &amp; rapports</td><td class="ar">التحليلات والتقارير</td></tr>
+      <tr><td>Activity Logs</td><td>Journal d'activité</td><td class="ar">سجل النشاط</td></tr>
+      <tr><td>Integrations</td><td>Intégrations</td><td class="ar">الربط</td></tr>
+      <tr><td>Settings</td><td>Paramètres</td><td class="ar">الإعدادات</td></tr>
+      <tr><td colspan="3" style="background:var(--petrol-soft);color:var(--petrol);font-family:Alexandria">Lead stages</td></tr>
+      <tr><td>New</td><td>Nouveau</td><td class="ar">جديد</td></tr>
+      <tr><td>Contacted</td><td>Contacté</td><td class="ar">تم التواصل</td></tr>
+      <tr><td>Qualified</td><td>Qualifié</td><td class="ar">مؤهَّل</td></tr>
+      <tr><td>Package sent</td><td>Forfait envoyé</td><td class="ar">أُرسل العرض</td></tr>
+      <tr><td>Awaiting documents</td><td>Attente documents</td><td class="ar">بانتظار الوثائق</td></tr>
+      <tr><td>Awaiting deposit</td><td>Attente acompte</td><td class="ar">بانتظار العربون</td></tr>
+      <tr><td>Confirmed</td><td>Confirmé</td><td class="ar">مؤكَّد</td></tr>
+      <tr><td>Travel preparation</td><td>Préparation du voyage</td><td class="ar">تحضير السفر</td></tr>
+      <tr><td>Completed</td><td>Terminé</td><td class="ar">مكتمل</td></tr>
+      <tr><td>Lost</td><td>Perdu</td><td class="ar">ضائع</td></tr>
+      <tr><td colspan="3" style="background:var(--petrol-soft);color:var(--petrol);font-family:Alexandria">Payments and roles</td></tr>
+      <tr><td>Unpaid</td><td>Non payé</td><td class="ar">غير مدفوع</td></tr>
+      <tr><td>Partially paid</td><td>Partiellement payé</td><td class="ar">مدفوع جزئياً</td></tr>
+      <tr><td>Paid</td><td>Payé</td><td class="ar">مدفوع</td></tr>
+      <tr><td>Refunded</td><td>Remboursé</td><td class="ar">مُسترجَع</td></tr>
+      <tr><td>Cancelled</td><td>Annulé</td><td class="ar">ملغى</td></tr>
+      <tr><td>Admin · Manager · Agent</td><td>Admin · Responsable · Agent</td><td class="ar">مسؤول · مشرف · موظف مبيعات</td></tr>
+      <tr><td colspan="3" style="background:var(--petrol-soft);color:var(--petrol);font-family:Alexandria">Frequent buttons</td></tr>
+      <tr><td>Save changes</td><td>Enregistrer</td><td class="ar">حفظ التغييرات</td></tr>
+      <tr><td>Open WhatsApp</td><td>Ouvrir WhatsApp</td><td class="ar">فتح واتساب</td></tr>
+      <tr><td>New lead</td><td>Nouveau lead</td><td class="ar">عميل جديد</td></tr>
+      <tr><td>Convert to booking</td><td>Convertir en réservation</td><td class="ar">تحويل إلى حجز</td></tr>
+      <tr><td>Mark completed</td><td>Marquer terminée</td><td class="ar">تعليم كمنجزة</td></tr>
+      <tr><td>Reschedule</td><td>Reporter</td><td class="ar">تأجيل</td></tr>
+    </tbody>
+  </table>
+  <div class="signature"></div>
+  <p class="small muted">YourTour · يور تور للسياحة والأسفار · Voyages &amp; Tourisme · Batna 05 — User guide v1.0, 13 November 2026.</p>
+</section>
+
+</body>
+</html>

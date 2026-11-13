@@ -1,0 +1,55 @@
+{
+  "name": "umrah-hajj-agency-crm",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "react-router dev",
+    "build": "react-router build",
+    "start": "react-router-serve ./build/server/index.js",
+    "typecheck": "react-router typegen && tsc",
+    "test": "vitest run",
+    "test:acceptance": "node scripts/acceptance.mjs",
+    "simulate": "node scripts/simulate-webhook.mjs",
+    "test:appwrite": "node --env-file-if-exists=infra/appwrite/app.env scripts/acceptance.mjs --appwrite",
+    "dev:appwrite": "node --env-file=infra/appwrite/app.env node_modules/@react-router/dev/bin.js dev",
+    "appwrite:start": "docker compose -f infra/appwrite/docker-compose.yml --project-directory infra/appwrite start",
+    "appwrite:stop": "docker compose -f infra/appwrite/docker-compose.yml --project-directory infra/appwrite stop",
+    "appwrite:bootstrap": "node scripts/local-appwrite-bootstrap.mjs",
+    "guide:pdf": "node scripts/build-user-guide.mjs && python scripts/finish-user-guide.py",
+    "guide:beginner": "node scripts/build-user-guide.mjs beginner && python scripts/finish-user-guide.py beginner"
+  },
+  "dependencies": {
+    "@fontsource-variable/alexandria": "^5.0.0",
+    "@fontsource-variable/fraunces": "^5.0.0",
+    "@fontsource-variable/plus-jakarta-sans": "^5.0.0",
+    "@fontsource/ibm-plex-sans-arabic": "^5.0.0",
+    "@react-router/node": "^7.5.1",
+    "@react-router/serve": "^7.5.1",
+    "@syncfusion/ej2-base": "^29.1.36",
+    "@syncfusion/ej2-react-charts": "^29.1.35",
+    "clsx": "^2.1.1",
+    "isbot": "^5.1.17",
+    "lucide-react": "^1.72.0",
+    "node-appwrite": "^31.2.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-router": "^7.5.1",
+    "tailwind-merge": "^3.2.0",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@react-router/dev": "^7.5.1",
+    "@tailwindcss/vite": "^4.0.0",
+    "@types/node": "^20",
+    "@types/react": "^19.0.1",
+    "@types/react-dom": "^19.0.1",
+    "tailwindcss": "^4.0.0",
+    "typescript": "^5.7.2",
+    "vite": "^5.4.11",
+    "vite-tsconfig-paths": "^5.1.4",
+    "vitest": "^3.0.0"
+  },
+  "engines": {
+    "node": ">=20.12"
+  }
+}

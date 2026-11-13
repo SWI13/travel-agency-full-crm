@@ -1,0 +1,463 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>YourTour — Beginner's guide</title>
+<link rel="stylesheet" href="guide.css">
+<style>
+  .big { font-size: 12pt; }
+  .exercise { background: var(--green-soft); border-inline-start: 1.2mm solid var(--green); }
+  .exercise .title { color: var(--green); }
+  .rule { font-family: "Alexandria", sans-serif; font-size: 11pt; font-weight: 600; color: var(--petrol); background: var(--saffron-soft); border-radius: 2.4mm; padding: 3.5mm 4.5mm; margin: 3mm 0 5mm; break-inside: avoid; }
+  .card { border: 0.4mm solid var(--stone-line); border-radius: 2.4mm; padding: 3.5mm 4mm; background: var(--stone); break-inside: avoid; }
+  .card b.t { display: block; font-family: "Alexandria", sans-serif; color: var(--petrol); margin-bottom: 1mm; }
+</style>
+</head>
+<body>
+
+<section class="chapter" id="contents">
+  <div class="eyebrow">YourTour · Beginner's guide</div>
+  <h1>Welcome</h1>
+  <p class="lead">This guide teaches you the system one small lesson at a time. You do not need any experience. Do the lessons in order, and do the <b>practice exercises</b> — they take about 5 minutes each.</p>
+  <ol class="toc">
+    <li><span class="n">1</span>The big idea in 2 minutes</li>
+    <li><span class="n">2</span>Lesson 1 — Open the system and sign in</li>
+    <li><span class="n">3</span>Lesson 2 — Know your screen</li>
+    <li><span class="n">4</span>Lesson 3 — A customer arrives (the lead)</li>
+    <li><span class="n">5</span>Lesson 4 — Answer the customer</li>
+    <li><span class="n">6</span>Lesson 5 — Save what you learn</li>
+    <li><span class="n">7</span>Lesson 6 — Stages: where is the customer?</li>
+    <li><span class="n">8</span>Lesson 7 — Follow-up and call back: when, and how</li>
+    <li><span class="n">9</span>Lesson 8 — Your follow-up list every day</li>
+    <li><span class="n">10</span>Lesson 9 — The customer says yes: booking</li>
+    <li><span class="n">11</span>Lesson 10 — Payments and travel documents</li>
+    <li><span class="n">12</span>Lesson 11 — Customers from the website</li>
+    <li><span class="n">13</span>Your day in 10 steps</li>
+    <li><span class="n">14</span>Mistakes everyone makes</li>
+    <li><span class="n">15</span>Quick card and mini quiz</li>
+  </ol>
+  <div class="box tip" style="margin-top:8mm">
+    <span class="title">Practice safely</span>
+    <p>Ask your administrator to switch on <b>sample data</b>. Sample customers, packages and bookings carry a <span class="badge b-demo">DEMO</span> badge. You cannot harm anything real while you practise, and nobody is contacted.</p>
+  </div>
+  <div class="box note">
+    <span class="title">One thing to remember from the very start</span>
+    <p>The system <b>shows you</b> customers and <b>reminds you</b> to act. It does <b>not send WhatsApp messages</b>. You always reply from the <b>WhatsApp Business app</b> on the agency phone (or press <span class="ui">Open WhatsApp</span> in the system). The system will also <b>not</b> create a reminder for you — you create it. Lesson 7 explains this fully.</p>
+  </div>
+</section>
+
+<section class="chapter" id="s1">
+  <div class="eyebrow">Start here</div>
+  <h2><span class="num">1</span>The big idea in 2 minutes</h2>
+  <p class="lead">Think of the system as a <b>notebook that fills itself</b>. Every person who writes to YourTour gets one page in the notebook. That page is called a <b>lead</b>.</p>
+  <div class="flow">
+    <div><span class="step">1</span><b>Customer writes</b>On WhatsApp or the website form.</div>
+    <div><span class="step">2</span><b>A page appears</b>Name, number and message are filled in for you.</div>
+    <div><span class="step">3</span><b>You answer</b>From the WhatsApp Business app.</div>
+    <div><span class="step">4</span><b>You write notes</b>Trip wishes, budget, what was agreed.</div>
+    <div><span class="step">5</span><b>You set a reminder</b>So the customer is never forgotten.</div>
+  </div>
+  <h3>Five words to learn</h3>
+  <table class="plain">
+    <tbody>
+      <tr><td style="width:24%"><b>Lead</b></td><td>One customer page. One page per phone number. Everything about the customer is on it.</td></tr>
+      <tr><td><b>Stage</b></td><td>Where the customer is: just arrived, in talks, confirmed, travelled… Like a train line with stations.</td></tr>
+      <tr><td><b>Follow-up</b></td><td>A reminder you set: "contact this customer on this day at this hour".</td></tr>
+      <tr><td><b>Package</b></td><td>A trip we sell (for example Umrah 15 days).</td></tr>
+      <tr><td><b>Booking</b></td><td>A customer who said yes and reserved places.</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section class="chapter" id="s2">
+  <div class="eyebrow">Lesson 1 · 3 minutes</div>
+  <h2><span class="num">2</span>Open the system and sign in</h2>
+  <figure class="crop" style="--h:70mm"><img src="img/01-sign-in.jpg" alt="Sign-in page"><figcaption><b>The sign-in page.</b></figcaption></figure>
+  <ol class="steps">
+    <li>Open the browser (Chrome) on the agency computer.</li>
+    <li>Type the system address and add <code>/admin</code> at the end. Today it is <code>http://localhost:5173/admin</code>. After the system goes online it will be your own web address. Save it as a <b>bookmark</b>.</li>
+    <li>Type your <b>email</b> and your <b>password</b>. Your administrator gave them to you.</li>
+    <li>Press <span class="ui">Sign in</span>.</li>
+    <li>First time only: click your <b>name</b> (top right) → <span class="ui">Change password</span>. Choose a password only you know, at least 10 characters.</li>
+  </ol>
+  <div class="box tip">
+    <span class="title">Choose your language</span>
+    <p>Click the little translate icon (文A) at the top. Pick English, Français or العربية. In Arabic the whole screen turns right-to-left.</p>
+  </div>
+  <div class="box warn">
+    <span class="title">Never share your password</span>
+    <p>Everything you do is recorded with your name. If someone else uses your account, their mistakes are written under your name. If you forget your password, ask the administrator to reset it.</p>
+  </div>
+  <div class="box exercise">
+    <span class="title">Exercise 1</span>
+    <ul class="checklist"><li>Sign in.</li><li>Change your password.</li><li>Switch the language to French, then back.</li><li>Sign out (name → <span class="ui">Sign out</span>) and sign in again.</li></ul>
+  </div>
+</section>
+
+<section class="chapter" id="s3">
+  <div class="eyebrow">Lesson 2 · 5 minutes</div>
+  <h2><span class="num">3</span>Know your screen</h2>
+  <figure class="crop" style="--h:74mm"><img src="img/02-overview.jpg" alt="Overview"><figcaption><b>The Overview.</b> This is the first page after you sign in.</figcaption></figure>
+  <p>You only need to know three areas:</p>
+  <div class="cols">
+    <div class="card"><b class="t">1 · The menu (left, dark green)</b>Your pages. The pages you use most are <b>WhatsApp Leads</b> and <b>Follow-ups</b>. A <span class="badge b-petrol">number</span> on WhatsApp Leads = customers with messages you have not read. A <span class="badge b-rose">red number</span> on Follow-ups = reminders that are late.</div>
+    <div class="card"><b class="t">2 · The top bar</b>Search (find a customer by name or number), the speaker (sound on/off), the bell (what is new), and your name.</div>
+  </div>
+  <div class="card" style="margin-top:4mm"><b class="t">3 · The middle</b>The page you opened. The Overview shows 8 numbers. Click any number to see the customers behind it.</div>
+  <div class="box tip">
+    <span class="title">The green light</span>
+    <p>At the bottom of the menu you see <b>Live</b> with a green dot. Green = new customers appear by themselves, without refreshing. If you see <b>Reconnecting…</b> (orange), check the internet.</p>
+  </div>
+  <div class="box exercise">
+    <span class="title">Exercise 2</span>
+    <ul class="checklist"><li>Click each item in the menu once and look at it.</li><li>Click the speaker icon: do you see it change?</li><li>Use Search to find a customer by typing two letters.</li></ul>
+  </div>
+</section>
+
+<section class="chapter" id="s4">
+  <div class="eyebrow">Lesson 3 · 5 minutes</div>
+  <h2><span class="num">4</span>A customer arrives — the lead</h2>
+  <p class="lead">Keep the dashboard open during work. When a customer writes on WhatsApp, three things happen by themselves.</p>
+  <figure><img src="img/23-live-toast.jpg" alt="Live notification"><figcaption><b>A new customer.</b> A card appears, a message pops up at the bottom, and you hear a short chime.</figcaption></figure>
+  <ol class="steps">
+    <li>A new <b>card</b> appears at the top of the first column, <b>New</b>.</li>
+    <li>You hear a <b>chime</b> (if the sound is on) and see a pop-up with an <span class="ui">Open</span> button.</li>
+    <li>The tab title of the browser shows a number, for example <b>(3)</b>, even if you are on another tab.</li>
+  </ol>
+  <h3>How to read the card</h3>
+  <figure><img src="img/03-leads-board.jpg" alt="Board"><figcaption><b>WhatsApp Leads.</b> Open this page and look at the first column.</figcaption></figure>
+  <table class="plain">
+    <tbody>
+      <tr><td style="width:30%"><b>Name and number</b></td><td>Filled in for you from WhatsApp. If the customer has no profile name you see only the number.</td></tr>
+      <tr><td><b>Green number + NEW MESSAGE</b></td><td>Unread messages. Green border = needs an answer.</td></tr>
+      <tr><td><b>Message text</b></td><td>The last thing written.</td></tr>
+      <tr><td><b>Small tags</b></td><td>Umrah or Hajj, and where the customer came from (a Facebook ad, the website, or "Organic WhatsApp" = they just wrote to us).</td></tr>
+      <tr><td><b>"Unassigned"</b></td><td>No employee owns this customer yet. A manager gives it to someone (Lesson 5).</td></tr>
+    </tbody>
+  </table>
+  <div class="box exercise">
+    <span class="title">Exercise 3 (ask your administrator to help the first time)</span>
+    <p>Open <span class="ui">Integrations</span> → <span class="ui">Demo &amp; testing</span> → press <b>First message from a new customer</b>. Open <span class="ui">WhatsApp Leads</span> in another tab. Did a card appear and did you hear the chime?</p>
+  </div>
+</section>
+
+<section class="chapter" id="s5">
+  <div class="eyebrow">Lesson 4 · 5 minutes</div>
+  <h2><span class="num">5</span>Answer the customer</h2>
+  <p class="lead">Speed matters. A customer who waits an hour often writes to another agency.</p>
+  <figure><img src="img/06-lead-details.jpg" alt="Lead panel"><figcaption><b>Click a card</b> and the customer's panel opens on the right.</figcaption></figure>
+  <ol class="steps">
+    <li><b>Click the card.</b> The panel opens.</li>
+    <li>Click the tab <span class="ui">Conversation</span> to read the messages. This also marks them as read.</li>
+    <li>Press the green button <span class="ui">Open WhatsApp</span>. The chat opens (WhatsApp Web or the phone).</li>
+    <li><b>Write your reply there</b> — not in the system.</li>
+    <li>Come back to the system for the next lesson: save what you learned.</li>
+  </ol>
+  <figure class="crop"><img src="img/07-lead-conversation.jpg" alt="Conversation"><figcaption><b>Conversation tab.</b> Customer messages on one side, agency replies on the other.</figcaption></figure>
+  <div class="box note">
+    <span class="title">Why can't I reply inside the system?</span>
+    <p>The agency keeps using the WhatsApp Business app. The system keeps a <b>copy</b> of the conversation so nothing is lost and the whole team sees it. Replies you send from the app appear in the Conversation tab too, once WhatsApp is connected.</p>
+  </div>
+  <h3>Who owns the customer?</h3>
+  <p>If the card says <b>Unassigned</b>: a <b>manager</b> opens the card and chooses an employee in <span class="ui">Assigned agent</span> (bottom of the first tab), then presses <span class="ui">Save changes</span>. An <b>agent</b> sees only customers assigned to them. If your list is empty, nobody has assigned you customers yet — ask your manager.</p>
+</section>
+
+<section class="chapter" id="s6">
+  <div class="eyebrow">Lesson 5 · 5 minutes</div>
+  <h2><span class="num">6</span>Save what you learn</h2>
+  <p class="lead">After you talked to the customer, write down the important things on their page. Next week you will not remember; the page will.</p>
+  <ol class="steps">
+    <li>Open the customer. Click the first tab, <span class="ui">Customer</span>.</li>
+    <li><b>Display name</b> — type the name you want to use (for example "Mme Benali"). WhatsApp will never overwrite it.</li>
+    <li><b>Travel interest</b> — choose Umrah or Hajj, the package they like, dates, number of adults and children, and the budget.</li>
+    <li>Scroll down to <b>Sales management</b>: choose the <b>stage</b> (Lesson 6) and write <b>notes</b>: "wants December, 4 people, asked about payment in two parts".</li>
+    <li>Press <span class="ui">Save changes</span> at the bottom right. The bar at the bottom says <b>Unsaved changes</b> until you do.</li>
+  </ol>
+  <figure class="crop"><img src="img/06b-lead-sales.jpg" alt="Sales management"><figcaption><b>Sales management.</b> Stage, priority, agent, tags and notes.</figcaption></figure>
+  <div class="box warn">
+    <span class="title">Do not type passport numbers or ID numbers</span>
+    <p>Not in notes, not anywhere. Write only "passport received" or "photos missing". Keep the original documents in the agency's secure file.</p>
+  </div>
+  <div class="box exercise">
+    <span class="title">Exercise 4</span>
+    <p>Open a sample customer. Set a display name, choose Umrah, set 2 adults, write a note, and press <span class="ui">Save changes</span>. Close the panel and open it again: is everything still there?</p>
+  </div>
+</section>
+
+<section class="chapter" id="s7">
+  <div class="eyebrow">Lesson 6 · 6 minutes</div>
+  <h2><span class="num">7</span>Stages: where is the customer?</h2>
+  <p class="lead">Every customer is at one <b>stage</b>. Moving the card to the next stage shows the whole team how far the customer has come.</p>
+  <table>
+    <thead><tr><th style="width:24%">Stage</th><th style="width:38%">Move the card here when…</th><th>Then do</th></tr></thead>
+    <tbody>
+      <tr><td>New</td><td>(automatic) The customer just wrote.</td><td>Answer within minutes.</td></tr>
+      <tr><td>Contacted</td><td>You answered the customer.</td><td>Ask: Umrah or Hajj? When? How many people?</td></tr>
+      <tr><td>Qualified</td><td>It is a real project: dates and people known.</td><td>Choose a package for them.</td></tr>
+      <tr><td>Package sent</td><td>You sent the offer.</td><td><b>Set a follow-up</b> to get their answer.</td></tr>
+      <tr><td>Awaiting documents</td><td>They said yes; you wait for papers.</td><td>Follow-up to collect passports and photos.</td></tr>
+      <tr><td>Awaiting deposit</td><td>You wait for the deposit.</td><td>Follow-up to confirm payment.</td></tr>
+      <tr><td>Confirmed</td><td>The deposit is received. It is sold.</td><td>Create the <b>booking</b> (Lesson 9).</td></tr>
+      <tr><td>Travel preparation</td><td>Visa and final preparation.</td><td>Tick each document step.</td></tr>
+      <tr><td>Completed</td><td>The trip happened.</td><td>Thank them; keep in touch.</td></tr>
+      <tr><td>Lost</td><td>They will not travel with us.</td><td>Type the reason (price, dates, booked elsewhere).</td></tr>
+    </tbody>
+  </table>
+  <h3>Three ways to move a card</h3>
+  <ul>
+    <li><b>Drag</b> the card with the mouse into another column.</li>
+    <li>Click the small <b>⇄</b> icon at the bottom right of the card and choose the stage (easiest on a phone).</li>
+    <li>Change <span class="ui">Lead stage</span> in the customer's panel and press <span class="ui">Save changes</span>.</li>
+  </ul>
+  <div class="box tip">
+    <span class="title">What moves by itself</span>
+    <p>Only one thing: when the agency replies from the WhatsApp Business app to a customer at <b>New</b>, the card goes to <b>Contacted</b> and the unread number clears. <b>Everything else is your decision.</b></p>
+  </div>
+</section>
+
+<section class="chapter" id="s8">
+  <div class="eyebrow">Lesson 7 · the most important lesson</div>
+  <h2><span class="num">8</span>Follow-up and call back: when, and how</h2>
+  <div class="rule">A follow-up is a reminder that YOU create. The system never creates one by itself.</div>
+  <p>A follow-up says: <i>"on this day, at this time, contact this customer, for this reason."</i> The system then puts it in your list, turns it red when it is late, and counts it on the Overview.</p>
+
+  <h3>When does a customer become a follow-up?</h3>
+  <p>Ask yourself one question at the end of <b>every</b> contact with a customer:</p>
+  <div class="rule">"What is the next step, and is it later than today?"  →  If yes, set a follow-up before you close the panel.</div>
+  <table>
+    <thead><tr><th style="width:38%">Situation</th><th style="width:20%">Reason to choose</th><th>When to set it</th></tr></thead>
+    <tbody>
+      <tr><td>The customer says <i>"call me tomorrow / next week"</i></td><td><b>Call back</b></td><td>The exact day and hour they asked.</td></tr>
+      <tr><td>You sent a package and wait for the answer</td><td><b>Send offer</b></td><td>In 1–2 days. Ask "did you see the offer?"</td></tr>
+      <tr><td>The customer said yes, papers are missing</td><td><b>Documents</b></td><td>In 2–3 days, or before the deadline.</td></tr>
+      <tr><td>You wait for the deposit</td><td><b>Deposit</b></td><td>On the day they promised to pay.</td></tr>
+      <tr><td>The customer is "thinking about it"</td><td><b>Other</b> (note: "thinking")</td><td>In 3–5 days.</td></tr>
+      <tr><td>The customer does not answer</td><td><b>Call back</b></td><td>Try again the next day, then in 3 days. After that, move to <i>Lost</i> with the reason "no answer".</td></tr>
+      <tr><td>The customer is ready and everything is done</td><td>—</td><td>No follow-up needed. Create the booking.</td></tr>
+    </tbody>
+  </table>
+  <div class="box warn">
+    <span class="title">A customer without a follow-up can be forgotten</span>
+    <p>If a customer is in a stage like <i>Contacted</i> or <i>Package sent</i> and has <b>no reminder</b>, nobody will remind you. That is exactly how customers are lost. A card with a follow-up date shows a small calendar at its bottom. No calendar = no safety net.</p>
+  </div>
+</section>
+
+<section class="chapter">
+  <h3 style="margin-top:0">"Call back" — three different meanings</h3>
+  <table>
+    <thead><tr><th style="width:26%">Meaning</th><th style="width:34%">What the system does by itself</th><th>What you do</th></tr></thead>
+    <tbody>
+      <tr><td><b>1. The customer asks to be called</b> (call-back <u>form</u> on the website)</td><td>Creates a <b>lead</b> with source <b>Website form</b>, with their name, number and message. Rings the chime. It does <u>not</u> create a follow-up.</td><td>Call them as soon as you can. If you cannot reach them, set a follow-up (reason <b>Call back</b>).</td></tr>
+      <tr><td><b>2. The customer says "call me later"</b> (on WhatsApp or phone)</td><td>Nothing. The system cannot understand the message.</td><td>Set a follow-up for the time they gave, reason <b>Call back</b>.</td></tr>
+      <tr><td><b>3. You promise to call back</b></td><td>Nothing.</td><td>Set a follow-up so you do not forget your own promise.</td></tr>
+    </tbody>
+  </table>
+  <p>The same logic applies to every kind of reminder: <b>the system keeps your promises only if you write them down</b> as a follow-up.</p>
+
+  <h3>How to set a follow-up — step by step</h3>
+  <figure class="crop"><img src="img/08-lead-tasks.jpg" alt="Follow-ups tab"><figcaption><b>Follow-ups · Bookings tab.</b> This is where you create a reminder.</figcaption></figure>
+  <ol class="steps">
+    <li>Open the customer (click the card).</li>
+    <li>Click the third tab, <span class="ui">Follow-ups · Bookings</span>.</li>
+    <li>Under <b>Schedule a follow-up</b>, choose the <b>date and time</b>. The system proposes tomorrow at 10:00 — change it if needed.</li>
+    <li>Choose the <b>reason</b>: Call back, Send offer, Documents, Deposit or Other.</li>
+    <li>Write a short <b>note</b> for your future self: "Ask if she saw the 15-day offer".</li>
+    <li>Press <span class="ui">Schedule</span>. The reminder appears in the list above the form.</li>
+  </ol>
+  <div class="box tip">
+    <span class="title">What happens next</span>
+    <p>The reminder is <b>assigned to the customer's agent</b>. On the card, the next date appears next to a small calendar. On the due day it shows in <span class="ui">Follow-ups</span> under <b>Today</b>. If you miss it, it turns <b>red</b> under <b>Overdue</b>, the menu shows a red number, and the Overview counts the customer under <i>Awaiting follow-up</i>.</p>
+  </div>
+</section>
+
+<section class="chapter">
+  <h3 style="margin-top:0">When does a follow-up end?</h3>
+  <ul>
+    <li><b>You did it:</b> press <span class="ui">Mark completed</span>. (Then set the <i>next</i> follow-up if the customer is not finished!)</li>
+    <li><b>The date changed:</b> press <span class="ui">Reschedule</span> and choose Tomorrow, In 3 days, Next week, or an exact date.</li>
+    <li><b>You pressed it by mistake:</b> press <span class="ui">Reopen</span>.</li>
+    <li><b>The customer is Confirmed or Lost:</b> complete or leave the old reminders; they no longer matter.</li>
+  </ul>
+  <div class="box note">
+    <span class="title">The chain</span>
+    <p>A sale is a chain of follow-ups: contact → follow-up → offer → follow-up → documents → follow-up → deposit → <b>booking</b>. Every time you finish one link, <b>create the next one</b>.</p>
+  </div>
+  <div class="box exercise">
+    <span class="title">Exercise 5</span>
+    <ol class="steps">
+      <li>Open a sample customer.</li>
+      <li>Imagine she said "call me Thursday at 4 pm". Set a follow-up for that time with the reason <b>Call back</b>.</li>
+      <li>Look at her card: do you see the small calendar and date?</li>
+      <li>Open <span class="ui">Follow-ups</span>: is her reminder in the list?</li>
+      <li>Press <span class="ui">Reschedule</span> → <i>Tomorrow</i>. Then press <span class="ui">Mark completed</span>.</li>
+    </ol>
+  </div>
+</section>
+
+<section class="chapter" id="s9">
+  <div class="eyebrow">Lesson 8 · 4 minutes</div>
+  <h2><span class="num">9</span>Your follow-up list every day</h2>
+  <figure><img src="img/10-followups.jpg" alt="Follow-ups page"><figcaption><b>The Follow-ups page.</b> Late reminders first, in red.</figcaption></figure>
+  <p>Open <span class="ui">Follow-ups</span> in the menu. You see four groups:</p>
+  <table class="plain">
+    <tbody>
+      <tr><td style="width:24%"><span class="badge b-rose">Overdue</span></td><td>The time has passed. <b>Do these first.</b> They sit in a red frame.</td></tr>
+      <tr><td><span class="badge b-green">Today</span></td><td>Due today. Go through them from the top.</td></tr>
+      <tr><td><span class="badge b-petrol">Upcoming</span></td><td>Later. Nothing to do yet.</td></tr>
+      <tr><td><span class="badge b-saffron">Completed</span></td><td>Click the heading to see what you have done.</td></tr>
+    </tbody>
+  </table>
+  <h3>For each reminder</h3>
+  <ol class="steps">
+    <li>Click the customer's <b>name</b> to open their page and read your note.</li>
+    <li>Contact them (<span class="ui">Open WhatsApp</span> or <span class="ui">Call</span>).</li>
+    <li>Write what happened in the notes. Move the stage if needed.</li>
+    <li>Press <span class="ui">Mark completed</span> — and <b>set the next follow-up</b>.</li>
+  </ol>
+  <div class="box tip">
+    <span class="title">Goal for the end of every day</span>
+    <p><b>Overdue = 0.</b> Every open customer has a future follow-up date.</p>
+  </div>
+</section>
+
+<section class="chapter" id="s10">
+  <div class="eyebrow">Lesson 9 · 6 minutes</div>
+  <h2><span class="num">10</span>The customer says yes: booking</h2>
+  <ol class="steps">
+    <li>Move the customer to <b>Confirmed</b> when the deposit is received. Until then the booking button stays grey.</li>
+    <li>Open the customer → tab <span class="ui">Follow-ups · Bookings</span> → <span class="ui">Convert to booking</span>.</li>
+    <li>Choose the <b>departure</b> (date). Only departures with free places are listed.</li>
+    <li>Enter the <b>number of travellers</b> and the <b>booking date</b>.</li>
+    <li>Check the <b>total price</b> (the system suggests it; change it only if you agreed another price).</li>
+    <li>Type what the customer has <b>already paid</b>. The remaining balance shows below.</li>
+    <li>Press <span class="ui">Create booking</span>.</li>
+  </ol>
+  <figure class="crop"><img src="img/16-booking-modal.jpg" alt="Create a booking"><figcaption><b>Create a booking.</b></figcaption></figure>
+  <p>The system now saves the booking, creates one <b>traveller record per person</b>, and takes the places from the departure (the website shows the new number of places left).</p>
+  <div class="box exercise">
+    <span class="title">Exercise 6</span>
+    <p>Move a sample customer to Confirmed, then create a booking for 2 travellers with part of the price paid. Open <span class="ui">Pilgrims &amp; Bookings</span>: do you see it?</p>
+  </div>
+</section>
+
+<section class="chapter" id="s11">
+  <div class="eyebrow">Lesson 10 · 5 minutes</div>
+  <h2><span class="num">11</span>Payments and travel documents</h2>
+  <h3>Record a payment</h3>
+  <ol class="steps">
+    <li>Menu → <span class="ui">Pilgrims &amp; Bookings</span> → tab <span class="ui">Bookings</span>.</li>
+    <li>Click the <b>pencil</b> at the end of the booking's row.</li>
+    <li>Change <b>Amount paid</b> to the new total received (not just the new payment). Keep <i>Payment</i> on <b>Automatic</b>.</li>
+    <li>Press <span class="ui">Save changes</span>. The label becomes <span class="badge b-rose">Unpaid</span>, <span class="badge b-saffron">Partially paid</span> or <span class="badge b-green">Paid</span> by itself.</li>
+  </ol>
+  <figure class="crop"><img src="img/14-bookings.jpg" alt="Bookings"><figcaption><b>Bookings.</b> Total, paid and remaining for each customer.</figcaption></figure>
+  <h3>Track the documents</h3>
+  <ol class="steps">
+    <li>Same page, tab <span class="ui">Pilgrims</span>. One line per traveller.</li>
+    <li>Click each step when you receive it: passport, photos, documents. It turns green with a tick.</li>
+    <li>Click the visa label to change it: not started → in progress → submitted → approved.</li>
+    <li>The bar fills up and says <b>Ready</b> when everything is complete.</li>
+  </ol>
+  <p>You can click a traveller's name to type the real name (the system starts with the customer's name plus 1, 2, 3…).</p>
+</section>
+
+<section class="chapter" id="s12">
+  <div class="eyebrow">Lesson 11 · 4 minutes</div>
+  <h2><span class="num">12</span>Customers from the website</h2>
+  <p class="lead">Customers can also come from the website, in two ways. Both end up as a lead in <b>WhatsApp Leads</b>.</p>
+  <table>
+    <thead><tr><th style="width:30%">How they came</th><th style="width:30%">What you see</th><th>What you do</th></tr></thead>
+    <tbody>
+      <tr><td><b>They pressed a WhatsApp button</b> on a package</td><td>Source <b>Website → WhatsApp</b>. Their first message starts with a code like <code>[OMR-01]</code>. The package is already chosen for you.</td><td>Reply on WhatsApp like any customer.</td></tr>
+      <tr><td><b>They filled in the call-back form</b></td><td>Source <b>Website form</b>. The message shows what they typed (adults, children, question).</td><td>Call them. That is what they asked for. Then follow Lesson 7.</td></tr>
+    </tbody>
+  </table>
+  <figure class="crop"><img src="img/32-site-packages.jpg" alt="Website packages"><figcaption><b>The website.</b> This is what customers see before they write to us.</figcaption></figure>
+  <div class="box tip">
+    <span class="title">The same customer, twice</span>
+    <p>If the same phone number writes again (on WhatsApp or the form), the system adds it to the <b>same page</b>. You never get two pages for one number. Everything you typed stays.</p>
+  </div>
+</section>
+
+<section class="chapter" id="s13">
+  <div class="eyebrow">Put it together</div>
+  <h2><span class="num">13</span>Your day in 10 steps</h2>
+  <ol class="steps">
+    <li><b>Sign in</b> and keep the dashboard open in a tab. Check the sound is on.</li>
+    <li>Open <span class="ui">Follow-ups</span>. Do every <b>Overdue</b> one, then <b>Today</b>.</li>
+    <li>Open <span class="ui">WhatsApp Leads</span>. Find cards with a <b>green number</b>.</li>
+    <li>For each one: read the Conversation, press <span class="ui">Open WhatsApp</span>, reply.</li>
+    <li>Come back: fill in the details, add a note, choose the stage, <span class="ui">Save changes</span>.</li>
+    <li><b>Set the next follow-up</b> for every customer who is not finished.</li>
+    <li>When a customer pays the deposit: <b>Confirmed</b> → booking.</li>
+    <li>Record payments received today. Tick documents received today.</li>
+    <li>Check the end-of-day goals: <b>Overdue = 0</b>, no unread green numbers, no open customer without a follow-up date.</li>
+    <li><b>Sign out</b> on a shared computer.</li>
+  </ol>
+</section>
+
+<section class="chapter" id="s14">
+  <div class="eyebrow">Learn from others</div>
+  <h2><span class="num">14</span>Mistakes everyone makes</h2>
+  <table>
+    <thead><tr><th style="width:42%">The mistake</th><th>The fix</th></tr></thead>
+    <tbody>
+      <tr><td>Replying and forgetting to set a follow-up.</td><td>Make it a habit: <i>answer → note → follow-up → save</i>.</td></tr>
+      <tr><td>Changing something and closing the panel without pressing <span class="ui">Save changes</span>.</td><td>Watch the bottom bar. "Unsaved changes" means not saved yet.</td></tr>
+      <tr><td>Looking for the reply box in the system.</td><td>Replies go from the WhatsApp Business app. Use <span class="ui">Open WhatsApp</span>.</td></tr>
+      <tr><td>Creating a manual lead for a customer who wrote on WhatsApp.</td><td>Do not. It already exists. Use <span class="ui">New lead</span> only for people who visit or phone.</td></tr>
+      <tr><td>Marking <b>Lost</b> without a reason.</td><td>The system asks for it. Be honest: it helps the agency improve.</td></tr>
+      <tr><td>Leaving customers in <b>New</b> for hours.</td><td>Reply quickly. Once you reply from the app, the card moves by itself.</td></tr>
+      <tr><td>Typing passport numbers in notes.</td><td>Never. Only write "received" or "missing".</td></tr>
+      <tr><td>Setting the "amount paid" as only the last payment.</td><td>It is the <b>total received so far</b>.</td></tr>
+      <tr><td>Sharing your password to "help a colleague".</td><td>Ask the administrator for an account for them.</td></tr>
+      <tr><td>Not seeing a customer a colleague mentioned.</td><td>It is assigned to someone else. Ask a manager to assign it to you.</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section class="chapter" id="s15">
+  <div class="eyebrow">Keep this page</div>
+  <h2><span class="num">15</span>Quick card and mini quiz</h2>
+  <div class="cols">
+    <div class="card"><b class="t">The 5 rules</b>
+      <ol style="margin:0">
+        <li>Answer fast, from the WhatsApp Business app.</li>
+        <li>Write notes on the customer's page, then Save.</li>
+        <li>Keep the stage up to date.</li>
+        <li><b>Every open customer needs a follow-up date.</b></li>
+        <li>Overdue = 0 at the end of the day.</li>
+      </ol>
+    </div>
+    <div class="card"><b class="t">Where is…</b>
+      <ul style="margin:0">
+        <li>New customers → <span class="ui">WhatsApp Leads</span></li>
+        <li>My reminders → <span class="ui">Follow-ups</span></li>
+        <li>Payments and documents → <span class="ui">Pilgrims &amp; Bookings</span></li>
+        <li>Trips and prices → <span class="ui">Packages</span>, <span class="ui">Departures</span></li>
+        <li>Who did what → <span class="ui">Activity Logs</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>Mini quiz (answers below)</h3>
+  <ol>
+    <li>A customer writes on WhatsApp. Does the system create a follow-up? <i>(yes / no)</i></li>
+    <li>A customer fills in the website call-back form. What does the system create?</li>
+    <li>She says "call me Monday at 11". What do you do?</li>
+    <li>After sending an offer, what should you set?</li>
+    <li>Where do you reply to a customer?</li>
+    <li>What does a red number next to Follow-ups mean?</li>
+    <li>When can you press <span class="ui">Convert to booking</span>?</li>
+    <li>Can you type a passport number in the notes?</li>
+  </ol>
+  <div class="box tip">
+    <span class="title">Answers</span>
+    <p><b>1</b> No — you create it. <b>2</b> A lead with source "Website form" (no follow-up). <b>3</b> Set a follow-up for Monday 11:00, reason "Call back". <b>4</b> A follow-up in 1–2 days (reason "Send offer"). <b>5</b> In the WhatsApp Business app (<span class="ui">Open WhatsApp</span>). <b>6</b> Reminders are late. <b>7</b> After the customer is at Confirmed. <b>8</b> No, never.</p>
+  </div>
+  <div class="signature"></div>
+  <p class="small muted">YourTour · يور تور للسياحة والأسفار — Beginner's guide v1.0. For the complete reference of every screen, see the full User guide.</p>
+</section>
+
+</body>
+</html>

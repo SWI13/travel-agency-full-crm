@@ -1,0 +1,183 @@
+/* YourTour user guide — print stylesheet (A4). Fonts are loaded from the project's node_modules. */
+@font-face {
+  font-family: "Alexandria";
+  src: url("../../node_modules/@fontsource-variable/alexandria/files/alexandria-latin-wght-normal.woff2") format("woff2");
+  font-weight: 100 900;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Alexandria";
+  src: url("../../node_modules/@fontsource-variable/alexandria/files/alexandria-latin-ext-wght-normal.woff2") format("woff2");
+  font-weight: 100 900;
+  unicode-range: U+0100-02AF, U+0304, U+0308, U+0329, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: "Alexandria";
+  src: url("../../node_modules/@fontsource-variable/alexandria/files/alexandria-arabic-wght-normal.woff2") format("woff2");
+  font-weight: 100 900;
+  unicode-range: U+0600-06FF, U+0750-077F, U+0870-088E, U+0890-0891, U+0897-08E1, U+08E3-08FF, U+200C-200E, U+2010-2011, U+204F, U+2E41, U+FB50-FDFF, U+FE70-FE74, U+FE76-FEFC;
+}
+@font-face {
+  font-family: "Jakarta";
+  src: url("../../node_modules/@fontsource-variable/plus-jakarta-sans/files/plus-jakarta-sans-latin-wght-normal.woff2") format("woff2");
+  font-weight: 200 800;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Jakarta";
+  src: url("../../node_modules/@fontsource-variable/plus-jakarta-sans/files/plus-jakarta-sans-latin-ext-wght-normal.woff2") format("woff2");
+  font-weight: 200 800;
+  unicode-range: U+0100-02AF, U+0304, U+0308, U+0329, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: "Plex Arabic";
+  src: url("../../node_modules/@fontsource/ibm-plex-sans-arabic/files/ibm-plex-sans-arabic-arabic-400-normal.woff2") format("woff2");
+  font-weight: 400;
+}
+@font-face {
+  font-family: "Plex Arabic";
+  src: url("../../node_modules/@fontsource/ibm-plex-sans-arabic/files/ibm-plex-sans-arabic-arabic-600-normal.woff2") format("woff2");
+  font-weight: 600;
+}
+
+:root {
+  --petrol: #0d3b44;
+  --petrol-2: #145260;
+  --petrol-soft: #e9f2f3;
+  --saffron: #f2a93b;
+  --saffron-soft: #fdf1dc;
+  --stone: #f5eee3;
+  --stone-line: #e6dccb;
+  --ink: #14181c;
+  --muted: #56616a;
+  --line: #e2ddd3;
+  --rose: #b4233b;
+  --rose-soft: #fdecef;
+  --green: #1e7a46;
+  --green-soft: #e8f5ec;
+}
+
+@page { size: A4; margin: 17mm 17mm 18mm 17mm; }
+
+* { box-sizing: border-box; }
+html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+body {
+  margin: 0;
+  font-family: "Jakarta", "Plex Arabic", sans-serif;
+  font-size: 10pt;
+  line-height: 1.55;
+  color: var(--ink);
+}
+[lang="ar"], .ar { font-family: "Alexandria", "Plex Arabic", sans-serif; direction: rtl; unicode-bidi: isolate; }
+
+h1, h2, h3, h4, .brand { font-family: "Alexandria", "Jakarta", sans-serif; color: var(--petrol); }
+h1 { font-size: 26pt; line-height: 1.15; margin: 0 0 6mm; font-weight: 700; }
+h2 {
+  font-size: 18pt; line-height: 1.2; font-weight: 700; margin: 0 0 4mm;
+  break-after: avoid; page-break-after: avoid;
+}
+h2 .num {
+  display: inline-grid; place-items: center; width: 10mm; height: 10mm; margin-inline-end: 3mm;
+  border-radius: 50%; background: var(--saffron); color: var(--ink); font-size: 12pt; vertical-align: 1.5mm;
+}
+h3 { font-size: 12.5pt; font-weight: 600; margin: 6mm 0 2mm; break-after: avoid; page-break-after: avoid; }
+h4 { font-size: 10.5pt; font-weight: 600; margin: 4mm 0 1.5mm; break-after: avoid; }
+p { margin: 0 0 2.6mm; }
+ul, ol { margin: 0 0 3mm; padding-inline-start: 6mm; }
+li { margin-bottom: 1.2mm; }
+li::marker { color: var(--petrol); font-weight: 600; }
+b, strong { font-weight: 650; }
+.ui { font-weight: 650; color: var(--petrol); white-space: nowrap; }
+code, .code { font-family: "Consolas", "Courier New", monospace; font-size: 8.8pt; background: var(--stone); border-radius: 1mm; padding: 0.2mm 1.2mm; }
+.muted { color: var(--muted); }
+.small { font-size: 8.8pt; }
+
+section.chapter { break-before: page; page-break-before: always; }
+section.chapter:first-of-type { break-before: auto; }
+.lead { font-size: 11.5pt; color: var(--muted); margin-bottom: 5mm; }
+.eyebrow {
+  font-family: "Alexandria", sans-serif; font-size: 7.8pt; letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--saffron); font-weight: 700; margin-bottom: 1.5mm;
+}
+
+figure { margin: 3mm 0 5mm; break-inside: avoid; page-break-inside: avoid; }
+figure img {
+  display: block; width: 100%; height: auto; border-radius: 2.2mm; border: 0.3mm solid var(--line);
+  box-shadow: 0 1mm 3mm rgba(13, 59, 68, 0.08);
+}
+figure.half { display: inline-block; width: 48.6%; vertical-align: top; }
+figure.half + figure.half { margin-inline-start: 2.4%; }
+.phones { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6mm; margin-top: 4mm; break-inside: avoid; page-break-inside: avoid; }
+.phones figure { margin: 0; }
+.phones img { max-height: 112mm; width: auto; max-width: 100%; margin: 0 auto; }
+figure.crop img { max-height: var(--h, 105mm); object-fit: cover; object-position: top; }
+figcaption { font-size: 8.6pt; color: var(--muted); margin-top: 1.6mm; }
+figcaption b { color: var(--petrol); }
+
+table { width: 100%; border-collapse: collapse; margin: 2mm 0 5mm; font-size: 9pt; break-inside: auto; }
+thead { display: table-header-group; }
+tr { break-inside: avoid; page-break-inside: avoid; }
+th {
+  text-align: start; font-family: "Alexandria", sans-serif; font-weight: 600; font-size: 8.4pt; color: var(--petrol);
+  background: var(--stone); padding: 2mm 2.4mm; border-bottom: 0.4mm solid var(--stone-line);
+}
+td { padding: 2mm 2.4mm; border-bottom: 0.25mm solid var(--line); vertical-align: top; }
+td:first-child { font-weight: 600; }
+table.plain td:first-child { font-weight: 400; }
+
+.box { border-radius: 2.4mm; padding: 3.2mm 4mm; margin: 3mm 0 4.5mm; break-inside: avoid; page-break-inside: avoid; }
+.box > :last-child { margin-bottom: 0; }
+.box .title { font-family: "Alexandria", sans-serif; font-weight: 700; font-size: 9.4pt; margin-bottom: 1mm; display: block; }
+.tip { background: var(--petrol-soft); border-inline-start: 1.2mm solid var(--petrol); }
+.tip .title { color: var(--petrol); }
+.note { background: var(--saffron-soft); border-inline-start: 1.2mm solid var(--saffron); }
+.note .title { color: #8a5a0f; }
+.warn { background: var(--rose-soft); border-inline-start: 1.2mm solid var(--rose); }
+.warn .title { color: var(--rose); }
+
+ol.steps { list-style: none; counter-reset: step; padding: 0; }
+ol.steps > li {
+  counter-increment: step; position: relative; padding-inline-start: 10mm; margin-bottom: 2.6mm; break-inside: avoid;
+}
+ol.steps > li::before {
+  content: counter(step); position: absolute; inset-inline-start: 0; top: 0;
+  width: 6.4mm; height: 6.4mm; border-radius: 50%; background: var(--petrol); color: #fff;
+  font-family: "Alexandria", sans-serif; font-size: 8.4pt; font-weight: 700; display: grid; place-items: center;
+}
+
+.checklist { list-style: none; padding: 0; }
+.checklist li { padding-inline-start: 7mm; position: relative; }
+.checklist li::before {
+  content: ""; position: absolute; inset-inline-start: 0; top: 0.9mm; width: 3.6mm; height: 3.6mm;
+  border: 0.45mm solid var(--petrol); border-radius: 0.8mm;
+}
+
+.cols { display: grid; grid-template-columns: 1fr 1fr; gap: 6mm; }
+.cols > * { min-width: 0; }
+
+.flow { display: grid; grid-template-columns: repeat(5, 1fr); gap: 2.2mm; margin: 4mm 0 6mm; break-inside: avoid; }
+.flow div {
+  background: var(--stone); border: 0.3mm solid var(--stone-line); border-radius: 2.4mm; padding: 3mm 2.6mm;
+  font-size: 8.6pt; position: relative; min-height: 26mm;
+}
+.flow div b { display: block; font-family: "Alexandria", sans-serif; color: var(--petrol); font-size: 9.4pt; margin-bottom: 1mm; }
+.flow div .step { font-family: "Alexandria", sans-serif; font-size: 7.6pt; color: var(--saffron); font-weight: 700; letter-spacing: 0.1em; }
+.flow div:not(:last-child)::after {
+  content: "→"; position: absolute; inset-inline-end: -2.4mm; top: 45%; transform: translateX(50%);
+  color: var(--saffron); font-weight: 700; font-size: 11pt; z-index: 1;
+}
+
+.toc { columns: 2; column-gap: 10mm; padding: 0; list-style: none; margin-top: 4mm; }
+.toc li { break-inside: avoid; display: flex; gap: 3mm; padding: 1.6mm 0; border-bottom: 0.25mm dotted var(--stone-line); }
+.toc .n { font-family: "Alexandria", sans-serif; color: var(--saffron); font-weight: 700; width: 7mm; flex: none; }
+
+.kbd { display: inline-block; border: 0.3mm solid var(--stone-line); border-bottom-width: 0.6mm; border-radius: 1mm; padding: 0 1.4mm; font-size: 8.4pt; background: #fff; }
+.badge { display: inline-block; border-radius: 10mm; padding: 0.2mm 2.2mm; font-size: 8pt; font-weight: 600; white-space: nowrap; }
+.b-green { background: var(--green-soft); color: var(--green); }
+.b-rose { background: var(--rose-soft); color: var(--rose); }
+.b-saffron { background: var(--saffron-soft); color: #8a5a0f; }
+.b-petrol { background: var(--petrol-soft); color: var(--petrol); }
+.b-demo { background: #fbe9fb; color: #a3239f; }
+
+.glossary td.ar { text-align: right; font-size: 9.6pt; }
+.signature { height: 0.5mm; margin: 2mm 0 6mm; background: repeating-linear-gradient(90deg, var(--saffron) 0 3mm, transparent 3mm 7mm); width: 40mm; }

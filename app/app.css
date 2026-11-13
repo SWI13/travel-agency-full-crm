@@ -1,0 +1,392 @@
+@import "tailwindcss";
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Design tokens
+   Two themes share one set of primitives:
+     .theme-site — public website, blue & white
+     .theme-crm  — staff dashboard, deep navy / warm off-white / emerald / gold
+   ───────────────────────────────────────────────────────────────────────────── */
+@theme {
+  --font-sans: "Plus Jakarta Sans Variable", "IBM Plex Sans Arabic", ui-sans-serif, system-ui, sans-serif;
+  /* YourTour brand typeface (Latin + Arabic) */
+  --font-display: "Alexandria Variable", "IBM Plex Sans Arabic", ui-sans-serif, system-ui, sans-serif;
+  --font-brand: "Alexandria Variable", "IBM Plex Sans Arabic", ui-sans-serif, system-ui, sans-serif;
+
+  /* YourTour brand colours (D-Loop identity) */
+  --color-petrol: #0d3b44; /* Aurès Petrol */
+  --color-saffron: #f2a93b; /* Saffron */
+  --color-stone: #f5eee3; /* Timgad Stone */
+  --color-stone-dark: #e6dccb;
+  --color-ink: #14181c; /* Ink */
+  --color-saffron-50: #fef7ea;
+  --color-saffron-100: #fcecd0;
+  --color-saffron-300: #f7c97a;
+  --color-saffron-400: #f2a93b;
+  --color-saffron-500: #dc9024;
+  --color-saffron-700: #8a5a0f;
+  --font-arabic: "IBM Plex Sans Arabic", "Plus Jakarta Sans Variable", system-ui, sans-serif;
+
+  /* Website: petrol scale built around Aurès Petrol (600) */
+  --color-brand-50: #eff6f6;
+  --color-brand-100: #dcebec;
+  --color-brand-200: #b8d6d9;
+  --color-brand-300: #86b7bd;
+  --color-brand-400: #4f8f98;
+  --color-brand-500: #2a6c77;
+  --color-brand-600: #0d3b44;
+  --color-brand-700: #0a3038;
+  --color-brand-800: #08272d;
+  --color-brand-900: #061f24;
+  --color-brand-950: #04171b;
+
+  /* Dashboard neutrals, tinted towards the petrol hue */
+  --color-navy-50: #f2f6f7;
+  --color-navy-100: #e1e9eb;
+  --color-navy-200: #c3d1d4;
+  --color-navy-300: #97abb0;
+  --color-navy-400: #667b81;
+  --color-navy-500: #4a5f65;
+  --color-navy-600: #374a50;
+  --color-navy-700: #26373d;
+  --color-navy-800: #1a272c;
+  --color-navy-900: #14181c;
+  --color-navy-950: #0b1114;
+
+  /* Warm off-white surfaces (Timgad Stone family) */
+  --color-sand-50: #fdfbf7;
+  --color-sand-100: #faf6ef;
+  --color-sand-200: #f5eee3;
+  --color-sand-300: #e8dfcf;
+  --color-sand-400: #d6c9b2;
+
+  /* Gold details = brand Saffron */
+  --color-gold-100: #fcecd0;
+  --color-gold-300: #f7c97a;
+  --color-gold-400: #f2a93b;
+  --color-gold-500: #dc9024;
+  --color-gold-600: #8a5a0f;
+
+  --color-whatsapp: #1faa59;
+  --color-whatsapp-dark: #168a47;
+
+  --shadow-soft: 0 1px 2px rgb(17 26 48 / 0.04), 0 4px 16px -4px rgb(17 26 48 / 0.08);
+  --shadow-lift: 0 2px 4px rgb(17 26 48 / 0.04), 0 12px 32px -8px rgb(17 26 48 / 0.16);
+  --shadow-drawer: -24px 0 60px -20px rgb(11 18 35 / 0.35);
+
+  --animate-fade-in: fade-in 0.2s ease-out;
+  --animate-slide-in: slide-in 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+  --animate-pop: pop 0.18s ease-out;
+  --animate-pulse-ring: pulse-ring 1.6s ease-out 3;
+
+  @keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes slide-in {
+    from { transform: translateX(var(--slide-from, 100%)); }
+    to { transform: translateX(0); }
+  }
+  @keyframes pop {
+    from { opacity: 0; transform: translateY(6px) scale(0.98); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  @keyframes pulse-ring {
+    0% { box-shadow: 0 0 0 0 rgb(16 185 129 / 0.45); }
+    100% { box-shadow: 0 0 0 12px rgb(16 185 129 / 0); }
+  }
+}
+
+@layer base {
+  html {
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  html[lang="ar"] {
+    font-family: var(--font-arabic);
+  }
+  html[lang="ar"] .font-display {
+    font-family: "Alexandria Variable", var(--font-arabic);
+    letter-spacing: 0;
+  }
+  body {
+    min-height: 100dvh;
+  }
+  button,
+  [role="button"],
+  summary {
+    cursor: pointer;
+  }
+  :focus-visible {
+    outline: 2px solid var(--accent, #2c6fe8);
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
+  /* Numbers in tables and KPIs line up */
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+  /* Phone numbers and codes always read left-to-right, even inside Arabic text */
+  .ltr-inline {
+    direction: ltr;
+    unicode-bidi: isolate;
+    display: inline-block;
+  }
+  ::selection {
+    background: color-mix(in srgb, var(--accent, #2c6fe8) 22%, transparent);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+.theme-site {
+  --accent: var(--color-petrol);
+  --accent-strong: var(--color-brand-800);
+  --accent-soft: var(--color-brand-50);
+  --ink: var(--color-ink);
+  --muted: #56616a;
+  --line: #e7e0d4;
+  --surface: #ffffff;
+  --canvas: #ffffff;
+  color: var(--ink);
+  background: var(--canvas);
+  font-family: var(--font-brand);
+}
+
+.theme-crm {
+  /* Inside the dashboard the "emerald" utilities render in the brand petrol-teal family. */
+  --color-emerald-50: #eaf4f4;
+  --color-emerald-100: #d2e8e9;
+  --color-emerald-200: #a6d0d3;
+  --color-emerald-300: #79bcc3;
+  --color-emerald-400: #3f9aa4;
+  --color-emerald-500: #1f7f8a;
+  --color-emerald-600: #156570;
+  --color-emerald-700: #0f4f58;
+  --color-emerald-800: #0d3b44;
+  --color-emerald-900: #0a2f36;
+  --accent: var(--color-petrol);
+  --accent-strong: var(--color-brand-800);
+  --accent-soft: var(--color-emerald-50);
+  --ink: var(--color-navy-900);
+  --muted: var(--color-navy-400);
+  --line: var(--color-sand-300);
+  --surface: #ffffff;
+  --canvas: var(--color-sand-100);
+  color: var(--ink);
+  background: var(--canvas);
+}
+
+@layer components {
+  /* ── Buttons ─────────────────────────────────────────────────────────── */
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg px-4 h-10 text-sm font-semibold whitespace-nowrap select-none transition-[background-color,border-color,color,box-shadow,transform] duration-150;
+  }
+  .btn:active:not(:disabled) {
+    transform: translateY(0.5px);
+  }
+  .btn:disabled {
+    @apply opacity-50 cursor-not-allowed;
+  }
+  .btn-sm {
+    @apply h-8 px-3 text-[13px] rounded-md gap-1.5;
+  }
+  .btn-lg {
+    @apply h-12 px-6 text-base rounded-xl;
+  }
+  .btn-primary {
+    background: var(--accent);
+    @apply text-white shadow-sm;
+  }
+  .btn-primary:hover:not(:disabled) {
+    background: var(--accent-strong);
+  }
+  .btn-secondary {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    color: var(--ink);
+  }
+  .btn-secondary:hover:not(:disabled) {
+    border-color: color-mix(in srgb, var(--ink) 30%, transparent);
+    background: color-mix(in srgb, var(--ink) 3%, var(--surface));
+  }
+  .btn-ghost {
+    color: var(--muted);
+  }
+  .btn-ghost:hover:not(:disabled) {
+    color: var(--ink);
+    background: color-mix(in srgb, var(--ink) 6%, transparent);
+  }
+  .btn-danger {
+    @apply bg-rose-600 text-white;
+  }
+  .btn-danger:hover:not(:disabled) {
+    @apply bg-rose-700;
+  }
+  .btn-whatsapp {
+    @apply text-white shadow-sm;
+    background: var(--color-whatsapp);
+  }
+  .btn-whatsapp:hover:not(:disabled) {
+    background: var(--color-whatsapp-dark);
+  }
+  .btn-navy {
+    @apply bg-navy-900 text-white;
+  }
+  .btn-navy:hover:not(:disabled) {
+    @apply bg-navy-800;
+  }
+  .icon-btn {
+    @apply inline-flex items-center justify-center size-9 rounded-lg transition-colors shrink-0;
+    color: var(--muted);
+  }
+  .icon-btn:hover {
+    color: var(--ink);
+    background: color-mix(in srgb, var(--ink) 6%, transparent);
+  }
+
+  /* ── Form controls ───────────────────────────────────────────────────── */
+  .field-label {
+    @apply block text-[13px] font-medium mb-1.5;
+    color: color-mix(in srgb, var(--ink) 80%, transparent);
+  }
+  .input {
+    @apply block w-full h-10 rounded-lg px-3 text-sm transition-[border-color,box-shadow] duration-150;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    color: var(--ink);
+  }
+  .input::placeholder {
+    color: color-mix(in srgb, var(--muted) 70%, transparent);
+  }
+  .input:hover {
+    border-color: color-mix(in srgb, var(--ink) 25%, transparent);
+  }
+  .input:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 18%, transparent);
+  }
+  .input[aria-invalid="true"] {
+    @apply border-rose-400;
+  }
+  textarea.input {
+    @apply h-auto py-2.5 leading-relaxed;
+    min-height: 5.5rem;
+  }
+  select.input {
+    @apply pe-9 appearance-none bg-no-repeat;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236b7c9b' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-position: right 0.7rem center;
+  }
+  [dir="rtl"] select.input {
+    background-position: left 0.7rem center;
+  }
+  .field-error {
+    @apply mt-1 text-xs text-rose-600;
+  }
+  .field-hint {
+    @apply mt-1 text-xs;
+    color: var(--muted);
+  }
+
+  /* ── Surfaces ────────────────────────────────────────────────────────── */
+  .panel {
+    @apply rounded-2xl;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    box-shadow: 0 1px 2px rgb(17 26 48 / 0.03);
+  }
+  .divider {
+    border-color: var(--line);
+  }
+  .muted {
+    color: var(--muted);
+  }
+  .eyebrow {
+    @apply text-[11px] font-semibold uppercase tracking-[0.14em];
+    color: var(--muted);
+  }
+  html[lang="ar"] .eyebrow {
+    @apply tracking-normal text-xs;
+  }
+
+  /* ── Badges ──────────────────────────────────────────────────────────── */
+  .badge {
+    @apply inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-semibold leading-5 whitespace-nowrap;
+  }
+  .badge-dot::before {
+    content: "";
+    @apply size-1.5 rounded-full bg-current opacity-80;
+  }
+  .tone-neutral { @apply bg-navy-50 text-navy-600; }
+  .tone-blue { @apply bg-sky-50 text-sky-700; }
+  .tone-emerald { @apply bg-emerald-50 text-emerald-700; }
+  .tone-teal { @apply bg-teal-50 text-teal-700; }
+  .tone-gold { @apply bg-gold-100 text-gold-600; }
+  .tone-amber { @apply bg-amber-50 text-amber-700; }
+  .tone-rose { @apply bg-rose-50 text-rose-700; }
+  .tone-violet { @apply bg-violet-50 text-violet-700; }
+  .tone-navy { @apply bg-navy-900 text-white; }
+  .tone-demo { @apply bg-fuchsia-50 text-fuchsia-700 ring-1 ring-inset ring-fuchsia-200; }
+
+  /* ── Tables ──────────────────────────────────────────────────────────── */
+  .data-table {
+    @apply w-full text-sm border-separate border-spacing-0;
+  }
+  .data-table thead th {
+    @apply sticky top-0 z-10 text-start text-[11px] font-semibold uppercase tracking-wider px-4 py-3 whitespace-nowrap;
+    color: var(--muted);
+    background: color-mix(in srgb, var(--canvas) 70%, var(--surface));
+    border-bottom: 1px solid var(--line);
+  }
+  html[lang="ar"] .data-table thead th {
+    @apply tracking-normal text-xs;
+  }
+  .data-table tbody td {
+    @apply px-4 py-3 align-middle;
+    border-bottom: 1px solid color-mix(in srgb, var(--line) 60%, transparent);
+  }
+  .data-table tbody tr {
+    @apply transition-colors;
+  }
+  .data-table tbody tr:hover {
+    background: color-mix(in srgb, var(--accent) 4%, transparent);
+  }
+  .data-table tbody tr:last-child td {
+    border-bottom: 0;
+  }
+
+  /* ── Skeleton ────────────────────────────────────────────────────────── */
+  .skeleton {
+    @apply rounded-md animate-pulse;
+    background: color-mix(in srgb, var(--ink) 8%, transparent);
+  }
+
+  /* ── Subtle Islamic geometric texture (eight-point star lattice) ─────── */
+  .pattern-star {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='72' height='72' viewBox='0 0 72 72'%3E%3Cg fill='none' stroke='%23ffffff' stroke-opacity='0.07' stroke-width='1'%3E%3Cpath d='M36 6 44.8 27.2 66 36 44.8 44.8 36 66 27.2 44.8 6 36 27.2 27.2Z'/%3E%3Cpath d='M14.8 14.8 36 23.6 57.2 14.8 48.4 36 57.2 57.2 36 48.4 14.8 57.2 23.6 36Z'/%3E%3C/g%3E%3C/svg%3E");
+    background-size: 72px 72px;
+  }
+  .pattern-star-blue {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='72' height='72' viewBox='0 0 72 72'%3E%3Cg fill='none' stroke='%231757cf' stroke-opacity='0.08' stroke-width='1'%3E%3Cpath d='M36 6 44.8 27.2 66 36 44.8 44.8 36 66 27.2 44.8 6 36 27.2 27.2Z'/%3E%3Cpath d='M14.8 14.8 36 23.6 57.2 14.8 48.4 36 57.2 57.2 36 48.4 14.8 57.2 23.6 36Z'/%3E%3C/g%3E%3C/svg%3E");
+    background-size: 72px 72px;
+  }
+
+  .scroll-thin {
+    scrollbar-width: thin;
+    scrollbar-color: color-mix(in srgb, var(--ink) 18%, transparent) transparent;
+  }
+}
+
+/* Syncfusion charts inherit the product typography */
+.e-chart text,
+.e-accumulationchart text {
+  font-family: var(--font-sans) !important;
+}

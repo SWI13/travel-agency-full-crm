@@ -1,0 +1,24 @@
+.DS_Store
+/node_modules/
+
+# React Router
+/.react-router/
+/build/
+
+# Secrets — never commit real environment files
+.env
+.env.*
+!.env.example
+
+# Local demo datastore (contains customer-like records)
+/.data/
+
+# IDE
+/.idea/
+/.vscode/
+
+# Pre-project reference files
+/agency-starter.zip
+
+# Local Appwrite (Docker) used for development: generated config with local secrets
+/infra/

@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>YourTour — Beginner's guide (cover)</title>
+<link rel="stylesheet" href="guide.css">
+<style>
+  @page { size: A4; margin: 0; }
+  body { margin: 0; }
+  .cover {
+    width: 210mm; height: 297mm; background: var(--petrol); color: var(--stone); position: relative; overflow: hidden;
+    display: flex; flex-direction: column; padding: 26mm 22mm 20mm;
+  }
+  .cover .mark { position: absolute; width: 150mm; right: -62mm; top: 34mm; opacity: 0.06; }
+  .cover .logo { width: 112mm; }
+  .cover .tagline { margin-top: 5mm; font-family: "Alexandria", sans-serif; font-size: 8.4pt; letter-spacing: 0.34em; color: var(--saffron); font-weight: 600; }
+  .cover .title { margin-top: auto; }
+  .cover h1 { color: #fff; font-size: 40pt; margin: 0; line-height: 1.05; }
+  .cover .sub { font-family: "Alexandria", sans-serif; font-size: 16pt; color: var(--stone); margin-top: 4mm; font-weight: 400; }
+  .cover .ar-sub { font-family: "Alexandria", sans-serif; font-size: 15pt; color: var(--stone); opacity: 0.85; margin-top: 2mm; direction: rtl; text-align: left; }
+  .cover .dots { margin: 10mm 0 8mm; display: flex; align-items: center; gap: 3mm; }
+  .cover .dots i { display: block; width: 2mm; height: 2mm; border-radius: 50%; background: var(--stone); opacity: 0.85; }
+  .cover .dots i:first-child { width: 3.6mm; height: 3.6mm; background: var(--saffron); opacity: 1; }
+  .cover .meta { display: grid; grid-template-columns: 1fr 1fr; gap: 6mm; font-size: 9.4pt; color: #cfe0e2; }
+  .cover .meta b { display: block; color: #fff; font-family: "Alexandria", sans-serif; font-size: 9.6pt; margin-bottom: 1mm; }
+</style>
+</head>
+<body>
+  <div class="cover">
+    <img class="mark" src="../../public/brand/mark-reversed.svg" alt="">
+    <img class="logo" src="../../public/brand/logo-horizontal-reversed.svg" alt="YourTour">
+    <div class="tagline">VOYAGES &amp; TOURISME · BATNA 05</div>
+
+    <div class="title">
+      <h1>Beginner's guide</h1>
+      <div class="sub">Step by step, from your first day</div>
+      <div class="ar-sub">دليل المبتدئين — خطوة بخطوة</div>
+      <div class="dots"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+      <div class="meta">
+        <div><b>Written for</b>New team members. No experience needed.</div>
+        <div><b>Version</b>1.0 · 13 November 2026<br>Practice lessons use sample (DEMO) data.</div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
