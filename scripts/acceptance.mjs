@@ -445,6 +445,12 @@ async function run() {
   await rpc(admin.cookie, "team.update", { id: agent.data.id, isActive: true });
   agt = await login("agent@acceptance.test", cfg.agentPassword);
   check("Reactivated employee can log in again", agt.status === 200);
+  // Usernames instead of emails.
+  const userPass = secret();
+  const byUsername = await rpc(admin.cookie, "team.create", { name: "Username Agent", username: "Sara.B", password: userPass, role: "agent" });
+  const usernameLogin = await fetch(`${BASE}/api/session`, { method: "POST", headers: { "Content-Type": "application/json", Origin: BASE }, body: JSON.stringify({ login: "sara.b", password: userPass }) });
+  check("Employees can be created with a username and sign in with it", byUsername.ok && usernameLogin.status === 200, JSON.stringify(byUsername.code));
+  check("A username can only be used once", (await rpc(admin.cookie, "team.create", { name: "Other", username: "sara.b", password: secret(), role: "agent" })).code === "email_taken");
   const settings = await rpc(admin.cookie, "settings.update", { agencyName: "Agence Test", whatsappNumber: "213 770 00 00 00", licenseNumber: "TEST-LIC" });
   check("Admin can update agency settings", settings.data?.agencyName === "Agence Test" && settings.data.whatsappNumber === "213770000000");
   const home = await (await fetch(`${BASE}/ar`)).text();

@@ -37,7 +37,7 @@ export default function SignIn({ loaderData }: Route.ComponentProps) {
         body: JSON.stringify({
           setup: needsSetup || undefined,
           name: form.get("name") ?? undefined,
-          email: form.get("email"),
+          login: form.get("login"),
           password: form.get("password"),
         }),
       });
@@ -88,8 +88,8 @@ export default function SignIn({ loaderData }: Route.ComponentProps) {
                 <input name="name" required minLength={2} maxLength={120} autoComplete="name" className="input h-11" />
               </Field>
             )}
-            <Field label={t("crm.auth.email")}>
-              <input name="email" type="email" required autoComplete="username" dir="ltr" className="input h-11" />
+            <Field label={t("crm.auth.username")} hint={needsSetup ? t("crm.auth.usernameHint") : undefined}>
+              <input name="login" type="text" required autoComplete="username" autoCapitalize="none" autoCorrect="off" spellCheck={false} dir="ltr" className="input h-11" />
             </Field>
             <Field label={t("crm.auth.password")} hint={needsSetup ? t("crm.auth.passwordHint") : undefined}>
               <input name="password" type="password" required minLength={needsSetup ? 10 : 1} autoComplete={needsSetup ? "new-password" : "current-password"} dir="ltr" className="input h-11" />

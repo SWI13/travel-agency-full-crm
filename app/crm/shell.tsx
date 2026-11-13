@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState, type FormEvent, type ReactNode } from "react";
+import { displayLogin } from "~/lib/login";
 import { Link, NavLink, useLocation, useNavigate, useRevalidator } from "react-router";
 import {
   Bell,
@@ -449,7 +450,7 @@ function ProfileMenu() {
         <div className={cn(POPOVER, "end-0 w-60 p-1.5")} role="menu">
           <div className="px-3 py-2 border-b border-[var(--line)] mb-1">
             <p className="text-sm font-semibold truncate">{data.me.name}</p>
-            <p className="text-xs muted truncate">{data.me.email}</p>
+            <p className="text-xs muted truncate ltr-inline">{displayLogin(data.me.email)}</p>
           </div>
           <button type="button" role="menuitem" className="w-full flex items-center gap-2.5 px-3 h-9 rounded-lg text-sm hover:bg-sand-100" onClick={() => { setPasswordOpen(true); setOpen(false); }}>
             <KeyRound className="size-4 text-navy-400" />

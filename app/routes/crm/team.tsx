@@ -1,4 +1,5 @@
 import { useMemo, useState, type FormEvent } from "react";
+import { displayLogin } from "~/lib/login";
 import { KeyRound, Pencil, UserPlus, UsersRound } from "lucide-react";
 import { api, errorMessage } from "~/crm/api";
 import { PageBody } from "~/crm/shell";
@@ -74,7 +75,7 @@ export default function TeamPage() {
                         {staff.id === data.me.id && <Badge tone="emerald">{t("crm.common.you")}</Badge>}
                         {staff.email.endsWith("@demo.invalid") && <Badge tone="demo">{t("crm.team.demoAccount")}</Badge>}
                       </span>
-                      <span className="block text-xs muted ltr-inline">{staff.email}</span>
+                      <span className="block text-xs muted ltr-inline">{displayLogin(staff.email)}</span>
                     </span>
                   </span>
                 </td>
@@ -132,7 +133,7 @@ function StaffForm({ staff, onClose }: { staff: Staff | null; onClose: () => voi
     try {
       const saved = staff
         ? await api<Staff>("team.update", { id: staff.id, name: form.get("name"), role: form.get("role") })
-        : await api<Staff>("team.create", { name: form.get("name"), email: form.get("email"), password: form.get("password"), role: form.get("role") });
+        : await api<Staff>("team.create", { name: form.get("name"), username: form.get("username"), password: form.get("password"), role: form.get("role") });
       apply("staff", saved);
       toast.success(staff ? t("crm.common.saved") : t("crm.team.created"));
       onClose();
@@ -149,7 +150,7 @@ function StaffForm({ staff, onClose }: { staff: Staff | null; onClose: () => voi
         <Field label={t(`${f}.name`)}><input name="name" required minLength={2} maxLength={120} defaultValue={staff?.name} className="input" /></Field>
         {!staff && (
           <>
-            <Field label={t(`${f}.email`)}><input name="email" type="email" required dir="ltr" autoComplete="off" className="input" /></Field>
+            <Field label={t(`${f}.username`)} hint={t("crm.auth.usernameHint")}><input name="username" type="text" required pattern="[A-Za-z0-9][A-Za-z0-9._\-]{1,31}|[^@\s]+@[^@\s]+" autoCapitalize="none" spellCheck={false} dir="ltr" autoComplete="off" className="input" /></Field>
             <Field label={t(`${f}.password`)} hint={t("crm.auth.passwordHint")}><input name="password" type="password" required minLength={10} dir="ltr" autoComplete="new-password" className="input" /></Field>
           </>
         )}

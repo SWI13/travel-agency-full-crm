@@ -14,14 +14,16 @@ import {
   throttle,
 } from "~/server/session.server";
 import { getStore } from "~/server/store/index.server";
+import { env } from "~/server/env.server";
+import { loginToEmail } from "~/lib/login";
 
-const credentials = z.object({
-  email: z.string().trim().toLowerCase().email().max(190),
-  password: z.string().min(1).max(128),
-});
+// "login" is a username ("eix") or an email; older clients send "email".
+const loginField = z
+  .object({ login: z.string().max(190).optional(), email: z.string().max(190).optional() })
+  .transform((v) => loginToEmail(v.login ?? v.email));
+const credentials = z.object({ password: z.string().min(1).max(128) });
 const setup = z.object({
   name: z.string().trim().min(2).max(120),
-  email: z.string().trim().toLowerCase().email().max(190),
   password: z.string().min(10, "Use at least 10 characters").max(128),
 });
 
@@ -59,7 +61,14 @@ export async function action({ request }: ActionFunctionArgs) {
         const issue = parsed.error.issues[0];
         throw badRequest(issue?.message ?? "Invalid input", { field: issue?.path[0] ?? null });
       }
-      const admin = await createStaffAccount({ ...parsed.data, role: "admin" });
+      const email = loginField.parse(body ?? {});
+      if (!email) throw badRequest("Choose a username: letters, numbers, dot, dash (2-32 characters)", { field: "login" });
+      // When the owner set ADMIN_USERNAME on the host, only that account can be created here.
+      const reserved = env.bootstrapAdmin.email;
+      if (reserved && email !== reserved) {
+        throw new HttpError(403, "setup_reserved", "This workspace is reserved for its configured administrator");
+      }
+      const admin = await createStaffAccount({ ...parsed.data, email, role: "admin" });
       return Response.json(
         { ok: true, data: { user: { id: admin.id, name: admin.name, email: admin.email, role: admin.role } } },
         { headers: { "Set-Cookie": sessionCookie(admin.id) } },
@@ -67,13 +76,14 @@ export async function action({ request }: ActionFunctionArgs) {
     }
 
     const parsed = credentials.safeParse(body);
-    if (!parsed.success) throw new HttpError(401, "invalid_credentials", "Incorrect email or password");
-    await throttle(`login:${clientIp(request)}:${parsed.data.email}`, 8, 5 * 60_000);
+    const email = loginField.parse(body ?? {});
+    if (!parsed.success || !email) throw new HttpError(401, "invalid_credentials", "Incorrect username or password");
+    await throttle(`login:${clientIp(request)}:${email}`, 8, 5 * 60_000);
 
-    const userId = await getStore().auth.verify(parsed.data.email, parsed.data.password);
+    const userId = await getStore().auth.verify(email, parsed.data.password);
     const staff = userId ? await db.get<Staff>("staff", userId) : null;
     // Same answer for unknown email, wrong password and deactivated account.
-    if (!staff || !staff.isActive) throw new HttpError(401, "invalid_credentials", "Incorrect email or password");
+    if (!staff || !staff.isActive) throw new HttpError(401, "invalid_credentials", "Incorrect username or password");
 
     await db.update("staff", staff.id, { lastLoginAt: new Date().toISOString() });
     const user = { id: staff.id, name: staff.name, email: staff.email, role: staff.role };

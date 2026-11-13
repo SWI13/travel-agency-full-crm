@@ -1,5 +1,6 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
-import { randomBytes } from "node:crypto";
+import { createHash, randomBytes } from "node:crypto";
+import { loginToEmail } from "~/lib/login";
 import path from "node:path";
 
 // `react-router dev` loads .env for us; `react-router-serve` does not.
@@ -42,7 +43,8 @@ export const env = {
     graphVersion: read("META_GRAPH_VERSION") || "v27.0",
   },
   bootstrapAdmin: {
-    email: read("ADMIN_EMAIL").toLowerCase(),
+    /** ADMIN_USERNAME ("eix") or ADMIN_EMAIL; stored as the login address. */
+    email: loginToEmail(read("ADMIN_USERNAME") || read("ADMIN_EMAIL")) ?? "",
     password: read("ADMIN_PASSWORD"),
     name: read("ADMIN_NAME") || "Administrator",
   },
@@ -52,6 +54,10 @@ export const env = {
   get sessionSecret(): string {
     const configured = read("SESSION_SECRET");
     if (configured.length >= 32) return configured;
+    // On Vercel with Redis and no SESSION_SECRET: derive one from the private
+    // Redis connection string (server-only), so no secret has to be typed in.
+    const redis = read("REDIS_URL") || read("KV_URL");
+    if (redis) return createHash("sha256").update(`crm-session:${redis}`).digest("hex");
     if (isProd) {
       throw new Error("SESSION_SECRET (32+ characters) is required in production.");
     }

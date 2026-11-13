@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { loginToEmail } from "~/lib/login";
 import { LOCALES, ROLES } from "~/lib/constants";
 import type { Activity, Settings, Staff } from "~/lib/types";
 import { logActivity } from "../activity.server";
@@ -28,10 +29,18 @@ export const adminProcedures = {
   // ── Team ──────────────────────────────────────────────────────────────────
   "team.create": rpc({
     cap: "team.manage",
-    input: z.object({ name: zText(120).min(2), email: zEmail, password: zPassword, role: z.enum(ROLES) }),
+    input: z.object({
+      name: zText(120).min(2),
+      username: z.string().max(190).optional(),
+      email: z.string().max(190).optional(),
+      password: zPassword,
+      role: z.enum(ROLES),
+    }),
     async run({ user }, input) {
+      const email = loginToEmail(input.username ?? input.email);
+      if (!email) throw badRequest("Choose a username: letters, numbers, dot, dash (2-32 characters)", { field: "username" });
       try {
-        const staff = await createStaffAccount(input);
+        const staff = await createStaffAccount({ name: input.name, email, password: input.password, role: input.role });
         await logActivity({
           actor: user,
           action: "staff_created",
@@ -43,7 +52,7 @@ export const adminProcedures = {
         return staff;
       } catch (error) {
         if (error instanceof ConflictError) {
-          throw new HttpError(409, "email_taken", "An employee with this email already exists", { field: "email" });
+          throw new HttpError(409, "email_taken", "This username is already used by another employee", { field: "username" });
         }
         throw error;
       }
