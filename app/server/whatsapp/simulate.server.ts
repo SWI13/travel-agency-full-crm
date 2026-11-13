@@ -27,6 +27,7 @@ export type Scenario = (typeof SCENARIOS)[number];
 const NAMES = [
   "Karim Benali", "Amina Hadj Ali", "Yacine Meziane", "Fatima Zohra B.", "Mohamed Cherif",
   "Nadia Belkacem", "Abdelkader S.", "Samira Touati", "Rachid Bouzid", "Khadidja Mansouri",
+  "Imane Rahmani", "Hichem Larbi", "Meriem Aouadi", "Sofiane Djebbar", "Lamia Ouali",
 ];
 const TEXTS = [
   "السلام عليكم، أريد معلومات عن عمرة رمضان",
@@ -35,6 +36,11 @@ const TEXTS = [
   "Salam, est-ce qu'il reste des places pour le départ de mars ?",
   "أريد حجز عمرة لأربعة أشخاص من فضلكم",
   "Bonjour, quels documents faut-il pour la Omra ?",
+  "Bonsoir, vous avez encore des places pour Istanbul en juillet ?",
+  "سلام، بشحال رحلة تركيا للعائلة؟",
+  "Salam, la sortie à Djanet c'est quand le prochain départ ?",
+  "Bonjour, je cherche un billet Alger – Paris pour décembre",
+  "السلام عليكم، نحتاج فيزا لتركيا، تقدروا تعاونونا؟",
 ];
 const FOLLOW_UPS = [
   "هل يمكن الدفع بالتقسيط؟",
@@ -119,8 +125,8 @@ const referral = (platform: "facebook" | "instagram") => ({
   source_url: platform === "facebook" ? "https://fb.me/demo-ad-umrah" : "https://www.instagram.com/p/demo-ad-umrah/",
   source_id: `DEMO${randomInt(100000, 999999)}`,
   source_type: "ad",
-  headline: platform === "facebook" ? "[DEMO] Omra Ramadan — départ Alger" : "[DEMO] عمرة شعبان — أماكن محدودة",
-  body: "[DEMO] Publicité de démonstration",
+  headline: platform === "facebook" ? "Omra Ramadan — départ Alger" : "Istanbul & Cappadoce — été 2027",
+  body: "Annonce d'exemple",
   media_type: "image",
   ctwa_clid: `DEMOCLID${randomBytes(8).toString("hex")}`,
 });

@@ -8,12 +8,20 @@ import {
   Clock,
   Footprints,
   Hotel,
+  Landmark,
   LoaderCircle,
   MapPin,
   Menu,
+  Moon,
+  Mountain,
   Navigation,
+  Palmtree,
   Phone,
+  PhoneCall,
   Plane,
+  Plus,
+  User,
+  Users,
   X,
 } from "lucide-react";
 import { useI18n } from "~/i18n";
@@ -397,24 +405,55 @@ export function SectionHeading({ eyebrow, title, subtitle, center }: { eyebrow?:
   );
 }
 
-/** Contact form. Posts to the server, which creates (or updates) the lead in the CRM. */
+/** Algerian numbers read best as "0661 23 45 67"; anything else is left as typed. */
+function formatPhoneInput(raw: string): string {
+  const cleaned = raw.replace(/[^\d+\s]/g, "");
+  const digits = cleaned.replace(/\D/g, "");
+  if (cleaned.startsWith("+") || !digits.startsWith("0") || digits.length > 10) return cleaned;
+  return [digits.slice(0, 4), digits.slice(4, 6), digits.slice(6, 8), digits.slice(8, 10)].filter(Boolean).join(" ");
+}
+
+const INTERESTS = [
+  { key: "umrah", icon: Moon, category: "umrah" },
+  { key: "hajj", icon: Landmark, category: "hajj" },
+  { key: "vacation", icon: Palmtree, category: "vacation" },
+  { key: "trip", icon: Mountain, category: "trip" },
+  { key: "visa", icon: Plane, category: null },
+] as const;
+type Interest = (typeof INTERESTS)[number]["key"];
+
+/**
+ * Call-back form, built to be filled in seconds on a phone: name and number are
+ * the only required fields; interest is one tap; the rest is optional.
+ * Posts to the server, which creates (or updates) the lead in the CRM.
+ */
 export function LeadForm({ packages, defaultSlug, compact }: { packages: PublicPackage[]; defaultSlug?: string; compact?: boolean }) {
   const { t, locale } = useI18n();
   const navigate = useNavigate();
   const [busy, setBusy] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [phone, setPhone] = useState("");
+  const [interest, setInterest] = useState<Interest | null>(null);
+  const [packageSlug, setPackageSlug] = useState(defaultSlug ?? "");
+  const [travelers, setTravelers] = useState(1);
+  const [noteOpen, setNoteOpen] = useState(false);
+
+  const category = INTERESTS.find((i) => i.key === interest)?.category ?? null;
+  const offers = category ? packages.filter((p) => p.category === category) : [];
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const form = new FormData(event.currentTarget);
     const name = String(form.get("name") ?? "").trim();
-    const phone = String(form.get("phone") ?? "").trim();
     const next: Record<string, string> = {};
     if (name.length < 2) next.name = t("site.form.errName");
     if (phone.replace(/\D/g, "").length < 8) next.phone = t("site.form.errPhone");
-    if (!form.get("consent")) next.consent = t("site.form.errConsent");
     setErrors(next);
     if (Object.keys(next).length) return;
+
+    const note = String(form.get("message") ?? "").trim();
+    // Vacation, trip and visa interests travel as text: the CRM's service field covers Umrah / Hajj.
+    const interestLine = interest && interest !== "umrah" && interest !== "hajj" ? `${t("site.form.interest")} ${t(`site.form.interests.${interest}`)}` : "";
 
     setBusy(true);
     try {
@@ -425,11 +464,11 @@ export function LeadForm({ packages, defaultSlug, compact }: { packages: PublicP
         body: JSON.stringify({
           name,
           phone,
-          packageSlug: String(form.get("packageSlug") ?? "") || null,
-          serviceType: String(form.get("serviceType") ?? "unknown"),
-          adults: Number(form.get("adults") ?? 1),
-          children: Number(form.get("children") ?? 0),
-          message: String(form.get("message") ?? ""),
+          packageSlug: packageSlug || null,
+          serviceType: interest === "umrah" || interest === "hajj" ? interest : "unknown",
+          adults: travelers,
+          children: 0,
+          message: [interestLine, note].filter(Boolean).join("\n") || null,
           consent: true,
           website: String(form.get("website") ?? ""),
           utmSource: utm.source,
@@ -452,85 +491,117 @@ export function LeadForm({ packages, defaultSlug, compact }: { packages: PublicP
     }
   }
 
+  const fieldShell = "flex items-center gap-3 rounded-2xl border-2 bg-white px-4 h-14 transition-colors focus-within:border-petrol focus-within:shadow-[0_0_0_4px_rgb(13_59_68/0.08)]";
+
   return (
     <form onSubmit={onSubmit} noValidate className="grid gap-4">
-      <div className={cn("grid gap-4", !compact && "sm:grid-cols-2")}>
-        <div>
-          <label className="field-label" htmlFor="lf-name">{t("site.form.name")}</label>
-          <input id="lf-name" name="name" className="input h-11" autoComplete="name" aria-invalid={!!errors.name} />
-          {errors.name && <p className="field-error">{errors.name}</p>}
+      <div>
+        <label htmlFor="lf-name" className="sr-only">{t("site.form.name")}</label>
+        <div className={cn(fieldShell, errors.name ? "border-rose-300" : "border-stone-dark")}>
+          <User className="size-5 shrink-0 text-petrol/60" />
+          <input id="lf-name" name="name" autoComplete="name" placeholder={t("site.form.namePh")} aria-invalid={!!errors.name} className="h-full w-full min-w-0 bg-transparent text-base outline-none placeholder:text-[#8a939b]" />
         </div>
-        <div>
-          <label className="field-label" htmlFor="lf-phone">{t("site.form.phone")}</label>
-          <input id="lf-phone" name="phone" type="tel" dir="ltr" inputMode="tel" className="input h-11" autoComplete="tel" placeholder="0661 23 45 67" aria-invalid={!!errors.phone} />
-          {errors.phone ? <p className="field-error">{errors.phone}</p> : <p className="field-hint">{t("site.form.phoneHint")}</p>}
-        </div>
-      </div>
-
-      {defaultSlug ? (
-        <input type="hidden" name="packageSlug" value={defaultSlug} />
-      ) : (
-        <div className={cn("grid gap-4", !compact && "sm:grid-cols-2")}>
-          <div>
-            <label className="field-label" htmlFor="lf-service">{t("site.form.service")}</label>
-            <select id="lf-service" name="serviceType" className="input h-11" defaultValue="umrah">
-              <option value="umrah">{t("site.packages.umrah")}</option>
-              <option value="hajj">{t("site.packages.hajj")}</option>
-              <option value="unknown">{t("site.form.anyPackage")}</option>
-            </select>
-          </div>
-          <div>
-            <label className="field-label" htmlFor="lf-package">{t("site.form.package")}</label>
-            <select id="lf-package" name="packageSlug" className="input h-11" defaultValue="">
-              <option value="">{t("site.form.anyPackage")}</option>
-              {packages.map((p) => (
-                <option key={p.id} value={p.slug}>{pkgName(p, locale)}</option>
-              ))}
-            </select>
-          </div>
-        </div>
-      )}
-
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <label className="field-label" htmlFor="lf-adults">{t("site.form.adults")}</label>
-          <input id="lf-adults" name="adults" type="number" min={1} max={50} defaultValue={1} className="input h-11" />
-        </div>
-        <div>
-          <label className="field-label" htmlFor="lf-children">{t("site.form.children")}</label>
-          <input id="lf-children" name="children" type="number" min={0} max={50} defaultValue={0} className="input h-11" />
-        </div>
+        {errors.name && <p className="field-error">{errors.name}</p>}
       </div>
 
       <div>
-        <label className="field-label" htmlFor="lf-message">{t("site.form.message")}</label>
-        <textarea id="lf-message" name="message" rows={3} maxLength={1000} className="input" placeholder={t("site.form.messagePh")} />
+        <label htmlFor="lf-phone" className="sr-only">{t("site.form.phone")}</label>
+        <div className={cn(fieldShell, errors.phone ? "border-rose-300" : "border-stone-dark")} dir="ltr">
+          <Phone className="size-5 shrink-0 text-petrol/60" />
+          <input
+            id="lf-phone"
+            name="phone"
+            type="tel"
+            inputMode="tel"
+            autoComplete="tel"
+            placeholder="0661 23 45 67"
+            value={phone}
+            onChange={(e) => setPhone(formatPhoneInput(e.target.value))}
+            aria-invalid={!!errors.phone}
+            className="h-full w-full min-w-0 bg-transparent text-lg font-semibold tracking-wide tabular outline-none placeholder:font-normal placeholder:text-[#8a939b]"
+          />
+        </div>
+        {errors.phone && <p className="field-error">{errors.phone}</p>}
       </div>
+
+      {!defaultSlug && (
+        <div>
+          <p className="mb-2 text-sm font-semibold text-petrol">{t("site.form.service")}</p>
+          <div className={cn("grid gap-2", compact ? "grid-cols-2" : "grid-cols-2 sm:grid-cols-3")}>
+            {INTERESTS.map(({ key, icon: Icon }) => {
+              const on = interest === key;
+              return (
+                <button
+                  key={key}
+                  type="button"
+                  aria-pressed={on}
+                  onClick={() => {
+                    setInterest(on ? null : key);
+                    setPackageSlug("");
+                  }}
+                  className={cn(
+                    "flex min-h-12 items-center gap-2 rounded-xl border-2 px-3 py-2 text-start text-[13px] sm:text-sm font-semibold leading-tight transition-colors",
+                    on ? "border-petrol bg-petrol text-white" : "border-stone-dark bg-white text-[var(--ink)] hover:border-petrol/40",
+                  )}
+                >
+                  <Icon className={cn("size-4 shrink-0", on ? "text-saffron" : "text-petrol/70")} />
+                  <span className="min-w-0">{t(`site.form.interests.${key}`)}</span>
+                </button>
+              );
+            })}
+          </div>
+          {offers.length > 0 && (
+            <select
+              aria-label={t("site.form.package")}
+              value={packageSlug}
+              onChange={(e) => setPackageSlug(e.target.value)}
+              className="input mt-3 h-12 rounded-xl"
+            >
+              <option value="">{t("site.form.anyOffer")}</option>
+              {offers.map((p) => <option key={p.id} value={p.slug}>{pkgName(p, locale)}</option>)}
+            </select>
+          )}
+        </div>
+      )}
+
+      <div className="flex items-center justify-between gap-3 rounded-2xl bg-stone/70 px-4 py-2.5">
+        <span className="flex items-center gap-2 text-sm font-semibold text-petrol">
+          <Users className="size-4" />
+          {t("site.form.travelers")}
+        </span>
+        <span className="flex items-center gap-1" dir="ltr">
+          <button type="button" onClick={() => setTravelers((n) => Math.max(1, n - 1))} className="grid size-10 place-items-center rounded-full bg-white text-xl font-bold text-petrol shadow-sm disabled:opacity-40" disabled={travelers <= 1} aria-label="-">−</button>
+          <span className="w-10 text-center text-lg font-bold tabular" aria-live="polite">{travelers}</span>
+          <button type="button" onClick={() => setTravelers((n) => Math.min(50, n + 1))} className="grid size-10 place-items-center rounded-full bg-white text-xl font-bold text-petrol shadow-sm" aria-label="+">+</button>
+        </span>
+      </div>
+
+      {noteOpen ? (
+        <textarea name="message" rows={3} maxLength={1000} autoFocus className="input rounded-2xl" placeholder={t("site.form.messagePh")} />
+      ) : (
+        <button type="button" onClick={() => setNoteOpen(true)} className="inline-flex w-fit items-center gap-1.5 text-sm font-medium text-petrol/80 hover:text-petrol">
+          <Plus className="size-4" />
+          {t("site.form.addNote")}
+        </button>
+      )}
 
       {/* Honeypot: hidden from people, tempting for bots */}
       <div className="hidden" aria-hidden="true">
         <label>Website<input name="website" tabIndex={-1} autoComplete="off" /></label>
       </div>
 
-      <div>
-        <label className="flex items-start gap-2.5 text-sm">
-          <input type="checkbox" name="consent" className="mt-0.5 size-4 accent-[var(--accent)]" />
-          <span>
-            {t("site.form.consent")}{" "}
-            <Link to={`/${locale}/privacy`} className="text-brand-700 underline underline-offset-2">{t("site.form.privacy")}</Link>
-          </span>
-        </label>
-        {errors.consent && <p className="field-error">{errors.consent}</p>}
-      </div>
-
       {errors.form && (
-        <p role="alert" className="rounded-lg bg-rose-50 text-rose-700 text-sm px-3 py-2.5">{errors.form}</p>
+        <p role="alert" className="rounded-xl bg-rose-50 text-rose-700 text-sm px-3 py-2.5">{errors.form}</p>
       )}
 
-      <button type="submit" disabled={busy} className="btn btn-primary btn-lg">
-        {busy ? <LoaderCircle className="size-5 animate-spin" /> : <Check className="size-5" />}
+      <button type="submit" disabled={busy} className="btn h-14 rounded-2xl bg-saffron text-ink text-base font-bold shadow-[0_10px_24px_-10px_rgb(242_169_59/0.9)] hover:bg-saffron-300">
+        {busy ? <LoaderCircle className="size-5 animate-spin" /> : <PhoneCall className="size-5" />}
         {busy ? t("site.form.sending") : t("site.form.submit")}
       </button>
+      <p className="-mt-1 text-center text-xs muted">
+        {t("site.form.consentNote")}{" "}
+        <Link to={`/${locale}/privacy`} className="underline underline-offset-2">{t("site.form.privacy")}</Link>
+      </p>
     </form>
   );
 }

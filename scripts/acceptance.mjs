@@ -518,7 +518,7 @@ async function run() {
   section("Demo data");
   const loaded = await rpc(admin.cookie, "demo.load");
   snap = await snapshot(admin.cookie);
-  check("Sample data loads and every sample record is flagged", loaded.data?.leads === 14 && snap.leads.filter((l) => l.isDemo).length >= 14 && snap.packages.filter((p) => p.isDemo).length === 3);
+  check("Sample data loads and every sample record is flagged", loaded.data?.leads === 17 && snap.leads.filter((l) => l.isDemo).length >= 17 && snap.packages.filter((p) => p.isDemo).length === 5);
   const realBefore = snap.leads.filter((l) => !l.isDemo).length;
   await rpc(admin.cookie, "demo.clear");
   snap = await snapshot(admin.cookie);

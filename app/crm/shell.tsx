@@ -36,6 +36,7 @@ import { formatPhone } from "~/lib/phone";
 import { Avatar, Badge, DemoBadge, Field, Modal, Spinner } from "~/ui";
 import { useToast } from "~/ui/feedback";
 import { api, errorMessage } from "./api";
+import { DemoRunningControls, StartDemoButton } from "./demo-controls";
 import { useCrm } from "./store";
 
 const LOCALE_LABEL: Record<Locale, string> = { fr: "Français", ar: "العربية", en: "English" };
@@ -477,6 +478,7 @@ export function Topbar({ onMenu }: { onMenu: () => void }) {
       </button>
       <GlobalSearch />
       <div className="ms-auto flex items-center gap-0.5 sm:gap-1">
+        <StartDemoButton />
         <button type="button" className="icon-btn" onClick={() => setSound(!sound)} aria-pressed={sound} aria-label={sound ? t("crm.top.soundOn") : t("crm.top.soundOff")} title={sound ? t("crm.top.soundOn") : t("crm.top.soundOff")}>
           {sound ? <Volume2 className="size-5" /> : <VolumeX className="size-5" />}
         </button>
@@ -505,9 +507,12 @@ export function DemoBanner() {
         </span>
       )}
       {local && can("integrations.manage") && <span className="opacity-80">{t("crm.demo.localStore")}</span>}
-      {can("integrations.manage") && pathname !== "/admin/integrations" && (
-        <Link to="/admin/integrations" className="ms-auto font-semibold underline underline-offset-2">{t("crm.demo.manage")}</Link>
-      )}
+      <span className="ms-auto flex flex-wrap items-center gap-3">
+        <DemoRunningControls />
+        {can("integrations.manage") && pathname !== "/admin/integrations" && (
+          <Link to="/admin/integrations" className="font-semibold underline underline-offset-2">{t("crm.demo.manage")}</Link>
+        )}
+      </span>
     </div>
   );
 }
