@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { PACKAGE_CATEGORIES, type PackageCategory } from "~/lib/constants";
 import { Link, useSearchParams } from "react-router";
 import { ArrowUpDown } from "lucide-react";
 import { useI18n } from "~/i18n";
@@ -14,7 +15,8 @@ export default function Packages() {
   const { t, locale } = useI18n();
   const [params, setParams] = useSearchParams();
   const requested = params.get("c");
-  const category = requested === "umrah" || requested === "hajj" ? requested : "all";
+  const category = (PACKAGE_CATEGORIES as readonly string[]).includes(requested ?? "") ? (requested as PackageCategory) : "all";
+  const tabs = ["all", ...PACKAGE_CATEGORIES.filter((c) => packages.some((p) => p.category === c))] as const;
   const sort = params.get("sort") === "price" ? "price" : "date";
   const [shown, setShown] = useState(PAGE);
 
@@ -41,7 +43,7 @@ export default function Packages() {
 
       <div className="mt-8 flex flex-wrap items-center gap-3">
         <nav className="flex rounded-full border border-[var(--line)] p-1 bg-white" aria-label={t("site.packages.title")}>
-          {(["all", "umrah", "hajj"] as const).map((c) => (
+          {tabs.map((c) => (
             <Link
               key={c}
               to={link({ c: c === "all" ? null : c })}

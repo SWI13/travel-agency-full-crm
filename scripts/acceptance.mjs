@@ -434,6 +434,13 @@ async function run() {
   check("Agents cannot upload photos", (await upload(agt.cookie, png)).status === 403);
   check("Files that are not images are refused", (await upload(mgr.cookie, "hello", "image/png")).status === 400);
 
+  // Vacation and trip offers, next to Umrah and Hajj.
+  const base = Object.fromEntries(Object.entries(pkg.data).filter(([k]) => !["id", "createdAt", "updatedAt", "slug", "refCode", "isDemo", "coverImage"].includes(k)));
+  const vacation = await rpc(mgr.cookie, "packages.save", { ...base, name: "Vacances Antalya 8 jours", nameAr: null, category: "vacation", status: "active", makkahArea: null, haramDistanceM: null, walkMinutes: null, madinahHotel: null, coverImage: null, firstDeparture: null });
+  const trip = await rpc(mgr.cookie, "packages.save", { ...base, name: "Circuit Tassili 5 jours", nameAr: null, category: "trip", status: "draft", coverImage: null, firstDeparture: null });
+  check("Vacation and trip offers get their own reference codes", vacation.data?.refCode?.startsWith("VAC-") && trip.data?.refCode?.startsWith("TRP-"), JSON.stringify([vacation.code, trip.code]));
+  check("An active vacation offer is listed on the website under its own filter", (await (await fetch(`${BASE}/fr/packages?c=vacation`)).text()).includes("Vacances Antalya 8 jours"));
+
   section("16 · Role permissions (enforced on the server)");
   const denied = async (cookie, name, input = {}) => (await rpc(cookie, name, input)).status === 403;
   check("Agent: no integrations, team, settings, demo tools or deletions", (await denied(agt.cookie, "integrations.status")) && (await denied(agt.cookie, "team.create", { name: "Xx", email: "x@x.test", password: "0123456789ab", role: "admin" })) && (await denied(agt.cookie, "settings.update", { agencyName: "Hack" })) && (await denied(agt.cookie, "demo.simulate", { scenario: "new_customer" })) && (await denied(agt.cookie, "leads.delete", { id: target.id })));

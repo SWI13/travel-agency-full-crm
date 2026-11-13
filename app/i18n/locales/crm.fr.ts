@@ -120,7 +120,7 @@ export const crmFr: CrmDict = {
     completed: "Terminé",
     lost: "Perdu",
   },
-  service: { unknown: "Non précisé", umrah: "Omra", hajj: "Hajj" },
+  service: { unknown: "Non précisé", umrah: "Omra", hajj: "Hajj", vacation: "Vacances", trip: "Voyage" },
   priority: { low: "Basse", normal: "Normale", high: "Haute", urgent: "Urgente" },
   source: {
     facebook_ad: "Publicité Facebook",
@@ -363,6 +363,7 @@ export const crmFr: CrmDict = {
       capacity: "Capacité maximale par groupe",
       flight: "Informations de vol",
       makkah: "Hébergement à La Mecque",
+      hotel: "Hôtel",
       madinah: "Hébergement à Médine",
       hotelCategory: "Catégorie d'hôtel",
       transport: "Détails du transport",

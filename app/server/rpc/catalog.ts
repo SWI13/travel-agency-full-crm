@@ -1,6 +1,7 @@
 import { z } from "zod";
 import {
   DEPARTURE_STATUSES,
+  CATEGORY_PREFIX,
   PACKAGE_CATEGORIES,
   PACKAGE_STATUSES,
   PAYMENT_STATUSES,
@@ -83,9 +84,9 @@ async function uniqueSlug(name: string, ignoreId?: string): Promise<string> {
   return slug;
 }
 
-/** OMR-01, OMR-02 … / HAJ-01 … — typed at the start of website WhatsApp messages. */
+/** OMR-01 … / HAJ-01 … / VAC-01 … / TRP-01 … — typed at the start of website WhatsApp messages. */
 async function nextRefCode(category: Package["category"]): Promise<string> {
-  const prefix = category === "hajj" ? "HAJ" : "OMR";
+  const prefix = CATEGORY_PREFIX[category];
   const numbers = (await db.list<Package>("packages"))
     .map((p) => new RegExp(`^${prefix}-(\\d+)$`).exec(p.refCode)?.[1])
     .filter(Boolean)

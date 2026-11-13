@@ -1,4 +1,5 @@
 import type { ActionFunctionArgs } from "react-router";
+import { serviceForCategory } from "~/lib/constants";
 import { z } from "zod";
 import { SERVICE_TYPES } from "~/lib/constants";
 import { maskPhone, normalizeDzPhone } from "~/lib/phone";
@@ -62,7 +63,7 @@ export async function action({ request }: ActionFunctionArgs) {
       source: "website_form",
       message: data.message || null,
       packageId: pkg?.id ?? null,
-      serviceType: pkg?.category ?? data.serviceType,
+      serviceType: pkg && serviceForCategory(pkg.category) !== "unknown" ? serviceForCategory(pkg.category) : data.serviceType,
       adults: data.adults,
       children: data.children,
       utmSource: data.utmSource || null,

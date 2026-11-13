@@ -1,4 +1,5 @@
 import { Link, useParams } from "react-router";
+import { isPilgrimage } from "~/lib/constants";
 import { ArrowLeft, ArrowRight, BedDouble, Bus, Clock, Footprints, Hotel, MapPin, Navigation, Plane, Star } from "lucide-react";
 import type { Route } from "./+types/package-detail";
 import { translate, useI18n } from "~/i18n";
@@ -44,7 +45,7 @@ export default function PackageDetail() {
   const facts = [
     { icon: Clock, label: t("site.detail.duration"), value: pkg.durationDays ? t("site.packages.days", { n: pkg.durationDays }) : null },
     { icon: MapPin, label: t("site.detail.departureCity"), value: pkg.departureCity },
-    { icon: Hotel, label: t("site.detail.makkahHotel"), value: pkg.makkahHotel },
+    { icon: Hotel, label: isPilgrimage(pkg.category) ? t("site.detail.makkahHotel") : t("site.detail.hotel"), value: pkg.makkahHotel },
     { icon: MapPin, label: t("site.detail.area"), value: pkg.makkahArea },
     { icon: Navigation, label: t("site.detail.distance"), value: pkg.haramDistanceM != null ? distance(pkg.haramDistanceM) : null },
     { icon: Footprints, label: t("site.detail.walkTime"), value: pkg.walkMinutes ? t("site.packages.walk", { n: pkg.walkMinutes }) : null },

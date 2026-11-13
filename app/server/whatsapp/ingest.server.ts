@@ -1,4 +1,5 @@
 import { DEMO_PHONE_NUMBER_ID } from "~/lib/constants";
+import { serviceForCategory } from "~/lib/constants";
 import { maskPhone } from "~/lib/phone";
 import type { IntegrationState, Lead, Message, WebhookEvent } from "~/lib/types";
 import { logActivity, SYSTEM_ACTOR } from "../activity.server";
@@ -218,7 +219,8 @@ async function handleMessage(
     const pkg = await findPackageByRef(refCode);
     const referral = message.referral;
     const source = inbound ? classifySource(referral, message.body) : "unknown";
-    const service = inbound ? (pkg?.category ?? detectService(message.body)) : "unknown";
+    const fromOffer = pkg ? serviceForCategory(pkg.category) : "unknown";
+    const service = inbound ? (fromOffer !== "unknown" ? fromOffer : detectService(message.body)) : "unknown";
     const adFields = referral
       ? {
           adId: referral.sourceId,

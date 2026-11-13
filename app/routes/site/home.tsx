@@ -1,4 +1,5 @@
 import { useState, type ComponentType, type ReactNode } from "react";
+import { PACKAGE_CATEGORIES, type PackageCategory } from "~/lib/constants";
 import { Link } from "react-router";
 import { ArrowLeft, ArrowRight, Layers, Phone, ShieldCheck, Tag, Users } from "lucide-react";
 import { translate, useI18n } from "~/i18n";
@@ -48,7 +49,8 @@ function Heading({ eyebrow, title, subtitle, center, light }: { eyebrow?: string
 export default function Home() {
   const { site, packages } = useSiteData();
   const { t, locale, isRtl } = useI18n();
-  const [category, setCategory] = useState<"all" | "umrah" | "hajj">("all");
+  const [category, setCategory] = useState<"all" | PackageCategory>("all");
+  const tabs: Array<"all" | PackageCategory> = ["all", ...PACKAGE_CATEGORIES.filter((c) => packages.some((p) => p.category === c))];
   const Arrow = isRtl ? ArrowLeft : ArrowRight;
   const visible = packages.filter((p) => category === "all" || p.category === category);
   const hasWhatsApp = !!site.whatsappNumber;
@@ -166,7 +168,7 @@ export default function Home() {
         <div className="flex flex-wrap items-end justify-between gap-6">
           <Heading title={t("site.packages.title")} subtitle={t("site.packages.subtitle")} />
           <div className="flex rounded-full border border-[var(--line)] p-1 bg-white" role="tablist">
-            {(["all", "umrah", "hajj"] as const).map((c) => (
+            {tabs.map((c) => (
               <button
                 key={c}
                 type="button"

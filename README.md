@@ -181,7 +181,7 @@ Every planned call or reminder, in four groups: **Overdue** (in red), **Today**,
 
 <img src="docs/screenshots/crm-packages.png" alt="Packages" width="100%" />
 
-The trips the agency sells. For each package: name in French and Arabic, Umrah or Hajj, description, duration, departure city, airline and direct flight or not, hotel in Makkah and Madinah, hotel area, **distance and walking time to the Haram**, transport, room options (single, double, triple, quad), price in DZD and a reference code (`OMR-01`, `HAJ-01`…).
+The trips the agency sells. For each package: name in French and Arabic, category (**Umrah, Hajj, Vacation or Trip**; Makkah and Haram fields only appear for Umrah and Hajj), description, duration, departure city, airline and direct flight or not, hotel in Makkah and Madinah, hotel area, **distance and walking time to the Haram**, transport, room options (single, double, triple, quad), price in DZD and a reference code (`OMR-01`, `HAJ-01`…).
 
 **Cover photo:** drag a photo onto the box, or click it to pick one from the computer or the phone gallery. It is resized automatically so it loads fast on the website. You can still paste a link instead.
 
@@ -407,7 +407,7 @@ React 19 · React Router 7 (framework mode, server rendering) · Vite · Tailwin
 | `npm run build` / `npm run start` | Production build / server |
 | `npm run typecheck` | TypeScript check |
 | `npm test` | Unit tests |
-| `npm run test:acceptance` | 114 end-to-end checks on an isolated copy of the app |
+| `npm run test:acceptance` | 118 end-to-end checks on an isolated copy of the app |
 | `REDIS_URL=redis://127.0.0.1:6379 REDIS_PREFIX=test npm run test:acceptance` | The same checks on Redis |
 | `npm run test:appwrite` | The same checks against Appwrite (temporary database) |
 | `npm run appwrite:start` / `appwrite:stop` | Local self-hosted Appwrite in Docker |
@@ -450,10 +450,10 @@ docs/              guides and screenshots scripts/  tests/  tools and tests
 <details>
 <summary><b>Known limits</b></summary>
 
-- The 114 end-to-end checks pass on the local file, on Redis 7 and on self-hosted Appwrite 2.7.2. A two-server test against one Redis (same and different WhatsApp messages sent to both at once) created no duplicates. The app has not yet been deployed on a real Vercel account, and Appwrite Cloud was not run.
+- The 118 end-to-end checks pass on the local file, on Redis 7 and on self-hosted Appwrite 2.7.2. A two-server test against one Redis (same and different WhatsApp messages sent to both at once) created no duplicates. The app has not yet been deployed on a real Vercel account, and Appwrite Cloud was not run.
 - No real Meta webhook has been received yet: WhatsApp handling follows Meta's documentation and is covered by tests.
 - The dashboard does not send WhatsApp messages; staff reply from the WhatsApp Business app (the offer message is prepared for them).
-- Packages cover Umrah and Hajj; Turkey, Algeria and visa requests come in through WhatsApp and the form.
+- Offers can be Umrah, Hajj, Vacation or Trip. Reports (Umrah vs Hajj) count only the two pilgrimage services; visa and ticket requests come in through WhatsApp and the form.
 </details>
 
 ---

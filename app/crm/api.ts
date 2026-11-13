@@ -99,3 +99,6 @@ export const PAYMENT_TONE: Record<PaymentStatus, string> = {
   refunded: "neutral",
   cancelled: "neutral",
 };
+
+/** Badge colour per offer category. */
+export const CATEGORY_TONE: Record<string, string> = { umrah: "teal", hajj: "gold", vacation: "violet", trip: "blue" };

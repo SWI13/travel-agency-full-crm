@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import { CATEGORY_TONE } from "~/crm/api";
 import { Link } from "react-router";
 import {
   ArrowLeft,
@@ -194,7 +195,7 @@ export default function Overview() {
                     <p className="mt-1.5 flex items-center justify-between text-xs muted">
                       <span>{t("crm.overview.seats", { booked: seats.booked, capacity: seats.capacity })}</span>
                       <span className="flex items-center gap-1.5">
-                        <Badge tone={pkg?.category === "hajj" ? "gold" : "teal"}>{t(`crm.service.${pkg?.category ?? "unknown"}`)}</Badge>
+                        <Badge tone={CATEGORY_TONE[pkg?.category ?? ""] ?? "teal"}>{t(`crm.service.${pkg?.category ?? "unknown"}`)}</Badge>
                         <DemoBadge show={departure.isDemo} />
                       </span>
                     </p>

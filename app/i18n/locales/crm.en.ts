@@ -118,7 +118,7 @@ export const crmEn = {
     completed: "Completed",
     lost: "Lost",
   },
-  service: { unknown: "Not specified", umrah: "Umrah", hajj: "Hajj" },
+  service: { unknown: "Not specified", umrah: "Umrah", hajj: "Hajj", vacation: "Vacation", trip: "Trip" },
   priority: { low: "Low", normal: "Normal", high: "High", urgent: "Urgent" },
   source: {
     facebook_ad: "Facebook ad",
@@ -361,6 +361,7 @@ export const crmEn = {
       capacity: "Maximum capacity per group",
       flight: "Flight information",
       makkah: "Makkah accommodation",
+      hotel: "Hotel",
       madinah: "Madinah accommodation",
       hotelCategory: "Hotel category",
       transport: "Transport details",

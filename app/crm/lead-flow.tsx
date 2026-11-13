@@ -15,7 +15,7 @@ import {
   Users,
 } from "lucide-react";
 import { useI18n, type TFunction } from "~/i18n";
-import { VOID_PAYMENT_STATUSES, type LeadStage, type Locale } from "~/lib/constants";
+import { serviceForCategory, VOID_PAYMENT_STATUSES, type LeadStage, type Locale } from "~/lib/constants";
 import { cn, dayKey, formatDate, formatDzd, leadName } from "~/lib/format";
 import { formatPhone, waChatLink } from "~/lib/phone";
 import { seatsFor } from "~/lib/stats";
@@ -358,7 +358,7 @@ export function OfferPicker({ lead, open, onClose, onBook }: {
       const stage: LeadStage = ["new", "contacted", "qualified"].includes(lead.stage) ? "package_sent" : lead.stage;
       const updated = await api<Lead>("leads.update", {
         id: lead.id,
-        patch: { packageId: chosen.id, stage, ...(lead.serviceType === "unknown" ? { serviceType: chosen.category } : {}) },
+        patch: { packageId: chosen.id, stage, ...(lead.serviceType === "unknown" && serviceForCategory(chosen.category) !== "unknown" ? { serviceType: serviceForCategory(chosen.category) } : {}) },
       });
       apply("leads", updated);
       if (send) {

@@ -8,9 +8,9 @@ Date: 2026-11-13 · Environment: Windows 11, Node 24, local demo datastore, Redi
 |---|---|---|
 | TypeScript check | clean | `npm run typecheck` |
 | Unit tests | 40 / 40 | `npm test` |
-| End-to-end acceptance (HTTP, isolated server), local datastore | 114 / 114 | `npm run test:acceptance` |
-| Same 114 checks against **Redis 7** (Docker, isolated key prefix) | 114 / 114 | `REDIS_URL=redis://127.0.0.1:6379 REDIS_PREFIX=test npm run test:acceptance` |
-| Same 114 checks against **live Appwrite 2.7.2** (Docker, temporary database) | 114 / 114 | `npm run test:appwrite` |
+| End-to-end acceptance (HTTP, isolated server), local datastore | 118 / 118 | `npm run test:acceptance` |
+| Same 118 checks against **Redis 7** (Docker, isolated key prefix) | 118 / 118 | `REDIS_URL=redis://127.0.0.1:6379 REDIS_PREFIX=test npm run test:acceptance` |
+| Same 118 checks against **live Appwrite 2.7.2** (Docker, temporary database) | 118 / 118 | `npm run test:appwrite` |
 | Two app servers sharing one Redis (serverless simulation): the same WhatsApp message sent 10 times and 12 messages from one customer, split across both at once | 1 lead, 1 + 12 messages, 0 duplicates; server B's change feed saw server A's writes | script used during the Vercel work |
 | Vercel build (`VERCEL=1 react-router build`, Vercel preset) and standard Node build | both succeed | — |
 | Browser checks on the Appwrite-backed dashboard | 16 / 16 | headless Chrome, same script as below |

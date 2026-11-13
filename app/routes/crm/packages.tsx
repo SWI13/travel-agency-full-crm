@@ -1,13 +1,13 @@
 import { useMemo, useState, type FormEvent } from "react";
 import { Archive, ArchiveRestore, BedDouble, CalendarDays, Clock, ExternalLink, Globe, MapPin, Package as PackageIcon, Pencil, Plus, Ticket, Trash2 } from "lucide-react";
-import { api, errorMessage } from "~/crm/api";
+import { api, CATEGORY_TONE, errorMessage } from "~/crm/api";
 import { ImageUpload } from "~/crm/image-upload";
 import { BookingModal } from "~/crm/lead-drawer";
 import { CustomerPicker } from "~/crm/lead-flow";
 import { PageBody } from "~/crm/shell";
 import { useCrm } from "~/crm/store";
 import { useI18n } from "~/i18n";
-import { PACKAGE_CATEGORIES, PACKAGE_STATUSES, ROOM_TYPES, type PackageStatus, type RoomType } from "~/lib/constants";
+import { isPilgrimage, PACKAGE_CATEGORIES, PACKAGE_STATUSES, ROOM_TYPES, type PackageCategory, type PackageStatus, type RoomType } from "~/lib/constants";
 import { cn, dayKey, formatDate, formatDzd } from "~/lib/format";
 import { seatsFor } from "~/lib/stats";
 import type { Lead, Package } from "~/lib/types";
@@ -93,7 +93,7 @@ export default function PackagesPage() {
                 {pkg.coverImage ? <img src={pkg.coverImage} alt="" loading="lazy" className="absolute inset-0 size-full object-cover" /> : <div className="absolute inset-0 pattern-star" aria-hidden="true" />}
                 <div className="absolute inset-0 bg-gradient-to-t from-navy-950/60 to-transparent" aria-hidden="true" />
                 <div className="absolute top-3 start-3 flex flex-wrap gap-1.5">
-                  <Badge tone={pkg.category === "hajj" ? "gold" : "teal"}>{t(`crm.service.${pkg.category}`)}</Badge>
+                  <Badge tone={CATEGORY_TONE[pkg.category] ?? "teal"}>{t(`crm.service.${pkg.category}`)}</Badge>
                   <Badge tone={STATUS_TONE[pkg.status]} dot>{t(`crm.pkgStatus.${pkg.status}`)}</Badge>
                   <DemoBadge show={pkg.isDemo} />
                 </div>
@@ -201,6 +201,8 @@ function PackageForm({ pkg, onClose }: { pkg: Package | null; onClose: () => voi
   const toast = useToast();
   const [busy, setBusy] = useState(false);
   const [rooms, setRooms] = useState<RoomType[]>((pkg?.roomOptions as RoomType[]) ?? ["double", "triple", "quad"]);
+  const [category, setCategory] = useState<PackageCategory>(pkg?.category ?? "umrah");
+  const pilgrimage = isPilgrimage(category);
   const f = "crm.packages.form";
 
   async function submit(event: FormEvent<HTMLFormElement>) {
@@ -223,10 +225,10 @@ function PackageForm({ pkg, onClose }: { pkg: Package | null; onClose: () => voi
         airline: text(form, "airline"),
         directFlight: form.get("directFlight") === "yes" ? true : form.get("directFlight") === "no" ? false : null,
         makkahHotel: text(form, "makkahHotel"),
-        makkahArea: text(form, "makkahArea"),
-        haramDistanceM: int(form, "haramDistanceM"),
-        walkMinutes: text(form, "walkMinutes"),
-        madinahHotel: text(form, "madinahHotel"),
+        makkahArea: pilgrimage ? text(form, "makkahArea") : null,
+        haramDistanceM: pilgrimage ? int(form, "haramDistanceM") : null,
+        walkMinutes: pilgrimage ? text(form, "walkMinutes") : null,
+        madinahHotel: pilgrimage ? text(form, "madinahHotel") : null,
         hotelCategory: text(form, "hotelCategory"),
         transport: text(form, "transport"),
         roomOptions: rooms,
@@ -254,7 +256,7 @@ function PackageForm({ pkg, onClose }: { pkg: Package | null; onClose: () => voi
           <Field label={t(`${f}.name`)}><input name="name" required minLength={2} maxLength={160} defaultValue={pkg?.name} className="input" /></Field>
           <Field label={t(`${f}.nameAr`)} optional><input name="nameAr" dir="rtl" lang="ar" maxLength={160} defaultValue={pkg?.nameAr ?? ""} className="input" /></Field>
           <Field label={t(`${f}.category`)}>
-            <select name="category" className="input" defaultValue={pkg?.category ?? "umrah"}>
+            <select name="category" className="input" value={category} onChange={(e) => setCategory(e.target.value as PackageCategory)}>
               {PACKAGE_CATEGORIES.map((c) => <option key={c} value={c}>{t(`crm.service.${c}`)}</option>)}
             </select>
           </Field>
@@ -271,12 +273,12 @@ function PackageForm({ pkg, onClose }: { pkg: Package | null; onClose: () => voi
           <legend className="eyebrow mb-3">{t(`${f}.stay`)}</legend>
           <Field label={t(`${f}.duration`)}><input name="durationDays" type="number" min={1} max={120} defaultValue={pkg?.durationDays ?? ""} className="input" /></Field>
           <Field label={t(`${f}.city`)}><input name="departureCity" maxLength={80} defaultValue={pkg?.departureCity ?? ""} className="input" /></Field>
-          <Field label={t(`${f}.makkah`)}><input name="makkahHotel" maxLength={200} defaultValue={pkg?.makkahHotel ?? ""} className="input" /></Field>
-          <Field label={t(`${f}.madinah`)}><input name="madinahHotel" maxLength={200} defaultValue={pkg?.madinahHotel ?? ""} className="input" /></Field>
+          <Field label={pilgrimage ? t(`${f}.makkah`) : t(`${f}.hotel`)}><input name="makkahHotel" maxLength={200} defaultValue={pkg?.makkahHotel ?? ""} className="input" /></Field>
+          {pilgrimage && <Field label={t(`${f}.madinah`)}><input name="madinahHotel" maxLength={200} defaultValue={pkg?.madinahHotel ?? ""} className="input" /></Field>}
           <Field label={t(`${f}.hotelCategory`)}><input name="hotelCategory" maxLength={60} defaultValue={pkg?.hotelCategory ?? ""} placeholder="4★" className="input" /></Field>
-          <Field label={t(`${f}.area`)} optional><input name="makkahArea" maxLength={80} defaultValue={pkg?.makkahArea ?? ""} className="input" /></Field>
-          <Field label={t(`${f}.distance`)} optional><input name="haramDistanceM" type="number" min={0} max={50000} step={50} dir="ltr" defaultValue={pkg?.haramDistanceM ?? ""} className="input" /></Field>
-          <Field label={t(`${f}.walk`)} hint={t(`${f}.walkHint`)} optional><input name="walkMinutes" maxLength={12} dir="ltr" defaultValue={pkg?.walkMinutes ?? ""} className="input" /></Field>
+          {pilgrimage && <Field label={t(`${f}.area`)} optional><input name="makkahArea" maxLength={80} defaultValue={pkg?.makkahArea ?? ""} className="input" /></Field>}
+          {pilgrimage && <Field label={t(`${f}.distance`)} optional><input name="haramDistanceM" type="number" min={0} max={50000} step={50} dir="ltr" defaultValue={pkg?.haramDistanceM ?? ""} className="input" /></Field>}
+          {pilgrimage && <Field label={t(`${f}.walk`)} hint={t(`${f}.walkHint`)} optional><input name="walkMinutes" maxLength={12} dir="ltr" defaultValue={pkg?.walkMinutes ?? ""} className="input" /></Field>}
           <Field label={t(`${f}.airline`)} optional><input name="airline" maxLength={80} defaultValue={pkg?.airline ?? ""} className="input" /></Field>
           <Field label={t(`${f}.flightType`)}>
             <select name="directFlight" className="input" defaultValue={pkg?.directFlight === true ? "yes" : pkg?.directFlight === false ? "no" : ""}>

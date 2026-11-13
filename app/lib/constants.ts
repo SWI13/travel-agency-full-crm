@@ -60,8 +60,12 @@ export const VOID_PAYMENT_STATUSES: PaymentStatus[] = ["refunded", "cancelled"];
 export const ROLES = ["admin", "manager", "agent"] as const;
 export type Role = (typeof ROLES)[number];
 
-export const PACKAGE_CATEGORIES = ["umrah", "hajj"] as const;
+export const PACKAGE_CATEGORIES = ["umrah", "hajj", "vacation", "trip"] as const;
 export type PackageCategory = (typeof PACKAGE_CATEGORIES)[number];
+/** Umrah and Hajj offers have Makkah / Madinah / Haram details; vacations and trips do not. */
+export const isPilgrimage = (category: PackageCategory | null | undefined) => category === "umrah" || category === "hajj";
+/** Reference code prefix shown in website WhatsApp messages: OMR-01, HAJ-01, VAC-01, TRP-01. */
+export const CATEGORY_PREFIX: Record<PackageCategory, string> = { umrah: "OMR", hajj: "HAJ", vacation: "VAC", trip: "TRP" };
 
 export const PACKAGE_STATUSES = ["draft", "active", "sold_out", "archived"] as const;
 export type PackageStatus = (typeof PACKAGE_STATUSES)[number];
@@ -138,3 +142,7 @@ export const GENERIC_REF = "WEB-00";
 
 /** phone_number_id used by simulated (demo) webhook events. */
 export const DEMO_PHONE_NUMBER_ID = "DEMO";
+
+/** The lead "service" (Umrah / Hajj reports) that an offer's category implies. */
+export const serviceForCategory = (category: PackageCategory): ServiceType =>
+  category === "umrah" || category === "hajj" ? category : "unknown";
