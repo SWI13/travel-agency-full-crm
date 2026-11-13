@@ -19,15 +19,15 @@ import {
   PRIORITIES,
   ROOM_TYPES,
   SERVICE_TYPES,
-  WON_STAGES,
 } from "~/lib/constants";
 import { cn, dayKey, formatDate, formatDateTime, formatDzd, formatTime, leadName, toLocalInput } from "~/lib/format";
 import { formatPhone, waChatLink } from "~/lib/phone";
-import type { Booking, FollowUp, Lead, Message } from "~/lib/types";
+import type { Booking, Departure, FollowUp, Lead, Message } from "~/lib/types";
 import { Avatar, Badge, DemoBadge, Drawer, EmptyState, Field, Modal, Segmented, SkeletonRows, Spinner } from "~/ui";
 import { useConfirm, useToast } from "~/ui/feedback";
 import { WhatsAppIcon } from "~/site/components";
 import { api, errorMessage, PAYMENT_TONE, SOURCE_TONE, STAGE_TONE } from "./api";
+import { JourneyBar, NextStep } from "./lead-flow";
 import { useCrm } from "./store";
 
 type Tab = "details" | "conversation" | "tasks";
@@ -89,7 +89,9 @@ function LeadPanel({ lead, onClose }: { lead: Lead; onClose: () => void }) {
   const [tab, setTab] = useState<Tab>(lead.unreadCount > 0 ? "conversation" : "details");
   const [form, setForm] = useState<FormState>(() => pickForm(lead));
   const [saving, setSaving] = useState(false);
-  const [bookingOpen, setBookingOpen] = useState(false);
+  const [booking, setBooking] = useState<{ packageId: string | null; departureId: string | null } | null>(null);
+  const openBooking = (packageId?: string | null, departureId?: string | null) =>
+    setBooking({ packageId: packageId ?? lead.packageId ?? null, departureId: departureId ?? null });
 
   const dirty = useMemo(
     () => EDITABLE.some((key) => JSON.stringify(form[key] ?? null) !== JSON.stringify(lead[key] ?? null)),
@@ -166,6 +168,7 @@ function LeadPanel({ lead, onClose }: { lead: Lead; onClose: () => void }) {
               <Badge tone={SOURCE_TONE[lead.source]}>{t(`crm.source.${lead.source}`)}</Badge>
               {lead.serviceType !== "unknown" && <Badge tone="gold">{t(`crm.service.${lead.serviceType}`)}</Badge>}
             </div>
+            <JourneyBar lead={lead} />
           </div>
           <button type="button" className="icon-btn -me-2 -mt-1" onClick={onClose} aria-label={t("crm.common.close")}>
             <X className="size-5" />
@@ -212,6 +215,9 @@ function LeadPanel({ lead, onClose }: { lead: Lead; onClose: () => void }) {
       </header>
 
       <div className="flex-1 overflow-y-auto scroll-thin">
+        <div className="px-5 pt-5">
+          <NextStep lead={lead} onBook={openBooking} />
+        </div>
         {tab === "conversation" && <Conversation lead={lead} />}
 
         {tab === "details" && (
@@ -337,13 +343,12 @@ function LeadPanel({ lead, onClose }: { lead: Lead; onClose: () => void }) {
             <Section
               title={t("crm.lead.bookings")}
               aside={
-                <button type="button" className="btn btn-primary btn-sm" disabled={!WON_STAGES.includes(lead.stage)} onClick={() => setBookingOpen(true)}>
+                <button type="button" className="btn btn-primary btn-sm" onClick={() => openBooking()}>
                   <Ticket className="size-3.5" />
                   {t("crm.lead.convert")}
                 </button>
               }
             >
-              {!WON_STAGES.includes(lead.stage) && <p className="text-[13px] muted mb-3">{t("crm.lead.convertHint")}</p>}
               {bookings.length === 0 ? (
                 <p className="text-sm muted">{t("crm.lead.noBookings")}</p>
               ) : (
@@ -389,7 +394,7 @@ function LeadPanel({ lead, onClose }: { lead: Lead; onClose: () => void }) {
         </footer>
       )}
 
-      <BookingModal lead={lead} open={bookingOpen} onClose={() => setBookingOpen(false)} />
+      {booking && <BookingModal lead={lead} open packageId={booking.packageId} departureId={booking.departureId} onClose={() => setBooking(null)} />}
     </>
   );
 }
@@ -601,32 +606,54 @@ function FollowUpForm({ lead }: { lead: Lead }) {
   );
 }
 
-// ── Convert to booking ───────────────────────────────────────────────────────
-export function BookingModal({ lead, open, onClose }: { lead: Lead; open: boolean; onClose: () => void }) {
+// ── Book (one click: also confirms the customer) ─────────────────────────────
+export function BookingModal({ lead, open, onClose, packageId: initialPackage, departureId: initialDeparture }: {
+  lead: Lead;
+  open: boolean;
+  onClose: () => void;
+  packageId?: string | null;
+  departureId?: string | null;
+}) {
   const { t, locale } = useI18n();
   const { data, packageById, apply } = useCrm();
   const toast = useToast();
   const today = dayKey(new Date());
-  const options = useMemo(
-    () =>
-      data.departures
-        .filter((d) => d.status === "open" && d.departDate >= today)
-        .map((d) => ({ d, pkg: packageById.get(d.packageId), left: d.capacity - (data.seatsTaken[d.id] ?? 0) }))
-        .filter((o) => o.pkg && o.left > 0)
-        .sort((a, b) => Number(b.d.packageId === lead.packageId) - Number(a.d.packageId === lead.packageId) || a.d.departDate.localeCompare(b.d.departDate)),
-    [data.departures, data.seatsTaken, packageById, lead.packageId, today],
+
+  // Open, future departures with free seats, grouped by offer.
+  const byPackage = useMemo(() => {
+    const map = new Map<string, Array<{ d: Departure; left: number }>>();
+    for (const d of data.departures) {
+      if (d.status !== "open" || d.departDate < today || !packageById.get(d.packageId)) continue;
+      const left = d.capacity - (data.seatsTaken[d.id] ?? 0);
+      if (left <= 0) continue;
+      map.set(d.packageId, [...(map.get(d.packageId) ?? []), { d, left }]);
+    }
+    for (const list of map.values()) list.sort((a, b) => a.d.departDate.localeCompare(b.d.departDate));
+    return map;
+  }, [data.departures, data.seatsTaken, packageById, today]);
+  const offerIds = [...byPackage.keys()].sort(
+    (a, b) => Number(b === lead.packageId) - Number(a === lead.packageId) || (packageById.get(a)?.name ?? "").localeCompare(packageById.get(b)?.name ?? ""),
   );
-  const [departureId, setDepartureId] = useState("");
+
+  const [packageId, setPackageId] = useState<string>(() =>
+    initialPackage && byPackage.has(initialPackage) ? initialPackage : offerIds[0] ?? "",
+  );
+  const dates = byPackage.get(packageId) ?? [];
+  const [departureId, setDepartureId] = useState<string>(() =>
+    initialDeparture && dates.some((x) => x.d.id === initialDeparture) ? initialDeparture : dates[0]?.d.id ?? "",
+  );
   const [travelers, setTravelers] = useState(Math.max(1, (lead.adults ?? 0) + (lead.children ?? 0)));
   const [total, setTotal] = useState<number | "">("");
   const [paid, setPaid] = useState<number | "">(0);
   const [busy, setBusy] = useState(false);
 
-  const selected = options.find((o) => o.d.id === departureId);
-  const unit = selected ? (selected.d.priceDzd ?? selected.pkg!.priceDzd ?? 0) : 0;
+  const selected = dates.find((x) => x.d.id === departureId);
+  const pkg = packageById.get(packageId);
+  const unit = selected ? (selected.d.priceDzd ?? pkg?.priceDzd ?? 0) : 0;
+  const maxTravelers = selected?.left ?? 100;
   useEffect(() => {
-    if (open && !departureId && options[0]) setDepartureId(options[0].d.id);
-  }, [open, departureId, options]);
+    if (!dates.some((x) => x.d.id === departureId)) setDepartureId(dates[0]?.d.id ?? "");
+  }, [packageId]); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (selected) setTotal(unit * travelers); // suggestion; the employee can overwrite it
   }, [departureId, travelers]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -644,6 +671,7 @@ export function BookingModal({ lead, open, onClose }: { lead: Lead; open: boolea
         paidDzd: Number(paid || 0),
         bookingDate: String(form.get("bookingDate")),
         notes: String(form.get("notes") ?? "") || null,
+        confirmLead: true,
       });
       apply("bookings", booking);
       toast.success(t("crm.booking.created"));
@@ -656,39 +684,65 @@ export function BookingModal({ lead, open, onClose }: { lead: Lead; open: boolea
   }
 
   return (
-    <Modal open={open} onClose={onClose} title={t("crm.booking.createTitle")} subtitle={leadName(lead)}>
-      {options.length === 0 ? (
+    <Modal open={open} onClose={onClose} size="lg" title={t("crm.booking.createTitle")} subtitle={leadName(lead)}>
+      {offerIds.length === 0 ? (
         <p className="text-sm muted">{t("crm.booking.noOpen")}</p>
       ) : (
-        <form onSubmit={submit} className="grid grid-cols-2 gap-4">
-          <Field label={t("crm.booking.departure")} className="col-span-2" hint={selected ? t("crm.booking.seatsLeft", { n: selected.left }) : undefined}>
-            <select className="input" value={departureId} onChange={(e) => setDepartureId(e.target.value)} required>
-              {options.map(({ d, pkg, left }) => (
-                <option key={d.id} value={d.id}>
-                  {pkg!.name} — {formatDate(d.departDate, locale)} ({t("crm.booking.seatsLeft", { n: left })})
-                </option>
+        <form onSubmit={submit} className="grid gap-5">
+          <div className="flex gap-3 items-end rounded-xl border border-[var(--line)] p-2.5">
+            <div className="relative size-16 shrink-0 overflow-hidden rounded-lg bg-gradient-to-br from-navy-900 to-emerald-800">
+              {pkg?.coverImage && <img src={pkg.coverImage} alt="" className="absolute inset-0 size-full object-cover" />}
+            </div>
+            <Field label={t("crm.booking.package")} className="flex-1 min-w-0">
+              <select className="input" value={packageId} onChange={(e) => setPackageId(e.target.value)}>
+                {offerIds.map((id) => <option key={id} value={id}>{packageById.get(id)!.name}</option>)}
+              </select>
+            </Field>
+          </div>
+
+          <div>
+            <p className="field-label">{t("crm.booking.departure")}</p>
+            <div className="flex flex-wrap gap-2">
+              {dates.map(({ d, left }) => (
+                <button
+                  key={d.id}
+                  type="button"
+                  onClick={() => setDepartureId(d.id)}
+                  className={cn("rounded-xl border-2 px-3 py-2 text-start text-[13px]", departureId === d.id ? "border-emerald-600 bg-emerald-50" : "border-[var(--line)] hover:border-emerald-300")}
+                >
+                  <span className="block font-semibold">{formatDate(d.departDate, locale)}</span>
+                  <span className="block text-[11px] muted">{t("crm.booking.seatsLeft", { n: left })}</span>
+                </button>
               ))}
-            </select>
-          </Field>
-          <Field label={t("crm.booking.travelers")}>
-            <input type="number" min={1} max={selected?.left ?? 100} required className="input" value={travelers} onChange={(e) => setTravelers(Math.max(1, Number(e.target.value)))} />
-          </Field>
-          <Field label={t("crm.booking.date")}>
-            <input name="bookingDate" type="date" required defaultValue={today} className="input" />
-          </Field>
-          <Field label={t("crm.booking.total")} hint={formatDzd(Number(total || 0), locale)}>
-            <input type="number" min={0} step={1000} required dir="ltr" className="input" value={total} onChange={(e) => setTotal(e.target.value === "" ? "" : Number(e.target.value))} />
-          </Field>
-          <Field label={t("crm.booking.paid")} hint={`${t("crm.booking.remaining")}: ${formatDzd(Math.max(0, Number(total || 0) - Number(paid || 0)), locale)}`}>
-            <input type="number" min={0} max={Number(total || 0)} step={1000} dir="ltr" className="input" value={paid} onChange={(e) => setPaid(e.target.value === "" ? "" : Number(e.target.value))} />
-          </Field>
-          <Field label={t("crm.common.notes")} className="col-span-2" optional>
-            <textarea name="notes" rows={2} className="input" maxLength={2000} />
-          </Field>
-          <div className="col-span-2 flex justify-end gap-2">
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <Field label={t("crm.booking.travelers")}>
+              <div className="flex items-center gap-2">
+                <button type="button" className="btn btn-secondary size-10 p-0 text-lg" onClick={() => setTravelers((n) => Math.max(1, n - 1))} aria-label="-">−</button>
+                <input type="number" min={1} max={maxTravelers} required className="input text-center tabular" value={travelers} onChange={(e) => setTravelers(Math.min(maxTravelers, Math.max(1, Number(e.target.value) || 1)))} />
+                <button type="button" className="btn btn-secondary size-10 p-0 text-lg" onClick={() => setTravelers((n) => Math.min(maxTravelers, n + 1))} aria-label="+">+</button>
+              </div>
+            </Field>
+            <Field label={t("crm.booking.date")}>
+              <input name="bookingDate" type="date" required defaultValue={today} className="input" />
+            </Field>
+            <Field label={t("crm.booking.total")} hint={formatDzd(Number(total || 0), locale)}>
+              <input type="number" min={0} step={1000} required dir="ltr" className="input" value={total} onChange={(e) => setTotal(e.target.value === "" ? "" : Number(e.target.value))} />
+            </Field>
+            <Field label={t("crm.booking.paid")} hint={`${t("crm.booking.remaining")}: ${formatDzd(Math.max(0, Number(total || 0) - Number(paid || 0)), locale)}`}>
+              <input type="number" min={0} max={Number(total || 0)} step={1000} dir="ltr" className="input" value={paid} onChange={(e) => setPaid(e.target.value === "" ? "" : Number(e.target.value))} />
+            </Field>
+            <Field label={t("crm.common.notes")} className="col-span-2" optional>
+              <textarea name="notes" rows={2} className="input" maxLength={2000} />
+            </Field>
+          </div>
+
+          <div className="flex justify-end gap-2">
             <button type="button" className="btn btn-secondary" onClick={onClose}>{t("crm.common.cancel")}</button>
-            <button type="submit" className="btn btn-primary" disabled={busy || !departureId}>
-              {busy && <Spinner />}
+            <button type="submit" className="btn btn-primary btn-lg" disabled={busy || !departureId}>
+              {busy ? <Spinner /> : <Ticket className="size-4" />}
               {t("crm.booking.submit")}
             </button>
           </div>

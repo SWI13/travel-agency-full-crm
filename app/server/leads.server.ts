@@ -3,6 +3,7 @@ import { GENERIC_REF, type LeadSource, type ServiceType } from "~/lib/constants"
 import type { FollowUp, Lead, Message, Package, Settings, SessionUser, Staff } from "~/lib/types";
 import { logActivity, SYSTEM_ACTOR } from "./activity.server";
 import { db } from "./db.server";
+import { evalScript, KEY_PREFIX, redis, redisConfigured } from "./redis.server";
 import { ConflictError } from "./store/index.server";
 import type { Identity } from "./whatsapp/parse";
 
@@ -18,17 +19,38 @@ export const leadIdForUser = (userId: string) => `l${hash(`bsuid:${userId}`).sli
 export const messageIdFor = (waMessageId: string) => `m${hash(waMessageId).slice(0, 31)}`;
 export const eventIdFor = (rawBody: string) => `e${hash(rawBody).slice(0, 31)}`;
 
-// ── Per-lead serialisation (single process) ─────────────────────────────────
+// ── Per-lead serialisation ──────────────────────────────────────────────────
+// Within one process: a promise chain per key. Across serverless instances
+// (Redis configured): additionally a short Redis lock, released by its owner only.
 const holder = globalThis as unknown as { __crmLocks?: Map<string, Promise<unknown>> };
 const locks = (holder.__crmLocks ??= new Map());
 export async function withLock<T>(key: string, task: () => Promise<T>): Promise<T> {
   const previous = locks.get(key) ?? Promise.resolve();
-  const run = previous.catch(() => {}).then(task);
+  const run = previous.catch(() => {}).then(() => (redisConfigured() ? withRedisLock(key, task) : task()));
   locks.set(key, run);
   try {
     return await run;
   } finally {
     if (locks.get(key) === run) locks.delete(key);
+  }
+}
+
+const RELEASE = `if redis.call('GET', KEYS[1]) == ARGV[1] then return redis.call('DEL', KEYS[1]) end return 0`;
+async function withRedisLock<T>(key: string, task: () => Promise<T>): Promise<T> {
+  const client = await redis();
+  const lockKey = `${KEY_PREFIX}lock:${key}`;
+  const token = randomUUID();
+  const deadline = Date.now() + 15_000;
+  // Wait for the other instance; after 15 s proceed anyway (ids stay deterministic, so no duplicates).
+  while (Date.now() < deadline) {
+    const taken = await client.set(lockKey, token, { condition: "NX", expiration: { type: "PX", value: 20_000 } });
+    if (taken) break;
+    await new Promise((r) => setTimeout(r, 60 + Math.random() * 60));
+  }
+  try {
+    return await task();
+  } finally {
+    await evalScript(RELEASE, [lockKey], [token]).catch(() => {});
   }
 }
 

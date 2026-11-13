@@ -3,6 +3,7 @@ import { DEFAULT_CHECKLIST } from "~/lib/constants";
 import { can, type Capability } from "~/lib/permissions";
 import type { SessionUser, Settings, Staff } from "~/lib/types";
 import { db } from "./db.server";
+import { KEY_PREFIX, redis, redisConfigured } from "./redis.server";
 import { env } from "./env.server";
 import { forbidden, HttpError, unauthorized } from "./errors";
 import { ConflictError, getStore } from "./store/index.server";
@@ -85,9 +86,19 @@ export function assertSameOrigin(request: Request): void {
   if (new URL(origin).host !== host) throw new HttpError(403, "bad_origin", "Cross-site request blocked");
 }
 
-// ── Login throttling (per email + IP, in memory) ────────────────────────────
+// ── Throttling (login, public form) ─────────────────────────────────────────
+// In memory for a single server; in Redis when several instances run (Vercel).
 const attempts = new Map<string, { count: number; resetAt: number }>();
-export function throttle(key: string, limit: number, windowMs: number): void {
+const tooMany = () => new HttpError(429, "too_many_requests", "Too many attempts. Please wait a moment and try again.");
+export async function throttle(key: string, limit: number, windowMs: number): Promise<void> {
+  if (redisConfigured()) {
+    const client = await redis();
+    const redisKey = `${KEY_PREFIX}throttle:${key}`;
+    const count = await client.incr(redisKey);
+    if (count === 1) await client.pExpire(redisKey, windowMs);
+    if (count > limit) throw tooMany();
+    return;
+  }
   const now = Date.now();
   const entry = attempts.get(key);
   if (!entry || entry.resetAt < now) {
@@ -95,9 +106,7 @@ export function throttle(key: string, limit: number, windowMs: number): void {
     return;
   }
   entry.count += 1;
-  if (entry.count > limit) {
-    throw new HttpError(429, "too_many_requests", "Too many attempts. Please wait a moment and try again.");
-  }
+  if (entry.count > limit) throw tooMany();
 }
 
 export const clientIp = (request: Request) =>

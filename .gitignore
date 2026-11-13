@@ -22,3 +22,6 @@
 
 # Local Appwrite (Docker) used for development: generated config with local secrets
 /infra/
+
+# Vercel local build output
+/.vercel/

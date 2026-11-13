@@ -4,6 +4,7 @@ import type { Route } from "./+types/layout";
 import { LeadDrawer } from "~/crm/lead-drawer";
 import { DemoBanner, Sidebar, Topbar } from "~/crm/shell";
 import { CrmProvider } from "~/crm/store";
+import { currentRevision, liveMode } from "~/server/events.server";
 import { snapshot } from "~/server/rpc/index.server";
 import { ensureBootstrap, getUser } from "~/server/session.server";
 import { FeedbackProvider } from "~/ui/feedback";
@@ -13,7 +14,9 @@ export async function loader({ request }: Route.LoaderArgs) {
   await ensureBootstrap();
   const user = await getUser(request);
   if (!user) throw redirect("/admin/sign-in");
-  return { snapshot: await snapshot(user) };
+  // Read the revision first: anything written while the snapshot loads is replayed afterwards.
+  const rev = await currentRevision();
+  return { snapshot: await snapshot(user), live: { mode: liveMode(), rev } };
 }
 
 // Data stays current through the live feed, so navigation never refetches the snapshot.
@@ -57,7 +60,7 @@ export default function CrmLayout({ loaderData }: Route.ComponentProps) {
   return (
     <div className="theme-crm min-h-dvh flex">
       <FeedbackProvider>
-        <CrmProvider initial={loaderData.snapshot}>
+        <CrmProvider initial={loaderData.snapshot} live={loaderData.live}>
           <Sidebar collapsed={collapsed} onToggle={toggle} mobileOpen={mobileOpen} onMobileClose={() => setMobileOpen(false)} />
           <div className="flex-1 min-w-0 flex flex-col">
             <Topbar onMenu={() => setMobileOpen(true)} />

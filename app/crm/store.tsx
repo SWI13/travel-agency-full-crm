@@ -78,7 +78,15 @@ function upsert<T extends { id: string }>(list: T[], doc: T, prepend = false): T
   return next;
 }
 
-export function CrmProvider({ initial, children }: { initial: Snapshot; children: ReactNode }) {
+export interface LiveConfig {
+  /** "stream" = Server-Sent Events; "poll" = ask /api/changes every few seconds (serverless). */
+  mode: "stream" | "poll";
+  rev: number;
+}
+
+const POLL_MS = 4_000;
+
+export function CrmProvider({ initial, live, children }: { initial: Snapshot; live: LiveConfig; children: ReactNode }) {
   const { t } = useI18n();
   const toast = useToast();
   const navigate = useNavigate();
@@ -166,7 +174,62 @@ export function CrmProvider({ initial, children }: { initial: Snapshot; children
   );
 
   // ── Live feed ───────────────────────────────────────────────────────────
+  const handleChange = useCallback(
+    (change: ChangeEvent) => {
+      if (change.collection === "seats") {
+        setData((current) => ({
+          ...current,
+          seatsTaken: { ...current.seatsTaken, [change.doc.id]: Number(change.doc.taken) },
+        }));
+      } else if (change.collection === "messages") {
+        for (const listener of messageListeners.current) listener(change.doc as unknown as Message, change.op);
+      } else if (change.collection === "settings") {
+        apply("settings", change.doc);
+      } else if (LIST_KEYS.includes(change.collection as ListKey)) {
+        if (change.op === "delete") drop(change.collection as ListKey, change.doc.id);
+        else apply(change.collection as ListKey, change.doc);
+      }
+      if (change.notify && change.op === "upsert") handleNotify(change.notify, change.doc as unknown as Lead);
+    },
+    [apply, drop, handleNotify],
+  );
+
+  // Serverless hosting: ask for the changes since the last revision while the tab is visible.
   useEffect(() => {
+    if (live.mode !== "poll") return;
+    let rev = live.rev;
+    let stopped = false;
+    let busy = false;
+    const tick = async () => {
+      if (stopped || busy || document.visibilityState !== "visible") return;
+      busy = true;
+      try {
+        const response = await fetch(`/api/changes?since=${rev}`, { headers: { Accept: "application/json" } });
+        if (!response.ok) throw new Error(String(response.status));
+        const body = (await response.json()) as { rev: number; events: ChangeEvent[]; resync: boolean };
+        setConnection("live");
+        if (body.resync) await reload();
+        else for (const change of body.events) handleChange(change);
+        rev = body.rev;
+      } catch {
+        setConnection("offline");
+      } finally {
+        busy = false;
+      }
+    };
+    void tick();
+    const timer = setInterval(tick, POLL_MS);
+    const onVisible = () => void tick();
+    document.addEventListener("visibilitychange", onVisible);
+    return () => {
+      stopped = true;
+      clearInterval(timer);
+      document.removeEventListener("visibilitychange", onVisible);
+    };
+  }, [live.mode, live.rev, handleChange, reload]);
+
+  useEffect(() => {
+    if (live.mode !== "stream") return;
     let source: EventSource | null = null;
     let closed = false;
     let everConnected = false;
@@ -187,20 +250,7 @@ export function CrmProvider({ initial, children }: { initial: Snapshot; children
         } catch {
           return;
         }
-        if (change.collection === "seats") {
-          setData((current) => ({
-            ...current,
-            seatsTaken: { ...current.seatsTaken, [change.doc.id]: Number(change.doc.taken) },
-          }));
-        } else if (change.collection === "messages") {
-          for (const listener of messageListeners.current) listener(change.doc as unknown as Message, change.op);
-        } else if (change.collection === "settings") {
-          apply("settings", change.doc);
-        } else if (LIST_KEYS.includes(change.collection as ListKey)) {
-          if (change.op === "delete") drop(change.collection as ListKey, change.doc.id);
-          else apply(change.collection as ListKey, change.doc);
-        }
-        if (change.notify && change.op === "upsert") handleNotify(change.notify, change.doc as unknown as Lead);
+        handleChange(change);
       };
       source.onerror = () => setConnection("offline"); // EventSource retries by itself
     };
@@ -218,7 +268,7 @@ export function CrmProvider({ initial, children }: { initial: Snapshot; children
       source?.close();
       if (fallback) clearInterval(fallback);
     };
-  }, [apply, drop, handleNotify, reload]);
+  }, [live.mode, handleChange, reload]);
 
   // Unread conversations in the browser tab title.
   const unread = useMemo(() => data.leads.filter((l) => l.unreadCount > 0).length, [data.leads]);

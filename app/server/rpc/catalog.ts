@@ -52,7 +52,7 @@ const packageInput = z.object({
     .trim()
     .max(1000)
     .nullable()
-    .refine((v) => !v || /^https:\/\/|^\/uploads\//.test(v), "Cover image must be an https:// link")
+    .refine((v) => !v || /^https:\/\/|^\/media\/[a-f0-9]{24}\.(jpg|png|webp)$/.test(v), "Cover image must be an uploaded photo or an https:// link")
     .transform((v) => v || null),
   /** Optional first departure created together with a new package. */
   firstDeparture: z
@@ -112,7 +112,7 @@ async function publishSeats(departureId: string): Promise<void> {
   const departure = await db.get<Departure>("departures", departureId);
   if (!departure) return;
   const taken = departure.capacity - (await seatsLeft(departure));
-  publish({ collection: "seats", op: "upsert", doc: { id: departureId, taken }, audience: { roles: [...ROLES], userIds: [] } });
+  await publish({ collection: "seats", op: "upsert", doc: { id: departureId, taken }, audience: { roles: [...ROLES], userIds: [] } });
 }
 
 export const catalogProcedures = {
@@ -265,10 +265,12 @@ export const catalogProcedures = {
       paidDzd: zMoney,
       bookingDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
       notes: zNullableText(2000).optional(),
+      /** One-click booking from the dashboard: also moves the lead to Confirmed. */
+      confirmLead: z.boolean().optional(),
     }),
     async run({ user }, input) {
-      const lead = await leadFor(user, input.leadId);
-      if (!WON_STAGES.includes(lead.stage)) {
+      let lead = await leadFor(user, input.leadId);
+      if (!WON_STAGES.includes(lead.stage) && !input.confirmLead) {
         throw new HttpError(409, "lead_not_confirmed", "Move the lead to Confirmed before creating a booking");
       }
       if (input.paidDzd > input.totalDzd) throw badRequest("The amount paid cannot exceed the total", { field: "paidDzd" });
@@ -285,6 +287,18 @@ export const catalogProcedures = {
         }
         const pkg = await db.get<Package>("packages", departure.packageId);
         if (!pkg) throw notFound("Package");
+        if (!WON_STAGES.includes(lead.stage)) {
+          const previousStage = lead.stage;
+          lead = await db.update<Lead>("leads", lead.id, { stage: "confirmed", lostReason: null, lastActivityAt: new Date().toISOString() });
+          await logActivity({
+            actor: user,
+            action: "stage_changed",
+            entityType: "lead",
+            lead,
+            description: `Stage changed from ${previousStage} to confirmed (booking)`,
+            meta: { from: previousStage, to: "confirmed", lostReason: null },
+          });
+        }
         const customerName = leadName(lead);
 
         const booking = await db.create<Booking>("bookings", {
@@ -315,7 +329,7 @@ export const catalogProcedures = {
           });
         }
         await publishSeats(departure.id);
-        if (!lead.packageId) await db.update("leads", lead.id, { packageId: pkg.id });
+        if (lead.packageId !== pkg.id) await db.update("leads", lead.id, { packageId: pkg.id });
         await logActivity({
           actor: user,
           action: "booking_created",

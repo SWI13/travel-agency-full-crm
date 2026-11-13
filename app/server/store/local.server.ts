@@ -186,6 +186,9 @@ export function createLocalStore(): Store {
     },
 
     async health() {
+      if (process.env.VERCEL) {
+        return { ok: false, detail: "No database on Vercel: add Storage → Redis to the project (REDIS_URL), then redeploy." };
+      }
       return { ok: true, detail: "Local demo datastore (.data/db.json)" };
     },
   };

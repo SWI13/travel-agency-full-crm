@@ -1,6 +1,6 @@
 # Testing report
 
-Date: 2026-11-13 · Environment: Windows 11, Node 24, local demo datastore, headless Chrome.
+Date: 2026-11-13 · Environment: Windows 11, Node 24, local demo datastore, Redis 7 and Appwrite 2.7.2 in Docker, headless Chrome.
 
 ## Summary
 
@@ -8,13 +8,18 @@ Date: 2026-11-13 · Environment: Windows 11, Node 24, local demo datastore, head
 |---|---|---|
 | TypeScript check | clean | `npm run typecheck` |
 | Unit tests | 40 / 40 | `npm test` |
-| End-to-end acceptance (HTTP, isolated server), local datastore | 109 / 109 | `npm run test:acceptance` |
-| Same 109 checks against **live Appwrite 2.7.2** (Docker, temporary database) | 109 / 109 | `npm run test:appwrite` |
+| End-to-end acceptance (HTTP, isolated server), local datastore | 114 / 114 | `npm run test:acceptance` |
+| Same 114 checks against **Redis 7** (Docker, isolated key prefix) | 114 / 114 | `REDIS_URL=redis://127.0.0.1:6379 REDIS_PREFIX=test npm run test:acceptance` |
+| Same 114 checks against **live Appwrite 2.7.2** (Docker, temporary database) | 114 / 114 | `npm run test:appwrite` |
+| Two app servers sharing one Redis (serverless simulation): the same WhatsApp message sent 10 times and 12 messages from one customer, split across both at once | 1 lead, 1 + 12 messages, 0 duplicates; server B's change feed saw server A's writes | script used during the Vercel work |
+| Vercel build (`VERCEL=1 react-router build`, Vercel preset) and standard Node build | both succeed | — |
 | Browser checks on the Appwrite-backed dashboard | 16 / 16 | headless Chrome, same script as below |
 | Browser checks (real UI, two sessions, RTL, phone width) | 16 / 16 | driven by a headless-Chrome script during the build |
 | Production build + smoke test | 9 / 9 | `npm run build`, then served build checked |
 
-Not covered by any test (stated plainly, details at the end): a real Meta webhook, audible playback of the notification sound, and mouse drag-and-drop on the pipeline board.
+The 5 checks added with the Vercel work: one-click booking confirms the customer and links the offer; a photo uploads and is served back; an uploaded photo can be set as a package cover; agents cannot upload; non-images are refused.
+
+Not covered by any test (stated plainly, details at the end): a deployment on a real Vercel account, a real Meta webhook, audible playback of the notification sound, and mouse drag-and-drop on the pipeline board.
 
 ## The 20 acceptance criteria
 

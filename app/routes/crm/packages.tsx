@@ -1,13 +1,16 @@
 import { useMemo, useState, type FormEvent } from "react";
-import { Archive, ArchiveRestore, BedDouble, CalendarDays, Clock, ExternalLink, Globe, MapPin, Package as PackageIcon, Pencil, Plus, Trash2 } from "lucide-react";
+import { Archive, ArchiveRestore, BedDouble, CalendarDays, Clock, ExternalLink, Globe, MapPin, Package as PackageIcon, Pencil, Plus, Ticket, Trash2 } from "lucide-react";
 import { api, errorMessage } from "~/crm/api";
+import { ImageUpload } from "~/crm/image-upload";
+import { BookingModal } from "~/crm/lead-drawer";
+import { CustomerPicker } from "~/crm/lead-flow";
 import { PageBody } from "~/crm/shell";
 import { useCrm } from "~/crm/store";
 import { useI18n } from "~/i18n";
 import { PACKAGE_CATEGORIES, PACKAGE_STATUSES, ROOM_TYPES, type PackageStatus, type RoomType } from "~/lib/constants";
 import { cn, dayKey, formatDate, formatDzd } from "~/lib/format";
 import { seatsFor } from "~/lib/stats";
-import type { Package } from "~/lib/types";
+import type { Lead, Package } from "~/lib/types";
 import { Badge, DemoBadge, EmptyState, Field, Modal, PageHeader, Spinner } from "~/ui";
 import { useConfirm, useToast } from "~/ui/feedback";
 
@@ -20,6 +23,8 @@ export default function PackagesPage() {
   const manage = can("catalog.manage");
   const [editing, setEditing] = useState<Package | "new" | null>(null);
   const [showArchived, setShowArchived] = useState(false);
+  const [bookingFor, setBookingFor] = useState<Package | null>(null);
+  const [bookingLead, setBookingLead] = useState<Lead | null>(null);
   const today = dayKey(new Date());
 
   const cards = useMemo(
@@ -147,6 +152,12 @@ export default function PackagesPage() {
                     )}
                   </div>
                 </div>
+                {departures.length > 0 && available > 0 && pkg.status !== "archived" && (
+                  <button type="button" className="btn btn-primary mt-4 w-full" onClick={() => setBookingFor(pkg)}>
+                    <Ticket className="size-4" />
+                    {t("crm.flow.bookCustomer")}
+                  </button>
+                )}
                 {pkg.status === "active" && (
                   <p className="mt-3 flex items-center gap-1.5 text-[11px] font-medium text-emerald-700">
                     <Globe className="size-3.5" />
@@ -160,6 +171,20 @@ export default function PackagesPage() {
       )}
 
       {editing && <PackageForm pkg={editing === "new" ? null : editing} onClose={() => setEditing(null)} />}
+      {bookingFor && !bookingLead && (
+        <CustomerPicker pkg={bookingFor} open onClose={() => setBookingFor(null)} onPick={(lead) => setBookingLead(lead)} />
+      )}
+      {bookingFor && bookingLead && (
+        <BookingModal
+          lead={bookingLead}
+          open
+          packageId={bookingFor.id}
+          onClose={() => {
+            setBookingLead(null);
+            setBookingFor(null);
+          }}
+        />
+      )}
     </PageBody>
   );
 }
@@ -281,7 +306,7 @@ function PackageForm({ pkg, onClose }: { pkg: Package | null; onClose: () => voi
           <legend className="eyebrow mb-3">{t(`${f}.pricing`)}</legend>
           <Field label={t(`${f}.price`)}><input name="priceDzd" type="number" min={0} step={1000} dir="ltr" defaultValue={pkg?.priceDzd ?? ""} className="input" /></Field>
           <Field label={t(`${f}.capacity`)}><input name="defaultCapacity" type="number" min={1} max={2000} defaultValue={pkg?.defaultCapacity ?? ""} className="input" /></Field>
-          <Field label={t(`${f}.cover`)} hint={t(`${f}.coverHint`)} className="sm:col-span-2" optional><input name="coverImage" type="url" dir="ltr" maxLength={1000} defaultValue={pkg?.coverImage ?? ""} placeholder="https://" className="input" /></Field>
+          <Field label={t(`${f}.cover`)} hint={t(`${f}.coverHint`)} className="sm:col-span-2" optional><ImageUpload name="coverImage" defaultValue={pkg?.coverImage} /></Field>
         </fieldset>
 
         {!pkg && (

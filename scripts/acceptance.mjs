@@ -415,6 +415,25 @@ async function run() {
   const cancelled = await rpc(mgr.cookie, "bookings.update", { id: booking.data.id, paymentStatus: "cancelled" });
   check("Cancelling a booking releases its seats", cancelled.data?.paymentStatus === "cancelled" && (await snapshot(mgr.cookie)).seatsTaken[dep1.id] === undefined);
 
+  // One-click booking from the dashboard ("Book now"): the customer is confirmed automatically.
+  await webhook(inbound({ from: "213661000777", name: "One Click", text: "Salam" }));
+  const quickLead = leadByPhone(await snapshot(admin.cookie), "+213661000777");
+  const quick = await rpc(admin.cookie, "bookings.create", { leadId: quickLead.id, departureId: dep2.data.id, travelers: 2, totalDzd: 530000, paidDzd: 100000, bookingDate: "2026-11-13", confirmLead: true });
+  const quickAfter = leadByPhone(await snapshot(admin.cookie), "+213661000777");
+  check("One-click booking confirms the customer and links the offer", quick.ok && quickAfter.stage === "confirmed" && quickAfter.packageId === pkg.data.id, JSON.stringify(quick.code));
+
+  // Package photos uploaded from the dashboard.
+  const png = Buffer.from("89504e470d0a1a0a0000000d4948445200000001000000010806000000" + "1f15c4890000000d49444154789c6360000002000154a24f5d0000000049454e44ae426082", "hex");
+  const upload = (cookie, body, type = "image/png") => fetch(`${BASE}/api/upload`, { method: "POST", headers: { "Content-Type": type, Origin: BASE, Cookie: cookie }, body });
+  const uploaded = await upload(mgr.cookie, png);
+  const uploadedUrl = (await uploaded.json().catch(() => null))?.data?.url;
+  const served = uploadedUrl ? await fetch(`${BASE}${uploadedUrl}`) : null;
+  check("A package photo can be uploaded and is served back", uploaded.ok && served?.ok && served.headers.get("content-type") === "image/png", uploadedUrl);
+  const withPhoto = await rpc(mgr.cookie, "packages.save", { ...Object.fromEntries(Object.entries(pkg.data).filter(([k]) => !["createdAt", "updatedAt", "slug", "refCode", "isDemo"].includes(k))), coverImage: uploadedUrl, firstDeparture: null });
+  check("An uploaded photo can be set as the package cover", withPhoto.data?.coverImage === uploadedUrl, JSON.stringify(withPhoto.code));
+  check("Agents cannot upload photos", (await upload(agt.cookie, png)).status === 403);
+  check("Files that are not images are refused", (await upload(mgr.cookie, "hello", "image/png")).status === 400);
+
   section("16 · Role permissions (enforced on the server)");
   const denied = async (cookie, name, input = {}) => (await rpc(cookie, name, input)).status === 403;
   check("Agent: no integrations, team, settings, demo tools or deletions", (await denied(agt.cookie, "integrations.status")) && (await denied(agt.cookie, "team.create", { name: "Xx", email: "x@x.test", password: "0123456789ab", role: "admin" })) && (await denied(agt.cookie, "settings.update", { agencyName: "Hack" })) && (await denied(agt.cookie, "demo.simulate", { scenario: "new_customer" })) && (await denied(agt.cookie, "leads.delete", { id: target.id })));

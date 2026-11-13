@@ -47,8 +47,8 @@ export async function action({ request }: ActionFunctionArgs) {
     const phone = normalizeDzPhone(data.phone);
     if (!phone) throw badRequest("Invalid phone number", { field: "phone" });
 
-    throttle(`form-ip:${clientIp(request)}`, 6, 10 * 60_000);
-    throttle(`form-phone:${phone}`, 1, 2 * 60_000);
+    await throttle(`form-ip:${clientIp(request)}`, 6, 10 * 60_000);
+    await throttle(`form-phone:${phone}`, 1, 2 * 60_000);
 
     const settings = await getSettings();
     let pkg: Package | null = null;

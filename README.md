@@ -27,12 +27,13 @@ Arabic · French · English  ·  Phone and desktop
 
 1. [Start in 2 minutes](#start-in-2-minutes)
 2. [First setup (owner)](#first-setup-owner)
-3. [The admin dashboard, screen by screen](#the-admin-dashboard-screen-by-screen)
-4. [A day with the CRM](#a-day-with-the-crm)
-5. [Who can do what](#who-can-do-what)
-6. [The public website](#the-public-website)
-7. [Going live](#going-live)
-8. [For developers](#for-developers)
+3. [Sell in 4 clicks](#sell-in-4-clicks)
+4. [The admin dashboard, screen by screen](#the-admin-dashboard-screen-by-screen)
+5. [A day with the CRM](#a-day-with-the-crm)
+6. [Who can do what](#who-can-do-what)
+7. [The public website](#the-public-website)
+8. [Put it online with Vercel](#put-it-online-with-vercel)
+9. [For developers](#for-developers)
 
 ---
 
@@ -62,10 +63,30 @@ Do these once, in this order:
 |:-:|---|---|
 | 1 | **Settings → Agency profile** | Agency name (French + Arabic), phone, **WhatsApp number** (digits only, e.g. `213776331900`), Instagram, Facebook, address, opening hours, licence number. The website's WhatsApp buttons appear as soon as the number is saved. Empty fields are simply hidden on the website. |
 | 2 | **Team → Add employee** | One account per employee with a temporary password and a role (Admin, Manager or Agent). |
-| 3 | **Packages → New package** | Each trip: name, type, hotels, distance to the Haram, airline, price, status *Active* to publish it. |
+| 3 | **Packages → New package** | Each trip: name, type, hotels, distance to the Haram, airline, price, a **cover photo** (drag it from your computer or pick it from your phone), status *Active* to publish it. |
 | 4 | **Departures → New departure** | The dated groups of each package, with capacity. The website shows the seats left automatically. |
 | 5 | **Settings → Lead automation** | Assign new leads automatically to the team in turn, or let a manager assign them. |
-| 6 | **Integrations** | Connect the agency's WhatsApp number (see [Going live](#going-live)). |
+| 6 | **Integrations** | Connect the agency's WhatsApp number (see [Put it online with Vercel](#put-it-online-with-vercel)). |
+
+---
+
+## Sell in 4 clicks
+
+You never need to know the stage names. Open a customer: a **progress bar** shows where they are (*New → Talking → Offer chosen → Booked → Travelled*), and a green **Next step** box tells you what to do now, with one button.
+
+| | What you see | What you press |
+|:-:|---|---|
+| **1** | <img src="docs/screenshots/flow-next-reply.png" alt="Reply" width="420" /> | A customer just wrote. Press **Reply on WhatsApp**, answer them, then press **I replied**. |
+| **2** | <img src="docs/screenshots/flow-next-choose.png" alt="Choose an offer" width="420" /> | Press **Choose an offer**. |
+| **3** | <img src="docs/screenshots/flow-offer-picker.png" alt="Offer picker" width="420" /> | Tap the trip they want (with its photo, price, dates and seats left). Then either **Choose & send on WhatsApp** (the offer and its link are written for you), or **Book now** if they already said yes. |
+| **4** | <img src="docs/screenshots/flow-booking.png" alt="Booking" width="420" /> | Tap the date, set the number of travellers with **−/+**, type what they paid. The price is calculated. Press **Confirm booking**. The seats are taken, one traveller file is created per person, and the customer is marked as booked. |
+| ✓ | <img src="docs/screenshots/flow-next-booked.png" alt="Booked" width="420" /> | The card now shows the booking and what is still to pay. Later: **Start trip preparation**, then **Trip completed**. |
+
+**Not interested?** Every step has a **Not interested** link: tap a reason (too expensive, booked elsewhere, dates don't fit, no answer, maybe later). It feeds the *Lost leads* report. **Talk again** brings them back.
+
+**Starting from the offer instead?** On the **Packages** page, every offer has a **Book a customer** button: search the customer by name or phone, and the same booking window opens.
+
+<p align="center"><img src="docs/screenshots/flow-book-customer.png" alt="Book a customer from an offer" width="80%" /></p>
 
 ---
 
@@ -129,7 +150,7 @@ The same leads as a table, easier to scan and sort. **Filters**: stage, service 
 
 #### The customer card
 
-Click any lead to open its card on the side. It has three tabs:
+Click any lead to open its card on the side. At the top: the progress bar and the **Next step** box (see [Sell in 4 clicks](#sell-in-4-clicks)). Below, three tabs:
 
 <table>
 <tr>
@@ -160,9 +181,13 @@ Every planned call or reminder, in four groups: **Overdue** (in red), **Today**,
 
 <img src="docs/screenshots/crm-packages.png" alt="Packages" width="100%" />
 
-The trips the agency sells. For each package: name in French and Arabic, Umrah or Hajj, description, duration, departure city, airline and direct flight or not, hotel in Makkah and Madinah, hotel area, **distance and walking time to the Haram**, transport, room options (single, double, triple, quad), price in DZD, cover photo link and a reference code (`OMR-01`, `HAJ-01`…).
+The trips the agency sells. For each package: name in French and Arabic, Umrah or Hajj, description, duration, departure city, airline and direct flight or not, hotel in Makkah and Madinah, hotel area, **distance and walking time to the Haram**, transport, room options (single, double, triple, quad), price in DZD and a reference code (`OMR-01`, `HAJ-01`…).
 
-Status decides what the public sees: **Draft** (hidden), **Active** (on the website), **Sold out**, **Archived**.
+**Cover photo:** drag a photo onto the box, or click it to pick one from the computer or the phone gallery. It is resized automatically so it loads fast on the website. You can still paste a link instead.
+
+<p align="center"><img src="docs/screenshots/flow-photo-upload.png" alt="Photo upload in the package form" width="80%" /></p>
+
+Status decides what the public sees: **Draft** (hidden), **Active** (on the website), **Sold out**, **Archived**. The **Book a customer** button on each card books someone directly on that offer.
 
 ---
 
@@ -262,12 +287,11 @@ When a customer writes, the dashboard updates **instantly** on every open screen
 
 1. **Morning**: open **Overview**. Check *Unassigned leads* and *Awaiting follow-up*.
 2. Open **Follow-ups**. Call everyone in **Overdue** and **Today**, mark each one done or reschedule it.
-3. Open **WhatsApp Leads**. Answer the **New** column from the WhatsApp Business app, then drag each card to **Contacted**.
-4. For each customer, fill the **Customer** tab: what they want, dates, number of people, budget. Move them to **Qualified**.
-5. Send the offer, move to **Package sent**, and **schedule a follow-up** so you call back.
-6. When the customer agrees, move to **Confirmed** and click **Convert to booking**.
-7. In **Pilgrims & Bookings**, record payments and tick the documents as they arrive.
-8. **End of week**: the manager opens **Analytics** to see which ads bring customers and how fast the team answers.
+3. Open **WhatsApp Leads** and click each card in the **New** column. Follow the green **Next step** box: reply, choose an offer, book.
+4. Fill the **Customer** tab when you learn something: dates, number of people, budget, notes.
+5. After sending an offer, **schedule a follow-up** (*Follow-ups · Bookings* tab) so you call back.
+6. In **Pilgrims & Bookings**, record payments and tick the documents as they arrive.
+7. **End of week**: the manager opens **Analytics** to see which ads bring customers and how fast the team answers.
 
 ---
 
@@ -322,17 +346,43 @@ These rules are checked by the server, not only hidden in the screen: an agent c
 
 ---
 
-## Going live
+## Put it online with Vercel
 
-| What | Why |
+Everything runs on Vercel: the website, the dashboard, the database (**Vercel Redis**) and the photos (**Vercel Blob**). No server to manage.
+
+**1. Import the project**
+On [vercel.com](https://vercel.com) → **Add New… → Project** → pick this GitHub repository → **Deploy**. Vercel detects React Router by itself. The first deploy works but has no database yet.
+
+**2. Add the database**
+In the project: **Storage → Create → Redis** (Upstash, free plan to start) → **Connect to project**. Vercel adds the connection setting (`REDIS_URL` or `KV_URL`) by itself.
+
+**3. Add photo storage (recommended)**
+**Storage → Create → Blob** → **Connect to project**. Vercel adds `BLOB_READ_WRITE_TOKEN`. Without it, photos are kept in Redis instead, which also works but uses more of the Redis allowance.
+
+**4. Add 3 settings**
+**Settings → Environment Variables**:
+
+| Name | Value |
 |---|---|
-| **Hosting with https** | The site must be public, and Meta only sends WhatsApp messages to https addresses. |
-| **Appwrite** (database and logins) | Stores everything safely. Put the keys in `.env`. Guide: [docs/DATABASE.md](docs/DATABASE.md) |
-| **Meta / WhatsApp credentials** | So real WhatsApp messages arrive in the CRM. Guide: [docs/META_SETUP.md](docs/META_SETUP.md) |
-| **`SESSION_SECRET`** | A long random value in `.env` that protects sign-ins. |
-| **Real content** | Agency details, packages, prices, dates and trip photos, entered from the dashboard. |
+| `SESSION_SECRET` | A long random text (at least 32 characters). It protects sign-ins. |
+| `ADMIN_EMAIL` | The owner's email. |
+| `ADMIN_PASSWORD` | The owner's first password (at least 10 characters, change it after). |
 
-Run it with `npm run build && npm run start` or the included `Dockerfile`.
+> Set `ADMIN_EMAIL` and `ADMIN_PASSWORD` **before** sharing the link: they create the administrator account on first start, so nobody else can claim it.
+
+**5. Redeploy**
+**Deployments → ⋯ → Redeploy**. Open `https://your-project.vercel.app/admin`, sign in, then follow [First setup](#first-setup-owner). Check **Integrations → Database**: it should say *Redis (Vercel)* with a green test.
+
+**6. WhatsApp (when ready)**
+Add the `WHATSAPP_*` variables and follow [docs/META_SETUP.md](docs/META_SETUP.md). The webhook address is `https://your-domain/api/whatsapp/webhook`.
+
+**Good to know on Vercel**
+- New messages appear on open dashboards within **about 4 seconds** (the dashboard checks for changes only while the tab is visible).
+- Two messages arriving at the same moment on two Vercel servers still create **one** customer: Redis locks and unique keys prevent duplicates.
+- Free plans have monthly limits (Redis requests, Blob storage, function calls). A small agency usually stays inside them; Vercel's **Usage** page shows where you are.
+- Redis keeps your data, but take regular exports of bookings and payments as a backup.
+
+**Other hosts:** any Node server works too (`npm run build && npm run start`, or the included `Dockerfile`, e.g. on Railway or Render). There, live updates are instant and the database can be Redis, [Appwrite](docs/DATABASE.md), or the local file for a demo.
 
 **Staff guides (PDF):** [full user guide](docs/YourTour-User-Guide.pdf) · [beginner guide](docs/YourTour-Beginner-Guide.pdf)
 
@@ -343,9 +393,9 @@ Run it with `npm run build && npm run start` or the included `Dockerfile`.
 <details>
 <summary><b>Tech stack</b></summary>
 
-React 19 · React Router 7 (framework mode, server rendering) · Vite · Tailwind CSS 4 · TypeScript (strict) · Appwrite · zod · lucide icons · Syncfusion charts (optional) · Vitest.
+React 19 · React Router 7 (framework mode, server rendering) · Vite · Tailwind CSS 4 · TypeScript (strict) · Redis / Appwrite · Vercel Blob · zod · lucide icons · Syncfusion charts (optional) · Vitest.
 
-Without Appwrite keys the app uses a local JSON file (`.data/db.json`), so everything works offline.
+**Storage is chosen automatically:** Appwrite if `APPWRITE_*` is set, else Redis if `REDIS_URL` (or `KV_URL`) is set, else a local JSON file (`.data/db.json`) so everything works offline. Photos go to Vercel Blob if `BLOB_READ_WRITE_TOKEN` is set, else Redis, else `.data/uploads`.
 </details>
 
 <details>
@@ -357,7 +407,8 @@ Without Appwrite keys the app uses a local JSON file (`.data/db.json`), so every
 | `npm run build` / `npm run start` | Production build / server |
 | `npm run typecheck` | TypeScript check |
 | `npm test` | Unit tests |
-| `npm run test:acceptance` | 109 end-to-end checks on an isolated copy of the app |
+| `npm run test:acceptance` | 114 end-to-end checks on an isolated copy of the app |
+| `REDIS_URL=redis://127.0.0.1:6379 REDIS_PREFIX=test npm run test:acceptance` | The same checks on Redis |
 | `npm run test:appwrite` | The same checks against Appwrite (temporary database) |
 | `npm run appwrite:start` / `appwrite:stop` | Local self-hosted Appwrite in Docker |
 | `npm run dev:appwrite` | Development server on the local Appwrite |
@@ -369,16 +420,18 @@ Without Appwrite keys the app uses a local JSON file (`.data/db.json`), so every
 <summary><b>How it works</b></summary>
 
 ```
-Website pages ───────────────┐
-Dashboard ── /api/rpc/* ─────┤
-Live feed ◄─ /api/events ────┤──  React Router server  ──  Appwrite  (or local JSON file)
-Call-back form ── /api/public/lead
-Meta ── /api/whatsapp/webhook┘
+Website pages ────────────────┐
+Dashboard ── /api/rpc/* ──────┤
+Live feed ◄─ /api/events (SSE)┤──  React Router server  ──  Redis · Appwrite · local JSON file
+        or ◄─ /api/changes    ┤
+Photos ── /api/upload ────────┤──  Vercel Blob · Redis · disk
+Meta ── /api/whatsapp/webhook ┘
 ```
 
 - The browser never talks to the database: the server checks the session, the role and every input, and writes the activity log.
 - WhatsApp webhooks are signature-checked, stored, and processed so that the same message or customer can never be created twice. They never overwrite what an employee typed.
-- Live updates use Server-Sent Events, filtered per employee. Run a single server instance.
+- **Live updates:** on a single server, Server-Sent Events (instant). With Redis (Vercel), every change is appended to a short log with a revision number, and dashboards ask for the changes since their last revision every 4 seconds while visible. Both are filtered per employee.
+- **Redis driver** (`app/server/store/redis.server.ts`): one hash per table, unique values in their own hashes, index sets for messages by customer, and every write as one Lua script, so concurrent serverless instances can neither create duplicates nor overwrite each other. The per-customer lock and login throttling also live in Redis.
 - Full data model: [docs/DATABASE.md](docs/DATABASE.md) · test report: [docs/TESTING_REPORT.md](docs/TESTING_REPORT.md)
 </details>
 
@@ -397,11 +450,10 @@ docs/              guides and screenshots scripts/  tests/  tools and tests
 <details>
 <summary><b>Known limits</b></summary>
 
-- Tested end-to-end on self-hosted Appwrite 2.7.2. Appwrite Cloud uses the same API but was not run.
+- The 114 end-to-end checks pass on the local file, on Redis 7 and on self-hosted Appwrite 2.7.2. A two-server test against one Redis (same and different WhatsApp messages sent to both at once) created no duplicates. The app has not yet been deployed on a real Vercel account, and Appwrite Cloud was not run.
 - No real Meta webhook has been received yet: WhatsApp handling follows Meta's documentation and is covered by tests.
-- The dashboard does not send WhatsApp messages; staff reply from the WhatsApp Business app.
+- The dashboard does not send WhatsApp messages; staff reply from the WhatsApp Business app (the offer message is prepared for them).
 - Packages cover Umrah and Hajj; Turkey, Algeria and visa requests come in through WhatsApp and the form.
-- Cover photos are links, not uploads.
 </details>
 
 ---

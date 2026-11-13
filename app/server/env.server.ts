@@ -12,7 +12,8 @@ try {
 const read = (key: string): string => (process.env[key] ?? "").trim();
 const isProd = process.env.NODE_ENV === "production";
 
-export const DATA_DIR = path.resolve(read("DATA_DIR") || ".data");
+// Vercel can only write to /tmp (and loses it between requests): Redis is the database there.
+export const DATA_DIR = path.resolve(read("DATA_DIR") || (process.env.VERCEL ? "/tmp/.data" : ".data"));
 
 function devSessionSecret(): string {
   // Development convenience only: a random secret persisted next to the demo datastore.

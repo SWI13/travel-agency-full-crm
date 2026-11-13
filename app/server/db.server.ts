@@ -6,7 +6,7 @@ import type { ListOptions } from "./store/types";
 
 /**
  * Data access used by all server code: the configured store plus change
- * publication. Reads and writes are identical for Appwrite and the local driver.
+ * publication. Reads and writes are identical for every storage driver.
  */
 
 const EVERYONE: Role[] = [...ROLES];
@@ -59,7 +59,7 @@ export const db = {
     options: WriteOptions & { id?: string } = {},
   ): Promise<T> {
     const doc = await getStore().create<T>(collection, data, options.id);
-    emit(collection, "upsert", doc, options);
+    await emit(collection, "upsert", doc, options);
     return doc;
   },
 
@@ -73,23 +73,23 @@ export const db = {
     const previous = options.previousAssignee;
     if (previous && previous !== field(doc, "assignedTo") && !options.silent) {
       // The record left this agent's scope: remove it from their screen.
-      publish({ collection, op: "delete", doc: { id }, audience: { roles: [], userIds: [previous] } });
+      await publish({ collection, op: "delete", doc: { id }, audience: { roles: [], userIds: [previous] } });
     }
-    emit(collection, "upsert", doc, options);
+    await emit(collection, "upsert", doc, options);
     return doc;
   },
 
   async remove(collection: Collection, doc: Doc, options: WriteOptions = {}): Promise<void> {
     await getStore().remove(collection, doc.id);
-    emit(collection, "delete", doc, options);
+    await emit(collection, "delete", doc, options);
   },
 };
 
-function emit(collection: Collection, op: ChangeEvent["op"], doc: Doc, options: WriteOptions) {
+async function emit(collection: Collection, op: ChangeEvent["op"], doc: Doc, options: WriteOptions): Promise<void> {
   if (options.silent) return;
   const audience = audienceFor(collection, doc, options.userIds);
   if (!audience) return;
-  publish({
+  await publish({
     collection,
     op,
     doc: op === "delete" ? { id: doc.id } : (doc as ChangeEvent["doc"]),

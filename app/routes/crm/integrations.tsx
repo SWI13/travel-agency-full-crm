@@ -29,7 +29,7 @@ interface Status {
   webhookUrl: string;
   isPublicUrl: boolean;
   graphVersion: string;
-  database: { driver: "local" | "appwrite"; ok: boolean; detail: string };
+  database: { driver: "local" | "appwrite" | "redis"; ok: boolean; detail: string };
   demoTools: boolean;
   hasDemoData: boolean;
   demoSeedLoaded: boolean;
@@ -302,7 +302,7 @@ export default function IntegrationsPage() {
                   <Row label={t(`${i}.database`)}>
                     <span className="flex items-center justify-end gap-1.5">
                       <Database className="size-3.5 text-navy-400" />
-                      {status.database.driver === "local" ? t(`${i}.driverLocal`) : t(`${i}.driverAppwrite`)}
+                      {status.database.driver === "local" ? t(`${i}.driverLocal`) : status.database.driver === "redis" ? t(`${i}.driverRedis`) : t(`${i}.driverAppwrite`)}
                       <span className={cn("size-2 rounded-full", status.database.ok ? "bg-emerald-500" : "bg-rose-500")} title={status.database.detail} />
                     </span>
                   </Row>

@@ -68,7 +68,7 @@ export async function action({ request }: ActionFunctionArgs) {
 
     const parsed = credentials.safeParse(body);
     if (!parsed.success) throw new HttpError(401, "invalid_credentials", "Incorrect email or password");
-    throttle(`login:${clientIp(request)}:${parsed.data.email}`, 8, 5 * 60_000);
+    await throttle(`login:${clientIp(request)}:${parsed.data.email}`, 8, 5 * 60_000);
 
     const userId = await getStore().auth.verify(parsed.data.email, parsed.data.password);
     const staff = userId ? await db.get<Staff>("staff", userId) : null;

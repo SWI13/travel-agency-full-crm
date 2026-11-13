@@ -36,11 +36,14 @@ export interface AuthProvider {
 }
 
 /**
- * Storage contract used by the whole server. Two implementations exist:
- * Appwrite (production) and a file-backed local store (demo / development).
+ * Storage contract used by the whole server. Three implementations exist:
+ * Appwrite, Redis (serverless hosting such as Vercel) and a file-backed local
+ * store (demo / development).
  */
+export type StoreKind = "appwrite" | "redis" | "local";
+
 export interface Store {
-  kind: "appwrite" | "local";
+  kind: StoreKind;
   get<T>(collection: Collection, id: string): Promise<T | null>;
   list<T>(collection: Collection, options?: ListOptions): Promise<T[]>;
   /**
