@@ -12,6 +12,7 @@ export const CAPABILITIES = [
   "leads.delete",
   "catalog.manage", // packages and departures
   "bookings.view_all",
+  "bookings.undo_departed", // correct a booking that was marked as departed by mistake
   "reports.view", // analytics & reports
   "team.view", // team performance
   "team.manage", // create / edit / deactivate employees
@@ -30,6 +31,7 @@ const MATRIX: Record<Role, readonly Capability[]> = {
     "leads.create",
     "catalog.manage",
     "bookings.view_all",
+    "bookings.undo_departed",
     "reports.view",
     "team.view",
     "activity.view_all",

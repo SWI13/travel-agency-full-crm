@@ -111,6 +111,8 @@ export const ACTIVITY_ACTIONS = [
   "booking_created",
   "booking_updated",
   "payment_updated",
+  "booking_departed",
+  "booking_departure_undone",
   "followup_scheduled",
   "followup_completed",
   "followup_rescheduled",

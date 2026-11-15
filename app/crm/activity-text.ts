@@ -1,6 +1,6 @@
 import type { TFunction } from "~/i18n";
 import type { Locale } from "~/lib/constants";
-import { formatDateTime, formatDzd } from "~/lib/format";
+import { formatDate, formatDateTime, formatDzd } from "~/lib/format";
 import type { Activity } from "~/lib/types";
 
 /** Localised one-line detail for an audit entry, built from its structured metadata. */
@@ -29,6 +29,10 @@ export function activityText(entry: Activity, t: TFunction, locale: Locale): str
         travelers: n("travelers"),
         total: formatDzd(n("totalDzd"), locale),
       });
+    case "booking_departed":
+      return t("crm.activity.text.booking_departed", { travelers: n("travelers"), date: formatDate(s("departDate"), locale) });
+    case "booking_departure_undone":
+      return t("crm.activity.text.booking_departure_undone", { reason: s("reason") ? ` · ${s("reason")}` : "" });
     case "payment_updated":
       return t("crm.activity.text.payment_updated", {
         paid: formatDzd(n("paidDzd"), locale),

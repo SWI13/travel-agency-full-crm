@@ -28,6 +28,7 @@ import { useConfirm, useToast } from "~/ui/feedback";
 import { WhatsAppIcon } from "~/site/components";
 import { api, errorMessage, PAYMENT_TONE, SOURCE_TONE, STAGE_TONE } from "./api";
 import { JourneyBar, NextStep } from "./lead-flow";
+import { canMarkDeparted, MarkDepartedModal } from "./departure-actions";
 import { useCrm } from "./store";
 
 type Tab = "details" | "conversation" | "tasks";
@@ -90,6 +91,7 @@ function LeadPanel({ lead, onClose }: { lead: Lead; onClose: () => void }) {
   const [form, setForm] = useState<FormState>(() => pickForm(lead));
   const [saving, setSaving] = useState(false);
   const [booking, setBooking] = useState<{ packageId: string | null; departureId: string | null } | null>(null);
+  const [departing, setDeparting] = useState<Booking | null>(null);
   const openBooking = (packageId?: string | null, departureId?: string | null) =>
     setBooking({ packageId: packageId ?? lead.packageId ?? null, departureId: departureId ?? null });
 
@@ -360,6 +362,15 @@ function LeadPanel({ lead, onClose }: { lead: Lead; onClose: () => void }) {
                         <p className="text-xs muted tabular">{formatDate(b.bookingDate, locale)} · {formatDzd(b.paidDzd, locale)} / {formatDzd(b.totalDzd, locale)}</p>
                       </div>
                       <Badge tone={PAYMENT_TONE[b.paymentStatus]} dot>{t(`crm.payment.${b.paymentStatus}`)}</Badge>
+                      {b.departedAt ? (
+                        <Badge tone="teal" dot>{t("crm.bookings.travel.badge")}</Badge>
+                      ) : (
+                        canMarkDeparted(b) && (
+                          <button type="button" className="btn btn-secondary btn-sm" onClick={() => setDeparting(b)}>
+                            {t("crm.bookings.travel.action")}
+                          </button>
+                        )
+                      )}
                     </li>
                   ))}
                 </ul>
@@ -394,6 +405,7 @@ function LeadPanel({ lead, onClose }: { lead: Lead; onClose: () => void }) {
         </footer>
       )}
 
+      {departing && <MarkDepartedModal booking={departing} onClose={() => setDeparting(null)} />}
       {booking && <BookingModal lead={lead} open packageId={booking.packageId} departureId={booking.departureId} onClose={() => setBooking(null)} />}
     </>
   );

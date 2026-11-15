@@ -108,6 +108,11 @@ export async function seatsLeft(departure: Departure, ignoreBookingId?: string):
   return departure.capacity - taken;
 }
 
+/** Today's date (YYYY-MM-DD) in the agency's time zone, so a departure on "today" counts from midnight in Algeria. */
+function todayInAlgeria(): string {
+  return new Intl.DateTimeFormat("en-CA", { timeZone: "Africa/Algiers", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date());
+}
+
 /** Seat counts are visible to every employee, including agents who cannot see other people's bookings. */
 async function publishSeats(departureId: string): Promise<void> {
   const departure = await db.get<Departure>("departures", departureId);
@@ -387,6 +392,98 @@ export const catalogProcedures = {
         isDemo: booking.isDemo,
       });
       return updated;
+    },
+  }),
+
+  /**
+   * Individual travel status. A booking is "departed" when its travellers have actually left.
+   * This is deliberately separate from the departure's own status (the whole group).
+   */
+  "bookings.markDeparted": rpc({
+    input: z.object({ id: zId }),
+    async run({ user }, input) {
+      return withLock(`booking:${input.id}`, async () => {
+        const booking = await db.get<Booking>("bookings", input.id);
+        if (!booking) throw notFound("Booking");
+        assertAssigned(user, booking.assignedTo);
+        if (booking.departedAt) throw new HttpError(409, "already_departed", "This booking is already marked as departed");
+        if (VOID_PAYMENT_STATUSES.includes(booking.paymentStatus)) {
+          throw new HttpError(409, "booking_void", "A cancelled or refunded booking cannot be marked as departed");
+        }
+        const departure = await db.get<Departure>("departures", booking.departureId);
+        if (!departure) throw notFound("Departure");
+        if (departure.status === "cancelled") throw new HttpError(409, "departure_cancelled", "This departure was cancelled");
+        if (departure.departDate > todayInAlgeria()) {
+          throw new HttpError(409, "departure_not_started", "This departure date has not arrived yet", { departDate: departure.departDate });
+        }
+        const now = new Date().toISOString();
+        const updated = await db.update<Booking>("bookings", booking.id, { departedAt: now, departedBy: user.id });
+        let lead = await db.get<Lead>("leads", booking.leadId);
+        if (lead && WON_STAGES.includes(lead.stage) && lead.stage !== "completed") {
+          // The customer is "Completed" once none of their bookings is still waiting to travel.
+          const others = await db.list<Booking>("bookings", { where: { leadId: lead.id } });
+          const waiting = others.some((b) => b.id !== booking.id && !b.departedAt && !VOID_PAYMENT_STATUSES.includes(b.paymentStatus));
+          if (!waiting) {
+            const from = lead.stage;
+            lead = await db.update<Lead>("leads", lead.id, { stage: "completed", lastActivityAt: now });
+            await logActivity({
+              actor: user,
+              action: "stage_changed",
+              entityType: "lead",
+              lead,
+              description: `Stage changed from ${from} to completed (departed)`,
+              meta: { from, to: "completed", lostReason: null },
+            });
+          }
+        }
+        await logActivity({
+          actor: user,
+          action: "booking_departed",
+          entityType: "booking",
+          entityId: booking.id,
+          lead,
+          description: `Marked as departed: ${booking.customerName}, ${booking.travelers} traveller(s)`,
+          meta: { departureId: booking.departureId, departDate: departure.departDate, travelers: booking.travelers },
+          isDemo: booking.isDemo,
+        });
+        return updated;
+      });
+    },
+  }),
+
+  "bookings.undoDeparted": rpc({
+    cap: "bookings.undo_departed",
+    input: z.object({ id: zId, reason: zNullableText(300).optional() }),
+    async run({ user }, input) {
+      return withLock(`booking:${input.id}`, async () => {
+        const booking = await db.get<Booking>("bookings", input.id);
+        if (!booking) throw notFound("Booking");
+        if (!booking.departedAt) throw new HttpError(409, "not_departed", "This booking is not marked as departed");
+        const updated = await db.update<Booking>("bookings", booking.id, { departedAt: null, departedBy: null });
+        let lead = await db.get<Lead>("leads", booking.leadId);
+        if (lead && lead.stage === "completed") {
+          lead = await db.update<Lead>("leads", lead.id, { stage: "travel_preparation", lastActivityAt: new Date().toISOString() });
+          await logActivity({
+            actor: user,
+            action: "stage_changed",
+            entityType: "lead",
+            lead,
+            description: "Stage changed from completed to travel_preparation (departure undone)",
+            meta: { from: "completed", to: "travel_preparation", lostReason: null },
+          });
+        }
+        await logActivity({
+          actor: user,
+          action: "booking_departure_undone",
+          entityType: "booking",
+          entityId: booking.id,
+          lead,
+          description: `Departure status removed: ${booking.customerName}`,
+          meta: { reason: input.reason ?? null, departedAt: booking.departedAt },
+          isDemo: booking.isDemo,
+        });
+        return updated;
+      });
     },
   }),
 

@@ -1,24 +1,27 @@
 import { useMemo, useState, type FormEvent } from "react";
 import { useSearchParams } from "react-router";
-import { BookUser, Check, Pencil, ShieldCheck, UsersRound, Wallet } from "lucide-react";
+import { BookUser, Check, Pencil, Plane, ShieldCheck, Undo2, UsersRound, Wallet } from "lucide-react";
 import { api, errorMessage, PAYMENT_TONE } from "~/crm/api";
 import { PageBody } from "~/crm/shell";
+import { canMarkDeparted, MarkDepartedModal, UndoDepartedModal } from "~/crm/departure-actions";
 import { useCrm } from "~/crm/store";
 import { useI18n } from "~/i18n";
 import { PAYMENT_STATUSES, VISA_STATUSES, VOID_PAYMENT_STATUSES, type VisaStatus } from "~/lib/constants";
-import { cn, formatDate, formatDzd } from "~/lib/format";
+import { cn, formatDate, formatDateTime, formatDzd } from "~/lib/format";
+import { formatPhone } from "~/lib/phone";
 import type { Booking, Pilgrim } from "~/lib/types";
 import { Avatar, Badge, DemoBadge, EmptyState, Field, Meter, Modal, PageHeader, Segmented, Spinner } from "~/ui";
 import { useToast } from "~/ui/feedback";
 
-type Tab = "bookings" | "pilgrims";
+type Tab = "bookings" | "departed" | "pilgrims";
 const VISA_TONE: Record<VisaStatus, string> = { not_started: "neutral", in_progress: "blue", submitted: "violet", approved: "emerald", rejected: "rose" };
 
 export default function BookingsPage() {
   const { t, locale } = useI18n();
   const { data } = useCrm();
   const [params, setParams] = useSearchParams();
-  const tab: Tab = params.get("tab") === "pilgrims" ? "pilgrims" : "bookings";
+  const tabParam = params.get("tab");
+  const tab: Tab = tabParam === "pilgrims" || tabParam === "departed" ? tabParam : "bookings";
   const setTab = (next: Tab) => {
     const copy = new URLSearchParams(params);
     if (next === "bookings") copy.delete("tab");
@@ -57,12 +60,13 @@ export default function BookingsPage() {
         value={tab}
         onChange={setTab}
         options={[
-          { value: "bookings", label: t("crm.bookings.tabBookings"), icon: BookUser, count: data.bookings.length },
+          { value: "bookings", label: t("crm.bookings.tabBookings"), icon: BookUser, count: data.bookings.filter((b) => !b.departedAt).length },
+          { value: "departed", label: t("crm.bookings.tabDeparted"), icon: Plane, count: data.bookings.filter((b) => b.departedAt).length },
           { value: "pilgrims", label: t("crm.bookings.tabPilgrims"), icon: UsersRound, count: data.pilgrims.length },
         ]}
       />
 
-      {tab === "bookings" ? <BookingsTable /> : <PilgrimsTable />}
+      {tab === "bookings" ? <BookingsTable /> : tab === "departed" ? <DepartedTable /> : <PilgrimsTable />}
     </PageBody>
   );
 }
@@ -71,7 +75,8 @@ function BookingsTable() {
   const { t, locale } = useI18n();
   const { data, packageById, departureById, staffById, openLead } = useCrm();
   const [editing, setEditing] = useState<Booking | null>(null);
-  const rows = useMemo(() => [...data.bookings].sort((a, b) => b.bookingDate.localeCompare(a.bookingDate)), [data.bookings]);
+  const [departing, setDeparting] = useState<Booking | null>(null);
+  const rows = useMemo(() => data.bookings.filter((b) => !b.departedAt).sort((a, b) => b.bookingDate.localeCompare(a.bookingDate)), [data.bookings]);
   const th = "crm.bookings.th";
 
   if (rows.length === 0) {
@@ -119,7 +124,13 @@ function BookingsTable() {
                   <td><Badge tone={PAYMENT_TONE[b.paymentStatus]} dot>{t(`crm.payment.${b.paymentStatus}`)}</Badge></td>
                   <td>{agent ? <span className="flex items-center gap-1.5"><Avatar name={agent.name} size="sm" /><span className="truncate max-w-24">{agent.name}</span></span> : "—"}</td>
                   <td className="whitespace-nowrap muted">{formatDate(b.bookingDate, locale)}</td>
-                  <td className="text-end">
+                  <td className="text-end whitespace-nowrap">
+                    {canMarkDeparted(b) && (
+                      <button type="button" className="btn btn-secondary btn-sm me-1" onClick={() => setDeparting(b)}>
+                        <Plane className="size-3.5" />
+                        {t("crm.bookings.travel.action")}
+                      </button>
+                    )}
                     <button type="button" className="icon-btn" onClick={() => setEditing(b)} aria-label={t("crm.bookings.edit.title")} title={t("crm.bookings.edit.title")}>
                       <Pencil className="size-4" />
                     </button>
@@ -131,6 +142,74 @@ function BookingsTable() {
         </table>
       </div>
       {editing && <PaymentForm booking={editing} onClose={() => setEditing(null)} />}
+      {departing && <MarkDepartedModal booking={departing} onClose={() => setDeparting(null)} />}
+    </>
+  );
+}
+
+function DepartedTable() {
+  const { t, locale } = useI18n();
+  const { data, packageById, departureById, staffById, leadById, openLead, can } = useCrm();
+  const [undoing, setUndoing] = useState<Booking | null>(null);
+  const rows = useMemo(() => data.bookings.filter((b) => b.departedAt).sort((a, b) => (b.departedAt ?? "").localeCompare(a.departedAt ?? "")), [data.bookings]);
+  const th = "crm.bookings.th";
+  const mayUndo = can("bookings.undo_departed");
+
+  if (rows.length === 0) {
+    return <div className="panel"><EmptyState icon={Plane} title={t("crm.bookings.emptyDeparted")} hint={t("crm.bookings.emptyDepartedHint")} /></div>;
+  }
+  return (
+    <>
+      <div className="panel overflow-x-auto scroll-thin">
+        <table className="data-table min-w-[62rem]">
+          <thead>
+            <tr>
+              <th>{t(`${th}.customer`)}</th>
+              <th>{t(`${th}.phone`)}</th>
+              <th>{t(`${th}.package`)}</th>
+              <th>{t(`${th}.departure`)}</th>
+              <th className="!text-end">{t(`${th}.travelers`)}</th>
+              <th>{t(`${th}.payment`)}</th>
+              <th>{t(`${th}.agent`)}</th>
+              <th>{t(`${th}.departedOn`)}</th>
+              {mayUndo && <th />}
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((b) => {
+              const agent = b.assignedTo ? staffById.get(b.assignedTo) : null;
+              const phone = leadById.get(b.leadId)?.phone;
+              return (
+                <tr key={b.id}>
+                  <td>
+                    <button type="button" className="flex items-center gap-2 font-semibold hover:text-emerald-700" onClick={() => openLead(b.leadId)}>
+                      <Avatar name={b.customerName} size="sm" />
+                      <span className="truncate max-w-40">{b.customerName}</span>
+                      <DemoBadge show={b.isDemo} />
+                    </button>
+                  </td>
+                  <td className="whitespace-nowrap tabular" dir="ltr">{phone ? formatPhone(phone) : "—"}</td>
+                  <td className="max-w-48 truncate">{packageById.get(b.packageId)?.name ?? "—"}</td>
+                  <td className="whitespace-nowrap">{formatDate(departureById.get(b.departureId)?.departDate, locale)}</td>
+                  <td className="text-end tabular">{b.travelers}</td>
+                  <td><Badge tone={PAYMENT_TONE[b.paymentStatus]} dot>{t(`crm.payment.${b.paymentStatus}`)}</Badge></td>
+                  <td>{agent ? <span className="flex items-center gap-1.5"><Avatar name={agent.name} size="sm" /><span className="truncate max-w-24">{agent.name}</span></span> : "—"}</td>
+                  <td className="whitespace-nowrap muted">{formatDateTime(b.departedAt!, locale)}</td>
+                  {mayUndo && (
+                    <td className="text-end">
+                      <button type="button" className="btn btn-ghost btn-sm" onClick={() => setUndoing(b)}>
+                        <Undo2 className="size-3.5" />
+                        {t("crm.bookings.travel.undo")}
+                      </button>
+                    </td>
+                  )}
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+      {undoing && <UndoDepartedModal booking={undoing} onClose={() => setUndoing(null)} />}
     </>
   );
 }

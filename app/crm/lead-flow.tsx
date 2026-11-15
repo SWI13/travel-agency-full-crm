@@ -24,6 +24,7 @@ import { WhatsAppIcon } from "~/site/components";
 import { Avatar, EmptyState, Modal, Spinner } from "~/ui";
 import { useToast } from "~/ui/feedback";
 import { api, errorMessage } from "./api";
+import { canMarkDeparted, MarkDepartedModal } from "./departure-actions";
 import { useCrm } from "./store";
 
 /**
@@ -98,6 +99,7 @@ export function NextStep({ lead, onBook }: { lead: Lead; onBook: (packageId?: st
   const [busy, setBusy] = useState(false);
   const [picker, setPicker] = useState(false);
   const [lostOpen, setLostOpen] = useState(false);
+  const [departing, setDeparting] = useState<Booking | null>(null);
   const name = leadName(lead);
   const offer = lead.packageId ? packageById.get(lead.packageId) : undefined;
   const wa = waChatLink(lead.phone);
@@ -173,7 +175,7 @@ export function NextStep({ lead, onBook }: { lead: Lead; onBook: (packageId?: st
       );
       break;
     case "booked": {
-      const booking = bookings[0];
+      const booking = bookings.find((b) => !b.departedAt) ?? bookings[0];
       if (!booking) {
         title = t("crm.flow.book.title", { name });
         body = t("crm.flow.book.body");
@@ -204,8 +206,8 @@ export function NextStep({ lead, onBook }: { lead: Lead; onBook: (packageId?: st
             {t("crm.flow.booked.open")}
           </Link>
           {travelling ? (
-            <button type="button" className="btn btn-primary" disabled={busy} onClick={() => setStage("completed")}>
-              {busy ? <Spinner /> : <PartyPopper className="size-4" />}
+            <button type="button" className="btn btn-primary" disabled={busy || !canMarkDeparted(booking)} onClick={() => setDeparting(booking)}>
+              {busy ? <Spinner /> : <Plane className="size-4" />}
               {t("crm.flow.travel.complete")}
             </button>
           ) : (
@@ -223,6 +225,11 @@ export function NextStep({ lead, onBook }: { lead: Lead; onBook: (packageId?: st
       title = t("crm.flow.done.title");
       body = t("crm.flow.done.body");
       icon = <PartyPopper className="size-5" />;
+      actions = (
+        <Link to="/admin/bookings?tab=departed" className="btn btn-secondary">
+          {t("crm.bookings.travel.seeList")}
+        </Link>
+      );
       break;
     case "lost":
       tone = "border-rose-200 bg-rose-50/70";
@@ -262,6 +269,7 @@ export function NextStep({ lead, onBook }: { lead: Lead; onBook: (packageId?: st
       )}
       <OfferPicker lead={lead} open={picker} onClose={() => setPicker(false)} onBook={(p, d) => { setPicker(false); onBook(p, d); }} />
       <LostModal lead={lead} open={lostOpen} onClose={() => setLostOpen(false)} />
+      {departing && <MarkDepartedModal booking={departing} onClose={() => setDeparting(null)} />}
     </section>
   );
 }

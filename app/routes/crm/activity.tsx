@@ -18,6 +18,8 @@ const ACTION_TONE: Partial<Record<ActivityAction, string>> = {
   lead_assigned: "violet",
   stage_changed: "gold",
   booking_created: "emerald",
+  booking_departed: "teal",
+  booking_departure_undone: "amber",
   payment_updated: "amber",
   webhook_error: "rose",
   integration_event: "neutral",

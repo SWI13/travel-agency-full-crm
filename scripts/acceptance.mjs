@@ -422,6 +422,34 @@ async function run() {
   const quickAfter = leadByPhone(await snapshot(admin.cookie), "+213661000777");
   check("One-click booking confirms the customer and links the offer", quick.ok && quickAfter.stage === "confirmed" && quickAfter.packageId === pkg.data.id, JSON.stringify(quick.code));
 
+  // Customer journey: WhatsApp lead → confirmed booking → departed (one booking, not the whole group).
+  const pastDep = await rpc(mgr.cookie, "departures.save", { packageId: pkg.data.id, groupName: "Groupe passé", departDate: "2025-01-10", returnDate: "2025-01-22", departureCity: null, capacity: 30, priceDzd: 250000, status: "open", flightInfo: null, notes: null });
+  await webhook(inbound({ from: "213661000888", name: "Journey Test", text: "Salam, omra svp" }));
+  let journeyLead = leadByPhone(await snapshot(admin.cookie), "+213661000888");
+  check("Journey: a WhatsApp message creates the lead", !!journeyLead && journeyLead.stage === "new");
+  await rpc(mgr.cookie, "leads.update", { id: journeyLead.id, patch: { assignedTo: agent.data.id } });
+  const journeyBooking = await rpc(agt.cookie, "bookings.create", { leadId: journeyLead.id, departureId: pastDep.data.id, travelers: 2, totalDzd: 500000, paidDzd: 100000, bookingDate: "2025-01-02", confirmLead: true });
+  check("Journey: the lead becomes a confirmed booking linked to a departure", journeyBooking.ok && !journeyBooking.data.departedAt, JSON.stringify(journeyBooking.code));
+  const seatsBefore = (await snapshot(mgr.cookie)).seatsTaken[pastDep.data.id];
+  check("A departure that has not happened yet cannot be marked as departed", (await rpc(admin.cookie, "bookings.markDeparted", { id: quick.data.id })).code === "departure_not_started");
+  check("An agent cannot mark somebody else's booking as departed", (await rpc(agt.cookie, "bookings.markDeparted", { id: quick.data.id })).status === 403);
+  check("A cancelled booking cannot be marked as departed", (await rpc(agt.cookie, "bookings.markDeparted", { id: booking.data.id })).code === "booking_void");
+  const departedRes = await rpc(agt.cookie, "bookings.markDeparted", { id: journeyBooking.data.id });
+  check("The assigned agent can mark their booking as departed", departedRes.ok && !!departedRes.data.departedAt && departedRes.data.departedBy === agent.data.id, JSON.stringify(departedRes.code));
+  journeyLead = leadByPhone(await snapshot(admin.cookie), "+213661000888");
+  check("Marking as departed completes the customer, and keeps the booking and the seats", journeyLead.stage === "completed" && (await snapshot(mgr.cookie)).seatsTaken[pastDep.data.id] === seatsBefore && (await snapshot(mgr.cookie)).bookings.some((b) => b.id === journeyBooking.data.id && b.departedAt));
+  const groupAfter = (await snapshot(mgr.cookie)).departures.find((d) => d.id === pastDep.data.id);
+  check("The departure group's own status is untouched", groupAfter?.status === "open");
+  check("Marking twice is refused", (await rpc(agt.cookie, "bookings.markDeparted", { id: journeyBooking.data.id })).code === "already_departed");
+  check("An agent cannot undo a departure", (await rpc(agt.cookie, "bookings.undoDeparted", { id: journeyBooking.data.id })).status === 403);
+  const undone = await rpc(mgr.cookie, "bookings.undoDeparted", { id: journeyBooking.data.id, reason: "Marked by mistake" });
+  journeyLead = leadByPhone(await snapshot(admin.cookie), "+213661000888");
+  check("A manager can undo a departure; the customer goes back to travel preparation", undone.ok && !undone.data.departedAt && journeyLead.stage === "travel_preparation", JSON.stringify(undone.code));
+  check("Undoing a booking that has not departed is refused", (await rpc(mgr.cookie, "bookings.undoDeparted", { id: journeyBooking.data.id })).code === "not_departed");
+  await rpc(agt.cookie, "bookings.markDeparted", { id: journeyBooking.data.id });
+  const journeyLog = (await rpc(admin.cookie, "activity.list", { limit: 500 })).data.filter((a) => a.entityId === journeyBooking.data.id);
+  check("Both actions are written to the activity log", journeyLog.some((a) => a.action === "booking_departed") && journeyLog.some((a) => a.action === "booking_departure_undone" && a.meta?.reason === "Marked by mistake"));
+
   // Package photos uploaded from the dashboard.
   const png = Buffer.from("89504e470d0a1a0a0000000d4948445200000001000000010806000000" + "1f15c4890000000d49444154789c6360000002000154a24f5d0000000049454e44ae426082", "hex");
   const upload = (cookie, body, type = "image/png") => fetch(`${BASE}/api/upload`, { method: "POST", headers: { "Content-Type": type, Origin: BASE, Cookie: cookie }, body });

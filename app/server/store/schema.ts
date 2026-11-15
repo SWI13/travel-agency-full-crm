@@ -173,6 +173,9 @@ export const SCHEMA = {
       bookingDate: s(10, true),
       assignedTo: s(40),
       notes: text,
+      /** Set when this booking's travellers have actually left. Empty = still waiting to travel. */
+      departedAt: date,
+      departedBy: s(40),
       isDemo: bool,
     },
     indexes: [{ fields: ["leadId"] }, { fields: ["departureId"] }, { fields: ["assignedTo"] }],

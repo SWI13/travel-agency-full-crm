@@ -162,6 +162,9 @@ export interface Booking extends BaseDoc {
   bookingDate: string;
   assignedTo: string | null;
   notes: string | null;
+  /** Travel status of this one booking (not of the whole departure group). Empty = has not departed yet. */
+  departedAt?: string | null;
+  departedBy?: string | null;
   isDemo: boolean;
 }
 
