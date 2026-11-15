@@ -2,7 +2,7 @@ import { useMemo, useState, type FormEvent } from "react";
 import { Archive, ArchiveRestore, BedDouble, CalendarDays, Clock, ExternalLink, Globe, MapPin, Package as PackageIcon, Pencil, Plus, Ticket, Trash2 } from "lucide-react";
 import { api, CATEGORY_TONE, errorMessage } from "~/crm/api";
 import { ImageUpload } from "~/crm/image-upload";
-import { BookingModal } from "~/crm/lead-drawer";
+import { AssignTripModal } from "~/crm/assign-trip";
 import { CustomerPicker } from "~/crm/lead-flow";
 import { PageBody } from "~/crm/shell";
 import { useCrm } from "~/crm/store";
@@ -175,10 +175,9 @@ export default function PackagesPage() {
         <CustomerPicker pkg={bookingFor} open onClose={() => setBookingFor(null)} onPick={(lead) => setBookingLead(lead)} />
       )}
       {bookingFor && bookingLead && (
-        <BookingModal
+        <AssignTripModal
           lead={bookingLead}
-          open
-          packageId={bookingFor.id}
+          initial={{ packageId: bookingFor.id }}
           onClose={() => {
             setBookingLead(null);
             setBookingFor(null);

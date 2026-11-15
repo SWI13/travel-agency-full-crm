@@ -77,6 +77,9 @@ export const SCHEMA = {
       lastActivityAt: date,
       unreadCount: int,
       packageId: s(40),
+      /** Trip the customer was assigned to. A booking (and seats) exists only once the purchase is confirmed. */
+      departureId: s(40),
+      tripTravelers: int,
       departureCity: s(80),
       departureDate: s(10),
       returnDate: s(10),

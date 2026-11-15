@@ -15,6 +15,7 @@ import { env } from "../env.server";
 import { badRequest, forbidden, HttpError } from "../errors";
 import { getSettings } from "../session.server";
 import { adminProcedures } from "./admin";
+import { assignProcedures } from "./assign";
 import { catalogProcedures } from "./catalog";
 import type { Ctx, RpcDef } from "./core";
 import { leadProcedures } from "./leads";
@@ -22,6 +23,7 @@ import { leadProcedures } from "./leads";
 const procedures: Record<string, RpcDef<any>> = {
   ...leadProcedures,
   ...catalogProcedures,
+  ...assignProcedures,
   ...adminProcedures,
 };
 

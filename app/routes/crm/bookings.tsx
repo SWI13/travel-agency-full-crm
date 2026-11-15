@@ -13,7 +13,7 @@ import type { Booking, Pilgrim } from "~/lib/types";
 import { Avatar, Badge, DemoBadge, EmptyState, Field, Meter, Modal, PageHeader, Segmented, Spinner } from "~/ui";
 import { useToast } from "~/ui/feedback";
 
-type Tab = "bookings" | "departed" | "pilgrims";
+type Tab = "bookings" | "pilgrims";
 const VISA_TONE: Record<VisaStatus, string> = { not_started: "neutral", in_progress: "blue", submitted: "violet", approved: "emerald", rejected: "rose" };
 
 export default function BookingsPage() {
@@ -21,7 +21,7 @@ export default function BookingsPage() {
   const { data } = useCrm();
   const [params, setParams] = useSearchParams();
   const tabParam = params.get("tab");
-  const tab: Tab = tabParam === "pilgrims" || tabParam === "departed" ? tabParam : "bookings";
+  const tab: Tab = tabParam === "pilgrims" ? tabParam : "bookings";
   const setTab = (next: Tab) => {
     const copy = new URLSearchParams(params);
     if (next === "bookings") copy.delete("tab");
@@ -61,12 +61,11 @@ export default function BookingsPage() {
         onChange={setTab}
         options={[
           { value: "bookings", label: t("crm.bookings.tabBookings"), icon: BookUser, count: data.bookings.filter((b) => !b.departedAt).length },
-          { value: "departed", label: t("crm.bookings.tabDeparted"), icon: Plane, count: data.bookings.filter((b) => b.departedAt).length },
           { value: "pilgrims", label: t("crm.bookings.tabPilgrims"), icon: UsersRound, count: data.pilgrims.length },
         ]}
       />
 
-      {tab === "bookings" ? <BookingsTable /> : tab === "departed" ? <DepartedTable /> : <PilgrimsTable />}
+      {tab === "bookings" ? <BookingsTable /> : <PilgrimsTable />}
     </PageBody>
   );
 }
@@ -147,7 +146,7 @@ function BookingsTable() {
   );
 }
 
-function DepartedTable() {
+export function DepartedTable() {
   const { t, locale } = useI18n();
   const { data, packageById, departureById, staffById, leadById, openLead, can } = useCrm();
   const [undoing, setUndoing] = useState<Booking | null>(null);

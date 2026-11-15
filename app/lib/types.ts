@@ -64,6 +64,8 @@ export interface Lead extends BaseDoc {
   unreadCount: number;
 
   packageId: string | null;
+  departureId?: string | null;
+  tripTravelers?: number | null;
   departureCity: string | null;
   departureDate: string | null;
   returnDate: string | null;

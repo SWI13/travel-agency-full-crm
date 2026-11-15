@@ -17,6 +17,7 @@ import {
   Package as PackageIcon,
   PanelLeftClose,
   PanelLeftOpen,
+  Plane,
   PlaneTakeoff,
   Plug,
   ScrollText,
@@ -49,30 +50,28 @@ interface NavItem {
   end?: boolean;
 }
 const NAV: Array<{ group: string; items: NavItem[] }> = [
+  // What every employee needs, in the order of the work.
   {
-    group: "groupSales",
+    group: "groupWork",
     items: [
-      { to: "/admin", key: "overview", icon: LayoutDashboard, end: true },
       { to: "/admin/leads", key: "leads", icon: MessageCircle },
+      { to: "/admin/departures", key: "trips", icon: PlaneTakeoff },
+      { to: "/admin/bookings", key: "bookings", icon: BookUser },
+      { to: "/admin/departed", key: "departed", icon: Plane },
       { to: "/admin/follow-ups", key: "followups", icon: CalendarClock },
     ],
   },
-  {
-    group: "groupOps",
-    items: [
-      { to: "/admin/packages", key: "packages", icon: PackageIcon },
-      { to: "/admin/departures", key: "departures", icon: PlaneTakeoff },
-      { to: "/admin/bookings", key: "bookings", icon: BookUser },
-    ],
-  },
+  // Managers and administrators only.
   {
     group: "groupAdmin",
     items: [
-      { to: "/admin/team", key: "team", icon: UsersRound, cap: "team.view" },
+      { to: "/admin", key: "overview", icon: LayoutDashboard, end: true, cap: "reports.view" },
+      { to: "/admin/packages", key: "packages", icon: PackageIcon, cap: "catalog.manage" },
       { to: "/admin/analytics", key: "analytics", icon: ChartNoAxesCombined, cap: "reports.view" },
-      { to: "/admin/activity", key: "activity", icon: ScrollText },
+      { to: "/admin/team", key: "team", icon: UsersRound, cap: "team.view" },
+      { to: "/admin/activity", key: "activity", icon: ScrollText, cap: "activity.view_all" },
       { to: "/admin/integrations", key: "integrations", icon: Plug, cap: "integrations.manage" },
-      { to: "/admin/settings", key: "settings", icon: SettingsIcon },
+      { to: "/admin/settings", key: "settings", icon: SettingsIcon, cap: "settings.manage" },
     ],
   },
 ];

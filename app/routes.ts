@@ -23,6 +23,7 @@ export default [
     route("packages", "routes/crm/packages.tsx"),
     route("departures", "routes/crm/departures.tsx"),
     route("bookings", "routes/crm/bookings.tsx"),
+    route("departed", "routes/crm/departed.tsx"),
     route("follow-ups", "routes/crm/follow-ups.tsx"),
     route("team", "routes/crm/team.tsx"),
     route("analytics", "routes/crm/analytics.tsx"),

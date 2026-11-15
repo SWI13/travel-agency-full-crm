@@ -450,6 +450,38 @@ async function run() {
   const journeyLog = (await rpc(admin.cookie, "activity.list", { limit: 500 })).data.filter((a) => a.entityId === journeyBooking.data.id);
   check("Both actions are written to the activity log", journeyLog.some((a) => a.action === "booking_departed") && journeyLog.some((a) => a.action === "booking_departure_undone" && a.meta?.reason === "Marked by mistake"));
 
+  // Simple workflow: WhatsApp lead → "Assign to trip" → (confirmed) booking. No manual stages.
+  await webhook(inbound({ from: "213661000999", name: "Assign Test", text: "Salam, je veux la omra d'avril" }));
+  let assignLead = leadByPhone(await snapshot(admin.cookie), "+213661000999");
+  const seatsDep2 = (await snapshot(mgr.cookie)).seatsTaken[dep2.data.id] ?? 0;
+  const interest = await rpc(mgr.cookie, "leads.assignTrip", { leadId: assignLead.id, departureId: dep2.data.id, travelers: 3 });
+  snap = await snapshot(mgr.cookie);
+  assignLead = leadByPhone(snap, "+213661000999");
+  check("Assign to trip (not confirmed) links the customer to the trip and its departure", interest.ok && assignLead.departureId === dep2.data.id && assignLead.packageId === pkg.data.id && assignLead.tripTravelers === 3, JSON.stringify(interest.code));
+  check("An unconfirmed assignment creates no booking and takes no seat", !snap.bookings.some((b) => b.leadId === assignLead.id) && (snap.seatsTaken[dep2.data.id] ?? 0) === seatsDep2);
+  check("The stage follows automatically (no manual stage change)", assignLead.stage === "package_sent" && assignLead.assignedTo === mgr.body.data.user.id);
+  check("An agent cannot assign a customer who is not theirs", (await rpc(agt.cookie, "leads.assignTrip", { leadId: assignLead.id, departureId: dep2.data.id, travelers: 1 })).status === 403);
+  check("A past departure cannot be chosen", (await rpc(mgr.cookie, "leads.assignTrip", { leadId: assignLead.id, departureId: pastDep.data.id, travelers: 1 })).code === "departure_closed");
+  check("Wrong traveller numbers are refused", (await rpc(mgr.cookie, "leads.assignTrip", { leadId: assignLead.id, departureId: dep2.data.id, travelers: 0 })).status === 400);
+  const confirmedAssign = await rpc(mgr.cookie, "leads.assignTrip", { leadId: assignLead.id, departureId: dep2.data.id, travelers: 2, confirmed: true });
+  snap = await snapshot(mgr.cookie);
+  assignLead = leadByPhone(snap, "+213661000999");
+  const assignBookings = snap.bookings.filter((b) => b.leadId === assignLead.id);
+  check("Confirming creates one booking with the trip price and reserves the seats", confirmedAssign.ok && assignBookings.length === 1 && assignBookings[0].totalDzd === 265000 * 2 && assignBookings[0].paidDzd === 0 && (snap.seatsTaken[dep2.data.id] ?? 0) === seatsDep2 + 2, JSON.stringify(confirmedAssign.code));
+  check("The confirmed customer is Confirmed and still has one lead record", assignLead.stage === "confirmed" && assignLead.tripTravelers === 2 && snap.leads.filter((l) => l.phone === "+213661000999").length === 1);
+  check("Pilgrim records are prepared for the confirmed travellers", snap.pilgrims.filter((x) => x.bookingId === assignBookings[0].id).length === 2);
+  check("Confirming the same trip twice does not duplicate the booking", (await rpc(mgr.cookie, "leads.assignTrip", { leadId: assignLead.id, departureId: dep2.data.id, travelers: 2, confirmed: true })).code === "already_booked" && (await snapshot(mgr.cookie)).bookings.filter((b) => b.leadId === assignLead.id).length === 1);
+  check("A booked trip cannot be silently removed", (await rpc(mgr.cookie, "leads.clearTrip", { leadId: assignLead.id })).code === "already_booked");
+  check("The WhatsApp conversation is kept after the assignment", (await rpc(mgr.cookie, "messages.list", { leadId: assignLead.id })).data?.some((m) => m.body.includes("omra d'avril")));
+  // An assignment made by mistake can be removed while nothing is booked.
+  await webhook(inbound({ from: "213661000998", name: "Undo Assign", text: "Salam" }));
+  const undoLead = leadByPhone(await snapshot(admin.cookie), "+213661000998");
+  await rpc(admin.cookie, "leads.assignTrip", { leadId: undoLead.id, departureId: dep2.data.id, travelers: 1 });
+  const cleared = await rpc(admin.cookie, "leads.clearTrip", { leadId: undoLead.id });
+  check("An unconfirmed assignment can be removed", cleared.ok && cleared.data.departureId === null);
+  const departedPage = await fetch(`${BASE}/admin/departed`, { headers: { Cookie: admin.cookie } });
+  check("The Departed customers page opens", departedPage.status === 200);
+
   // Package photos uploaded from the dashboard.
   const png = Buffer.from("89504e470d0a1a0a0000000d4948445200000001000000010806000000" + "1f15c4890000000d49444154789c6360000002000154a24f5d0000000049454e44ae426082", "hex");
   const upload = (cookie, body, type = "image/png") => fetch(`${BASE}/api/upload`, { method: "POST", headers: { "Content-Type": type, Origin: BASE, Cookie: cookie }, body });

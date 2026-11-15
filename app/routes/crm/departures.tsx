@@ -1,14 +1,16 @@
-import { useMemo, useState, type FormEvent } from "react";
-import { Pencil, PlaneTakeoff, Plus, Trash2 } from "lucide-react";
+import { Fragment, useMemo, useState, type FormEvent } from "react";
+import { ChevronDown, Pencil, PlaneTakeoff, Plus, Trash2, Users } from "lucide-react";
 import { api, errorMessage } from "~/crm/api";
 import { PageBody } from "~/crm/shell";
+import { TripBadge, tripOf, type TripStatus } from "~/crm/assign-trip";
 import { useCrm } from "~/crm/store";
+import { formatPhone } from "~/lib/phone";
 import { useI18n } from "~/i18n";
 import { DEPARTURE_STATUSES, type DepartureStatus } from "~/lib/constants";
 import { cn, dayKey, formatDate, formatDzd } from "~/lib/format";
 import { seatsFor } from "~/lib/stats";
-import type { Departure } from "~/lib/types";
-import { Badge, DemoBadge, EmptyState, Field, Meter, Modal, PageHeader, Spinner } from "~/ui";
+import type { Booking, Departure, Lead } from "~/lib/types";
+import { Avatar, Badge, DemoBadge, EmptyState, Field, Meter, Modal, PageHeader, Spinner } from "~/ui";
 import { useConfirm, useToast } from "~/ui/feedback";
 
 const STATUS_TONE: Record<DepartureStatus, string> = { open: "emerald", closed: "amber", departed: "navy", cancelled: "rose" };
@@ -76,6 +78,8 @@ function DepartureTable({ title, rows, manage, onEdit, onDelete, dim }: {
   const { t, locale } = useI18n();
   const { data, packageById } = useCrm();
   const th = "crm.departures.th";
+  const [open, setOpen] = useState<string | null>(null);
+  const customers = useTripCustomers();
   return (
     <section className="min-w-0">
       <h2 className="font-display text-lg font-semibold mb-3">
@@ -94,6 +98,7 @@ function DepartureTable({ title, rows, manage, onEdit, onDelete, dim }: {
                 <th className="w-56">{t(`${th}.occupancy`)}</th>
                 <th>{t(`${th}.price`)}</th>
                 <th>{t(`${th}.status`)}</th>
+                <th>{t("crm.trip.customers")}</th>
                 {manage && <th />}
               </tr>
             </thead>
@@ -103,7 +108,8 @@ function DepartureTable({ title, rows, manage, onEdit, onDelete, dim }: {
                 const seats = seatsFor(departure, data.seatsTaken);
                 const ratio = seats.capacity ? seats.booked / seats.capacity : 0;
                 return (
-                  <tr key={departure.id}>
+                  <Fragment key={departure.id}>
+                  <tr>
                     <td>
                       <p className="font-semibold flex items-center gap-1.5">{pkg?.name ?? "—"} <DemoBadge show={departure.isDemo} /></p>
                       <p className="text-xs muted">{departure.groupName ?? t(`crm.service.${pkg?.category ?? "unknown"}`)}</p>
@@ -122,6 +128,13 @@ function DepartureTable({ title, rows, manage, onEdit, onDelete, dim }: {
                     </td>
                     <td className="tabular whitespace-nowrap">{formatDzd(departure.priceDzd ?? pkg?.priceDzd, locale)}</td>
                     <td><Badge tone={STATUS_TONE[departure.status]} dot>{t(`crm.depStatus.${departure.status}`)}</Badge></td>
+                    <td>
+                      <button type="button" className="btn btn-secondary btn-sm" aria-expanded={open === departure.id} onClick={() => setOpen(open === departure.id ? null : departure.id)}>
+                        <Users className="size-3.5" />
+                        <span className="tabular">{(customers.get(departure.id) ?? []).length}</span>
+                        <ChevronDown className={cn("size-3.5 transition-transform", open === departure.id && "rotate-180")} />
+                      </button>
+                    </td>
                     {manage && (
                       <td className="text-end whitespace-nowrap">
                         <button type="button" className="icon-btn" onClick={() => onEdit(departure)} aria-label={t("crm.common.edit")} title={t("crm.common.edit")}><Pencil className="size-4" /></button>
@@ -129,6 +142,14 @@ function DepartureTable({ title, rows, manage, onEdit, onDelete, dim }: {
                       </td>
                     )}
                   </tr>
+                  {open === departure.id && (
+                    <tr>
+                      <td colSpan={manage ? 8 : 7} className="!bg-sand-50">
+                        <TripCustomers rows={customers.get(departure.id) ?? []} />
+                      </td>
+                    </tr>
+                  )}
+                  </Fragment>
                 );
               })}
             </tbody>
@@ -136,6 +157,54 @@ function DepartureTable({ title, rows, manage, onEdit, onDelete, dim }: {
         </div>
       )}
     </section>
+  );
+}
+
+interface TripCustomer {
+  lead: Lead | undefined;
+  name: string;
+  booking: Booking | null;
+  travelers: number;
+  status: TripStatus;
+}
+
+/** Everyone linked to each departure: confirmed bookings and customers assigned without a booking yet. */
+function useTripCustomers() {
+  const { data, leadById } = useCrm();
+  return useMemo(() => {
+    const map = new Map<string, TripCustomer[]>();
+    const add = (departureId: string, row: TripCustomer) => map.set(departureId, [...(map.get(departureId) ?? []), row]);
+    for (const b of data.bookings) {
+      if (b.paymentStatus === "cancelled" || b.paymentStatus === "refunded") continue;
+      add(b.departureId, { lead: leadById.get(b.leadId), name: b.customerName, booking: b, travelers: b.travelers, status: b.departedAt ? "departed" : "booked" });
+    }
+    for (const lead of data.leads) {
+      const trip = tripOf(lead, data.bookings);
+      if (trip.status === "assigned" && trip.departureId) add(trip.departureId, { lead, name: lead.displayName || lead.waName || lead.phone || "—", booking: null, travelers: lead.tripTravelers ?? 1, status: "assigned" });
+    }
+    return map;
+  }, [data.bookings, data.leads, leadById]);
+}
+
+function TripCustomers({ rows }: { rows: TripCustomer[] }) {
+  const { t } = useI18n();
+  const { openLead } = useCrm();
+  if (rows.length === 0) return <p className="text-sm muted py-2">{t("crm.trip.noCustomers")}</p>;
+  return (
+    <ul className="grid gap-1.5 sm:grid-cols-2 xl:grid-cols-3 py-1">
+      {rows.map((row, i) => (
+        <li key={row.booking?.id ?? row.lead?.id ?? i}>
+          <button type="button" disabled={!row.lead} onClick={() => row.lead && openLead(row.lead.id)} className="w-full flex items-center gap-2.5 rounded-xl bg-white border border-[var(--line)] px-3 py-2 text-start hover:border-emerald-300">
+            <Avatar name={row.name} size="sm" />
+            <span className="min-w-0 flex-1">
+              <span className="block truncate text-sm font-semibold" dir="auto">{row.name}</span>
+              <span className="block text-xs muted"><span className="ltr-inline">{formatPhone(row.lead?.phone) || "—"}</span> · {t("crm.trip.travelersN", { n: row.travelers })}</span>
+            </span>
+            <TripBadge status={row.status} />
+          </button>
+        </li>
+      ))}
+    </ul>
   );
 }
 

@@ -22,12 +22,12 @@ import {
 } from "~/lib/constants";
 import { cn, dayKey, formatDate, formatDateTime, formatDzd, formatTime, leadName, toLocalInput } from "~/lib/format";
 import { formatPhone, waChatLink } from "~/lib/phone";
-import type { Booking, Departure, FollowUp, Lead, Message } from "~/lib/types";
-import { Avatar, Badge, DemoBadge, Drawer, EmptyState, Field, Modal, Segmented, SkeletonRows, Spinner } from "~/ui";
+import type { Booking, FollowUp, Lead, Message } from "~/lib/types";
+import { Avatar, Badge, DemoBadge, Drawer, EmptyState, Field, SkeletonRows, Spinner } from "~/ui";
 import { useConfirm, useToast } from "~/ui/feedback";
 import { WhatsAppIcon } from "~/site/components";
-import { api, errorMessage, PAYMENT_TONE, SOURCE_TONE, STAGE_TONE } from "./api";
-import { JourneyBar, NextStep } from "./lead-flow";
+import { api, errorMessage, PAYMENT_TONE, SOURCE_TONE } from "./api";
+import { AssignTripModal, TripBadge, TripPanel, useLeadTrip } from "./assign-trip";
 import { canMarkDeparted, MarkDepartedModal } from "./departure-actions";
 import { useCrm } from "./store";
 
@@ -90,10 +90,9 @@ function LeadPanel({ lead, onClose }: { lead: Lead; onClose: () => void }) {
   const [tab, setTab] = useState<Tab>(lead.unreadCount > 0 ? "conversation" : "details");
   const [form, setForm] = useState<FormState>(() => pickForm(lead));
   const [saving, setSaving] = useState(false);
-  const [booking, setBooking] = useState<{ packageId: string | null; departureId: string | null } | null>(null);
+  const [assignOpen, setAssignOpen] = useState(false);
+  const trip = useLeadTrip(lead);
   const [departing, setDeparting] = useState<Booking | null>(null);
-  const openBooking = (packageId?: string | null, departureId?: string | null) =>
-    setBooking({ packageId: packageId ?? lead.packageId ?? null, departureId: departureId ?? null });
 
   const dirty = useMemo(
     () => EDITABLE.some((key) => JSON.stringify(form[key] ?? null) !== JSON.stringify(lead[key] ?? null)),
@@ -150,7 +149,6 @@ function LeadPanel({ lead, onClose }: { lead: Lead; onClose: () => void }) {
   const bookings = data.bookings.filter((b) => b.leadId === lead.id);
   const pending = followUps.filter((f) => f.status === "pending").length;
   const agents = data.staff.filter((s) => s.isActive || s.id === lead.assignedTo);
-  const packages = data.packages.filter((p) => p.status !== "archived" || p.id === lead.packageId);
 
   return (
     <>
@@ -166,11 +164,10 @@ function LeadPanel({ lead, onClose }: { lead: Lead; onClose: () => void }) {
               {lead.phone ? <span className="ltr-inline">{formatPhone(lead.phone)}</span> : t("crm.lead.noPhone")}
             </p>
             <div className="mt-2 flex flex-wrap gap-1.5">
-              <Badge tone={STAGE_TONE[lead.stage]} dot>{t(`crm.stage.${lead.stage}`)}</Badge>
+              <TripBadge status={trip.status} />
               <Badge tone={SOURCE_TONE[lead.source]}>{t(`crm.source.${lead.source}`)}</Badge>
               {lead.serviceType !== "unknown" && <Badge tone="gold">{t(`crm.service.${lead.serviceType}`)}</Badge>}
             </div>
-            <JourneyBar lead={lead} />
           </div>
           <button type="button" className="icon-btn -me-2 -mt-1" onClick={onClose} aria-label={t("crm.common.close")}>
             <X className="size-5" />
@@ -218,7 +215,7 @@ function LeadPanel({ lead, onClose }: { lead: Lead; onClose: () => void }) {
 
       <div className="flex-1 overflow-y-auto scroll-thin">
         <div className="px-5 pt-5">
-          <NextStep lead={lead} onBook={openBooking} />
+          <TripPanel lead={lead} />
         </div>
         {tab === "conversation" && <Conversation lead={lead} />}
 
@@ -262,12 +259,6 @@ function LeadPanel({ lead, onClose }: { lead: Lead; onClose: () => void }) {
                     {SERVICE_TYPES.map((s) => <option key={s} value={s}>{t(`crm.service.${s}`)}</option>)}
                   </select>
                 </Field>
-                <Field label={t("crm.lead.package")}>
-                  <select className="input" value={form.packageId ?? ""} onChange={(e) => set("packageId", e.target.value || null)}>
-                    <option value="">{t("crm.lead.noPackage")}</option>
-                    {packages.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
-                  </select>
-                </Field>
                 <Field label={t("crm.lead.departureCity")}>
                   <input className="input" value={form.departureCity ?? ""} onChange={(e) => set("departureCity", e.target.value || null)} maxLength={80} />
                 </Field>
@@ -276,12 +267,6 @@ function LeadPanel({ lead, onClose }: { lead: Lead; onClose: () => void }) {
                     <option value="">{t("crm.lead.noPreference")}</option>
                     {ROOM_TYPES.map((r) => <option key={r} value={r}>{t(`crm.room.${r}`)}</option>)}
                   </select>
-                </Field>
-                <Field label={t("crm.lead.departureDate")}>
-                  <input type="date" className="input" value={form.departureDate ?? ""} onChange={(e) => set("departureDate", e.target.value || null)} />
-                </Field>
-                <Field label={t("crm.lead.returnDate")}>
-                  <input type="date" className="input" value={form.returnDate ?? ""} min={form.departureDate ?? undefined} onChange={(e) => set("returnDate", e.target.value || null)} />
                 </Field>
                 <Field label={t("crm.lead.adults")}>
                   <input type="number" min={0} max={500} className="input" value={form.adults ?? ""} onChange={(e) => set("adults", numberOrNull(e.target.value))} />
@@ -297,11 +282,13 @@ function LeadPanel({ lead, onClose }: { lead: Lead; onClose: () => void }) {
 
             <Section title={t("crm.lead.sales")}>
               <div className="grid grid-cols-2 gap-4">
-                <Field label={t("crm.lead.stage")}>
-                  <select className="input" value={form.stage} onChange={(e) => set("stage", e.target.value as Lead["stage"])}>
-                    {LEAD_STAGES.map((s) => <option key={s} value={s}>{t(`crm.stage.${s}`)}</option>)}
-                  </select>
-                </Field>
+                {can("settings.manage") && (
+                  <Field label={t("crm.lead.stage")} hint={t("crm.trip.stageAdmin")}>
+                    <select className="input" value={form.stage} onChange={(e) => set("stage", e.target.value as Lead["stage"])}>
+                      {LEAD_STAGES.map((s) => <option key={s} value={s}>{t(`crm.stage.${s}`)}</option>)}
+                    </select>
+                  </Field>
+                )}
                 <Field label={t("crm.lead.priority")}>
                   <select className="input" value={form.priority} onChange={(e) => set("priority", e.target.value as Lead["priority"])}>
                     {PRIORITIES.map((p) => <option key={p} value={p}>{t(`crm.priority.${p}`)}</option>)}
@@ -345,9 +332,9 @@ function LeadPanel({ lead, onClose }: { lead: Lead; onClose: () => void }) {
             <Section
               title={t("crm.lead.bookings")}
               aside={
-                <button type="button" className="btn btn-primary btn-sm" onClick={() => openBooking()}>
+                <button type="button" className="btn btn-primary btn-sm" onClick={() => setAssignOpen(true)}>
                   <Ticket className="size-3.5" />
-                  {t("crm.lead.convert")}
+                  {t("crm.trip.assign")}
                 </button>
               }
             >
@@ -406,7 +393,7 @@ function LeadPanel({ lead, onClose }: { lead: Lead; onClose: () => void }) {
       )}
 
       {departing && <MarkDepartedModal booking={departing} onClose={() => setDeparting(null)} />}
-      {booking && <BookingModal lead={lead} open packageId={booking.packageId} departureId={booking.departureId} onClose={() => setBooking(null)} />}
+      {assignOpen && <AssignTripModal lead={lead} onClose={() => setAssignOpen(false)} />}
     </>
   );
 }
@@ -615,151 +602,5 @@ function FollowUpForm({ lead }: { lead: Lead }) {
         {t("crm.lead.schedule")}
       </button>
     </form>
-  );
-}
-
-// ── Book (one click: also confirms the customer) ─────────────────────────────
-export function BookingModal({ lead, open, onClose, packageId: initialPackage, departureId: initialDeparture }: {
-  lead: Lead;
-  open: boolean;
-  onClose: () => void;
-  packageId?: string | null;
-  departureId?: string | null;
-}) {
-  const { t, locale } = useI18n();
-  const { data, packageById, apply } = useCrm();
-  const toast = useToast();
-  const today = dayKey(new Date());
-
-  // Open, future departures with free seats, grouped by offer.
-  const byPackage = useMemo(() => {
-    const map = new Map<string, Array<{ d: Departure; left: number }>>();
-    for (const d of data.departures) {
-      if (d.status !== "open" || d.departDate < today || !packageById.get(d.packageId)) continue;
-      const left = d.capacity - (data.seatsTaken[d.id] ?? 0);
-      if (left <= 0) continue;
-      map.set(d.packageId, [...(map.get(d.packageId) ?? []), { d, left }]);
-    }
-    for (const list of map.values()) list.sort((a, b) => a.d.departDate.localeCompare(b.d.departDate));
-    return map;
-  }, [data.departures, data.seatsTaken, packageById, today]);
-  const offerIds = [...byPackage.keys()].sort(
-    (a, b) => Number(b === lead.packageId) - Number(a === lead.packageId) || (packageById.get(a)?.name ?? "").localeCompare(packageById.get(b)?.name ?? ""),
-  );
-
-  const [packageId, setPackageId] = useState<string>(() =>
-    initialPackage && byPackage.has(initialPackage) ? initialPackage : offerIds[0] ?? "",
-  );
-  const dates = byPackage.get(packageId) ?? [];
-  const [departureId, setDepartureId] = useState<string>(() =>
-    initialDeparture && dates.some((x) => x.d.id === initialDeparture) ? initialDeparture : dates[0]?.d.id ?? "",
-  );
-  const [travelers, setTravelers] = useState(Math.max(1, (lead.adults ?? 0) + (lead.children ?? 0)));
-  const [total, setTotal] = useState<number | "">("");
-  const [paid, setPaid] = useState<number | "">(0);
-  const [busy, setBusy] = useState(false);
-
-  const selected = dates.find((x) => x.d.id === departureId);
-  const pkg = packageById.get(packageId);
-  const unit = selected ? (selected.d.priceDzd ?? pkg?.priceDzd ?? 0) : 0;
-  const maxTravelers = selected?.left ?? 100;
-  useEffect(() => {
-    if (!dates.some((x) => x.d.id === departureId)) setDepartureId(dates[0]?.d.id ?? "");
-  }, [packageId]); // eslint-disable-line react-hooks/exhaustive-deps
-  useEffect(() => {
-    if (selected) setTotal(unit * travelers); // suggestion; the employee can overwrite it
-  }, [departureId, travelers]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  async function submit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    const form = new FormData(event.currentTarget);
-    setBusy(true);
-    try {
-      const booking = await api<Booking>("bookings.create", {
-        leadId: lead.id,
-        departureId,
-        travelers,
-        totalDzd: Number(total || 0),
-        paidDzd: Number(paid || 0),
-        bookingDate: String(form.get("bookingDate")),
-        notes: String(form.get("notes") ?? "") || null,
-        confirmLead: true,
-      });
-      apply("bookings", booking);
-      toast.success(t("crm.booking.created"));
-      onClose();
-    } catch (error) {
-      toast.error(errorMessage(t, error));
-    } finally {
-      setBusy(false);
-    }
-  }
-
-  return (
-    <Modal open={open} onClose={onClose} size="lg" title={t("crm.booking.createTitle")} subtitle={leadName(lead)}>
-      {offerIds.length === 0 ? (
-        <p className="text-sm muted">{t("crm.booking.noOpen")}</p>
-      ) : (
-        <form onSubmit={submit} className="grid gap-5">
-          <div className="flex gap-3 items-end rounded-xl border border-[var(--line)] p-2.5">
-            <div className="relative size-16 shrink-0 overflow-hidden rounded-lg bg-gradient-to-br from-navy-900 to-emerald-800">
-              {pkg?.coverImage && <img src={pkg.coverImage} alt="" className="absolute inset-0 size-full object-cover" />}
-            </div>
-            <Field label={t("crm.booking.package")} className="flex-1 min-w-0">
-              <select className="input" value={packageId} onChange={(e) => setPackageId(e.target.value)}>
-                {offerIds.map((id) => <option key={id} value={id}>{packageById.get(id)!.name}</option>)}
-              </select>
-            </Field>
-          </div>
-
-          <div>
-            <p className="field-label">{t("crm.booking.departure")}</p>
-            <div className="flex flex-wrap gap-2">
-              {dates.map(({ d, left }) => (
-                <button
-                  key={d.id}
-                  type="button"
-                  onClick={() => setDepartureId(d.id)}
-                  className={cn("rounded-xl border-2 px-3 py-2 text-start text-[13px]", departureId === d.id ? "border-emerald-600 bg-emerald-50" : "border-[var(--line)] hover:border-emerald-300")}
-                >
-                  <span className="block font-semibold">{formatDate(d.departDate, locale)}</span>
-                  <span className="block text-[11px] muted">{t("crm.booking.seatsLeft", { n: left })}</span>
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <Field label={t("crm.booking.travelers")}>
-              <div className="flex items-center gap-2">
-                <button type="button" className="btn btn-secondary size-10 p-0 text-lg" onClick={() => setTravelers((n) => Math.max(1, n - 1))} aria-label="-">−</button>
-                <input type="number" min={1} max={maxTravelers} required className="input text-center tabular" value={travelers} onChange={(e) => setTravelers(Math.min(maxTravelers, Math.max(1, Number(e.target.value) || 1)))} />
-                <button type="button" className="btn btn-secondary size-10 p-0 text-lg" onClick={() => setTravelers((n) => Math.min(maxTravelers, n + 1))} aria-label="+">+</button>
-              </div>
-            </Field>
-            <Field label={t("crm.booking.date")}>
-              <input name="bookingDate" type="date" required defaultValue={today} className="input" />
-            </Field>
-            <Field label={t("crm.booking.total")} hint={formatDzd(Number(total || 0), locale)}>
-              <input type="number" min={0} step={1000} required dir="ltr" className="input" value={total} onChange={(e) => setTotal(e.target.value === "" ? "" : Number(e.target.value))} />
-            </Field>
-            <Field label={t("crm.booking.paid")} hint={`${t("crm.booking.remaining")}: ${formatDzd(Math.max(0, Number(total || 0) - Number(paid || 0)), locale)}`}>
-              <input type="number" min={0} max={Number(total || 0)} step={1000} dir="ltr" className="input" value={paid} onChange={(e) => setPaid(e.target.value === "" ? "" : Number(e.target.value))} />
-            </Field>
-            <Field label={t("crm.common.notes")} className="col-span-2" optional>
-              <textarea name="notes" rows={2} className="input" maxLength={2000} />
-            </Field>
-          </div>
-
-          <div className="flex justify-end gap-2">
-            <button type="button" className="btn btn-secondary" onClick={onClose}>{t("crm.common.cancel")}</button>
-            <button type="submit" className="btn btn-primary btn-lg" disabled={busy || !departureId}>
-              {busy ? <Spinner /> : <Ticket className="size-4" />}
-              {t("crm.booking.submit")}
-            </button>
-          </div>
-        </form>
-      )}
-    </Modal>
   );
 }

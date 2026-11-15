@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { CATEGORY_TONE } from "~/crm/api";
-import { Link } from "react-router";
+import { Link, Navigate } from "react-router";
 import {
   ArrowLeft,
   ArrowRight,
@@ -58,7 +58,13 @@ function PanelTitle({ title, to, linkLabel }: { title: string; to?: string; link
   );
 }
 
+/** Employees start on their work list; the overview is for managers and administrators. */
 export default function Overview() {
+  const { can } = useCrm();
+  return can("reports.view") ? <OverviewBody /> : <Navigate to="/admin/leads" replace />;
+}
+
+function OverviewBody() {
   const { t, locale } = useI18n();
   const { data, can, staffById, packageById, openLead, highlighted } = useCrm();
 
